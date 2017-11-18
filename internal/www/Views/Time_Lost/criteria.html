@@ -1,0 +1,250 @@
+<html>
+
+<head>
+  <title>Time Lost View Criteria</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+<body background="/www/background.gif" onLoad="document.time_lost_view.LAST_NAME.focus();">
+
+<form name="time_lost_view" method="GET" action="/bin/time_lost_view.pl" target="time_lost_view_results">
+
+  <table border="0">
+    <tr>
+      <td valign="middle"><b>Name:</b></td>
+      <td nowrap valign="middle"><input type="text" name="LAST_NAME" size="20"><b> ,</b></td>
+      <td valign="middle"><input type="text" name="FIRST_NAME" size="20"></td>
+      <td valign="middle"><input type="text" name="MIDDLE_NAME" size="20"></td>
+    </tr>
+    <tr>
+      <td valign="top"></td>
+      <td valign="top"><b>Last</b></td>
+      <td valign="top"><b>First</b></td>
+      <td valign="top"><b>Middle</b></td>
+    </tr>
+    <tr>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+    </tr>
+  </table>
+  <table border="0">
+    <tr>
+      <td align="right" valign="middle"><b>Sex:</b></td>
+      <td valign="middle"><select name="SEX" size="1">
+        <option selected value="">All</option>
+        <option value="Female">Female</option>
+        <option value="Male">Male</option>
+      </select></td>
+      <td valign="middle">&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td align="right" valign="middle"><b>Sport:</b></td>
+      <td valign="middle"><select name="SPORT" size="1">
+        <option selected value="">All</option>
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+      <td valign="middle">&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td align="right" valign="middle"><b>Status:</b></td>
+      <td valign="middle"><select name="STATUS" size="1">
+        <option value="">All</option>
+        <option selected value="Active">Active</option>
+        <option value="Archived">Archived</option>
+      </select></td>
+    </tr>
+    <tr>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+    </tr>
+    <tr>
+      <td align="right" valign="middle"><b>Position:</b></td>
+      <td valign="middle"><select name="POSITION" size="1">
+        <option selected value="">All</option>
+        <option value="Left">Left</option>
+        <option value="Right">Right</option>
+        <option value="Bilateral">Bilateral</option>
+	<option value="Other">Other</option>
+      </select></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"><b>Body Part:</b></td>
+      <td valign="middle"><select name="BODY_PART" size="1">
+        <option selected value="">All</option>
+        <option value="Abdomen">Abdomen</option>
+        <option value="Achilles">Achilles</option>
+        <option value="Adductor">Adductor</option>
+        <option value="Ankle">Ankle</option>
+        <option value="Carpal">Carpal</option>
+        <option value="Cervical Region">Cervical Region</option>
+        <option value="Chest">Chest</option>
+        <option value="Ear">Ear</option>
+        <option value="Elbow">Elbow</option>
+        <option value="Eye">Eye</option>
+        <option value="Face">Face</option>
+        <option value="Femur">Femur</option>
+        <option value="Foot">Foot</option>
+        <option value="Forearm">Forearm</option>
+        <option value="Gluteals">Gluteals</option>
+        <option value="Groin">Groin</option>
+        <option value="Hamstring">Hamstring</option>
+        <option value="Hand">Hand</option>
+        <option value="Head">Head</option>
+        <option value="Heart">Heart</option>
+        <option value="Hips">Hips</option>
+        <option value="Illness">Illness</option>
+        <option value="Internal Organ">Internal Organ</option>
+        <option value="Knee">Knee</option>
+        <option value="Lower Leg">Lower Leg</option>
+        <option value="Lumbar Region">Lumbar Region</option>
+        <option value="Lung">Lung</option>
+        <option value="Metacarpal">Metacarpal</option>
+        <option value="Metatarsal">Metatarsal</option>
+        <option value="Mouth">Mouth</option>
+        <option value="Nose">Nose</option>
+        <option value="Pelvis">Pelvis</option>
+        <option value="Phalange">Phalange</option>
+        <option value="Quadricep">Quadricep</option>
+        <option value="Sacral Region">Sacral Region</option>
+        <option value="Shoulder">Shoulder</option>
+        <option value="Skin">Skin</option>
+        <option value="Tarsal">Tarsal</option>
+        <option value="Teeth">Teeth</option>
+        <option value="Thoracic Region">Thoracic Region</option>
+        <option value="Tongue">Tongue</option>
+        <option value="Upper Arm">Upper Arm</option>
+        <option value="Wrist">Wrist</option>
+        <option value="Other">Other</option>
+      </select></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"><b>Injury Type:</b></td>
+      <td valign="middle"><select name="INJURY_TYPE" size="1">
+        <option selected value="">All</option>
+        <option value="Abrasion">Abrasion</option>
+        <option value="Asthma">Asthma</option>
+        <option value="Avulsion">Avulsion</option>
+        <option value="Bursitis">Bursitis</option>
+        <option value="Carpal Tunnel">Carpal Tunnel</option>
+        <option value="Compartment Syndrome">Compartment Syndrome</option>
+        <option value="Concussion">Concussion</option>
+        <option value="Contusion">Contusion</option>
+        <option value="Disc Bulge">Disc Bulge</option>
+        <option value="Disc Herniation">Disc Herniation</option>
+        <option value="Dislocation">Dislocation</option>
+        <option value="Epicondylitis">Epicondylitis</option>
+        <option value="Facet Syndrome">Facet Syndrome</option>
+        <option value="Fracture">Fracture</option>
+        <option value="Head Injury">Head Injury</option>
+        <option value="Hernia">Hernia</option>
+        <option value="Illness">Illness</option>
+	<option value="Impingement">Impingement</option>
+        <option value="Incision">Incision</option>
+        <option value="Laceration">Laceration</option>
+        <option value="MRSA">MRSA</option>
+        <option value="Nerve Injury">Nerve Injury</option>
+	<option value="PFD">PFD</option>
+	<option value="Plantar Fasciatus">Plantar Fasciatus</option>
+        <option value="Puncture">Puncture</option>
+	<option value="Shin Splints">Shin Splints</option>
+        <option value="Skin Disorder">Skin Disorder</option>
+	<option value="Spondylolysis">Spondylolysis</option>
+	<option value="Spondylothesis">Spondylothesis</option>
+        <option value="Sprain">Sprain</option>
+        <option value="Staphylococcus Aureus">Staphylococcus Aureus</option>
+        <option value="Stress Fracture">Stress Fracture</option>
+        <option value="Strain">Strain</option>
+        <option value="Subluxation">Subluxation</option>
+        <option value="Tendonitis">Tendonitis</option>
+        <option value="Tenosynovitis">Tenosynovitis</option>
+        <option value="TFCC">TFCC</option>
+        <option value="Thoracic Outlet">Thoracic Outlet</option>
+        <option value="Other">Other</option>
+      </select></td>
+
+
+    <td valign="middle"></td>
+    <td align="right"><b>Injury Environment:&nbsp; </b></td>
+    <td><select name="INJURY_ENVIRONMENT" size="1">
+       <option selected value="">All</option>
+       <option value="Competition">Competition</option>
+       <option value="Practice">Practice</option>
+       <option value="Weight Room">Weight Room</option>
+       <option value="Other">Other</option>
+    </select></td>
+
+    </tr>
+    <tr>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+    </tr>
+
+    <tr><td colspan="5">
+  <table border="0">
+    <tr>
+      <td valign="middle"><b>Date Reported Between:</b></td>
+      <td><input type="text" name="DATE_REPORTED1" size="10"><br>
+<small>mm-dd-yyyy</small></td>
+      <td align="center"><b>&nbsp; and</b> </td>
+      <td align="center"><input type="text" name="DATE_REPORTED2" size="10"><br>
+<small>mm-dd-yyyy</small></td>
+    </tr>
+  </table>
+  </td>
+
+ <td valign="middle"></td>
+ <td align="right"><b>Injury Status: </b></td>
+  <td><select name="INJURY_STATUS" size="1">
+         <option value="" selected>All</option>
+         <option value="Open">Open</option>
+         <option value="Closed">Closed</option>
+      </select>
+  </td>
+  </tr>
+</table>
+
+
+<!--
+  <div align="left"><table border="0">
+    <tr>
+      <td><div align="left"><p><b>Show Links? </b><input type="radio" value="Yes" name="SHOW_LINKS">Yes &nbsp;
+          <input type="radio" name="SHOW_LINKS" value="No" checked>No</td>
+    </tr>
+  </table>
+  </div>
+-->
+
+<p>
+<input type="submit" value=" List Injury Reports ">
+<input type="reset" value=" Reset Fields ">
+</p>
+
+
+</form>
+</body>
+</html>
+

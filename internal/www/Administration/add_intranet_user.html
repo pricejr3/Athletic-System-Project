@@ -1,0 +1,73 @@
+<!-- Copyright 1999, Melampus Enterprises, Inc. -->
+
+<html>
+
+<head>
+<title>Add Intranet User</title>
+</head>
+
+<body background="/www/background.gif">
+
+<br>
+<h1 align=center><strong><u>Add New Intranet Account</u></strong></h1>
+
+<p>
+
+<form method="POST" action="/bin/account_administration.pl">
+
+<input type="hidden" name="OPERATION" value="ADD_INTRANET_USER">
+
+
+
+<center>
+<table border="0">
+    <tr>
+      <td><strong>Login ID:</strong></td>
+      <td><input type="text" name="LOGIN_ID" size="20"></td>
+    </tr>
+
+    <tr>
+      <td><strong>First Name:</strong></td>
+      <td><input type="text" name="FIRST_NAME" size="20"></td>
+    </tr>
+
+    <tr>
+      <td><strong>Middle Name:</strong></td>
+      <td><input type="text" name="MIDDLE_NAME" size="20"></td>
+    </tr>
+
+    <tr>
+      <td><strong>Last Name:</strong></td>
+      <td><input type="text" name="LAST_NAME" size="20"></td>
+    </tr>
+
+    <tr>
+      <td valign=top><strong>Clearance:</strong></td>
+      <td nowrap><input type="radio" name="CLEARANCE1" value="STAFF">Staff
+          <input type="radio" name="CLEARANCE1" value="STUDENT" CHECKED>Student
+          <br>
+	  <input type="checkbox" name="ADMIN" value="TRUE">Admin
+	  <br>
+	  <input type="checkbox" name="PHYSICIAN" value="TRUE">Physician
+    </tr>
+
+    <tr>
+      <td valign=top><strong>Set Password:</strong></td>
+      <td><input type="password" name="PASSWORD" size="20">
+          <br>
+	  <input type="checkbox" name="GENERATE_PASSWORD" value="TRUE">Generate Password
+    </tr>
+
+
+
+
+  </table>
+
+<p><input type="submit" value=" Add New User Now ">
+
+</center>
+
+</form>
+</body>
+</html>
+

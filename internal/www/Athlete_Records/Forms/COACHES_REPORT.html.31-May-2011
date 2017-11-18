@@ -1,0 +1,269 @@
+<html>
+
+<head>
+  <title>Coaches Report</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+FORM_DATE: not null
+FORM_DATE: date
+STATUS: maxsize=20
+INJURY: maxsize=100
+NO_SHOWS: integer
+--- END DATA VERIFICATION ---
+
+
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT,
+TO_CHAR(now(), 'MM-DD-YYYY') as FORM_DATE
+
+FROM athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+
+
+SELECT
+
+POSITION, BODY_PART, INJURY_TYPE
+
+FROM injury_report_lv
+
+WHERE ATHLETE_ID = $ORIG_ATHLETE_ID
+
+ORDER BY INJURY_REPORT_ID desc;
+
+
+SELECT PARTICIPATION_STATUS as STATUS, FORM_DATE as FORM_DATE2
+  from treatment_addtnl_info_lv
+WHERE
+  ATHLETE_ID = $ORIG_ATHLETE_ID
+
+UNION ALL
+
+SELECT STATUS, FORM_DATE as FORM_DATE2
+  from coaches_report_lv
+WHERE
+  ATHLETE_ID = $ORIG_ATHLETE_ID
+
+UNION ALL
+
+SELECT PARTICIPATION_STATUS as STATUS, FORM_DATE as FORM_DATE2
+  from recommended_treatment_lv
+WHERE
+  ATHLETE_ID = $ORIG_ATHLETE_ID
+
+UNION ALL
+
+SELECT PARTICIPATION_STATUS as STATUS, FORM_SIGN_DATE as FORM_DATE2
+  from treatment_record_lv
+WHERE
+  ATHLETE_ID = $ORIG_ATHLETE_ID
+
+order by FORM_DATE2 desc;
+
+
+
+SELECT '<option>[IR:' || ORIG_VERSION_ID || '] ' || POSITION || ', ' || BODY_PART || ', ' ||
+   INJURY_TYPE || ' (' || TO_CHAR(DATE_REPORTED, 'MM-DD-YYYY') || ')</option>' as "OPEN_INJURIES[]"
+FROM injury_report_lv where athlete_id = $ORIG_ATHLETE_ID
+AND injury_status = 'Open'
+order by DATE_REPORTED desc;
+
+
+SELECT
+ '<option>PEC: Head (' || substr (PEC_HEAD, 0, 0) || COALESCE (TO_CHAR (PEC_HEAD_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</option>' as PEC_HEAD,
+ '<option>PEC: Unconscious (' || substr (PEC_UNCONSCIOUS, 0, 0) || COALESCE (TO_CHAR (PEC_UNCONSCIOUS_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</option>' as PEC_UNCONSCIOUS,
+ '<option>PEC: Shoulder (' || substr (PEC_SHOULDER, 0, 0) || COALESCE (TO_CHAR (PEC_SHOULDER_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</option>' as PEC_SHOULDER,
+ '<option>PEC: Neck (' || substr (PEC_NECK, 0, 0) || COALESCE (TO_CHAR (PEC_NECK_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</option>' as PEC_NECK,
+ '<option>PEC: Back (' || substr (PEC_BACK, 0, 0) || COALESCE (TO_CHAR (PEC_BACK_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</option>' as PEC_BACK,
+ '<option>PEC: Ribs (' || substr (PEC_RIBS, 0, 0) || COALESCE (TO_CHAR (PEC_RIBS_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</option>' as PEC_RIBS,
+ '<option>PEC: Hips (' || substr (PEC_HIPS, 0, 0) || COALESCE (TO_CHAR (PEC_HIPS_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</option>' as PEC_HIPS,
+ '<option>PEC: Lower Leg (' || substr (PEC_LOWER_LEG, 0, 0) || COALESCE (TO_CHAR (PEC_LOWER_LEG_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</option>' as PEC_LOWER_LEG,
+ '<option>PEC: Thigh (' || substr (PEC_THIGH, 0, 0) || COALESCE (TO_CHAR (PEC_THIGH_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</option>' as PEC_THIGH,
+ '<option>PEC: Knee (' || substr (PEC_KNEE, 0, 0) || COALESCE (TO_CHAR (PEC_KNEE_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</option>' as PEC_KNEE,
+ '<option>PEC: Ankle (' || substr (PEC_ANKLE, 0, 0) || COALESCE (TO_CHAR (PEC_ANKLE_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</option>' as PEC_ANKLE,
+ '<option>PEC: Elbow (' || substr (PEC_ELBOW, 0, 0) || COALESCE (TO_CHAR (PEC_ELBOW_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</option>' as PEC_ELBOW,
+ '<option>PEC: Hand/Wrist (' || substr (PEC_HAND_WRIST, 0, 0) || COALESCE (TO_CHAR (PEC_HAND_WRIST_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</option>' as PEC_HAND_WRIST
+
+FROM health_history2_lv where ATHLETE_ID = $ORIG_ATHLETE_ID
+AND health_history2_id = (select MAX (health_history2_id) from health_history2_lv where athlete_id = $ORIG_ATHLETE_ID);
+
+
+
+SELECT
+ '<option>PEC: Allergies or Asthma' || substr (YOUR_ALLERGIES_ASTHMA, 0, 0) || '</option>' as PEC_ALLERGIES_ASTHMA,
+ '<option>PEC: Anemia or Sickle Cell' || substr (YOUR_ANEMIA_SICKLE_CELL, 0, 0) || '</option>' as PEC_ANEMIA_SICKLE_CELL,
+ '<option>PEC: Bleeding Tendencies' || substr (YOUR_BLEEDING_TENDENCIES, 0, 0) || '</option>' as PEC_BLEEDING_TENDENCIES,
+ '<option>PEC: Diabetes / Gout' || substr (YOUR_DIABETES_GOUT, 0, 0) || '</option>' as PEC_DIABETES_GOUT,
+ '<option>PEC: Cancer or Tumor' || substr (YOUR_CANCER_TUMOR, 0, 0) || '</option>' as PEC_CANCER_TUMOR,
+ '<option>PEC: Epilepsy' || substr (YOUR_EPILEPSY, 0, 0) || '</option>' as PEC_EPILEPSY,
+ '<option>PEC: Yellow Jaundice' || substr (YOUR_YELLOW_JAUNDICE, 0, 0) || '</option>' as PEC_YELLOW_JAUNDICE,
+ '<option>PEC: Missing any Paired Organs' || substr (YOUR_MISSING_ORGANS, 0, 0) || '</option>' as PEC_MISSING_ORGANS,
+ '<option>PEC: High Blood Pressure' || substr (YOUR_HIGH_BLOOD_PRESSURE, 0, 0) || '</option>' as PEC_HIGH_BLOOD_PRESSURE,
+ '<option>PEC: Kidney or Bladder Trouble' || substr (YOUR_KIDNEY_BLADDER_TROUBLE, 0, 0) || '</option>' as PEC_KIDNEY_BLADDER_TROUBLE,
+ '<option>PEC: Ulcer' || substr (YOUR_ULCER, 0, 0) || '</option>' as PEC_ULCER,
+ '<option>PEC: Rheumatic Fever' || substr (YOUR_RHEUMATIC_FEVER, 0, 0) || '</option>' as PEC_RHEUMATIC_FEVER,
+ '<option>PEC: Rheumatism or Arthritis' || substr (YOUR_RHEUMATISM_ARTHRITIS, 0, 0) || '</option>' as PEC_RHEUMATISM_ARTHRITIS,
+ '<option>PEC: Heart Trouble' || substr (YOUR_HEART_TROUBLE, 0, 0) || '</option>' as PEC_HEART_TROUBLE
+
+FROM family_history_lv where ATHLETE_ID = $ORIG_ATHLETE_ID
+AND family_history_id = (select MAX (family_history_id) from family_history_lv where athlete_id = $ORIG_ATHLETE_ID);
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+insert into coaches_report
+(
+
+COACHES_REPORT_ID, ORIG_VERSION_ID, ATHLETE_ID, SPORT, INJURY,
+FORM_DATE, STATUS, COMMENTS, FORM_SIGN_USER_ID, FORM_SIGN_DATE,
+FORM_SIGNATURE, NO_SHOWS, ASSOCIATED_INJURIES
+
+)
+VALUES
+(
+
+nextval('new_coaches_report_id'), $ORIG_VERSION_ID, $ORIG_ATHLETE_ID, $SPORT,
+$INJURY, TO_DATE($FORM_DATE, 'MM-DD-YYYY'), $STATUS, $COMMENTS,
+$FORM_SIGN_USER_ID, now(), $FORM_SIGNATURE, $NO_SHOWS, $ASSOCIATED_INJURIES[]
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+COACHES_REPORT_ID, ORIG_VERSION_ID, ATHLETE_ID as ORIG_ATHLETE_ID,
+SPORT, INJURY, TO_CHAR(FORM_DATE, 'MM-DD-YYYY') as FORM_DATE, STATUS,
+COMMENTS, FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE, NO_SHOWS,
+ASSOCIATED_INJURIES as "ASSOCIATED_INJURIES[]"
+
+FROM coaches_report
+
+WHERE COACHES_REPORT_ID = $COACHES_REPORT_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+
+<body background="/www/background.gif">
+
+<p align="center"><b>MIAMI UNIVERSITY SPORTS MEDICINE<br>
+COACHES REPORT</b></p>
+
+<form name="coaches_report" method="POST" action="/bin/process_form">
+
+<input type="hidden" name="FORM_NAME" value="COACHES_REPORT">
+
+<table border="0" width="100%">
+    <tr>
+      <td><b>Athlete: </b>#LAST_NAME#, #FIRST_NAME# #MIDDLE_NAME#</td>
+      <td align="right"><b>Sport: </b><select name="SPORT" size="1">
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+    </tr>
+  </table>
+
+  <table border="0">
+    <tr>
+      <td valign="middle" align="right"><b>Status:</b> </td>
+      <td><select name="STATUS" size="1">
+        <option value="Out">Out</option>
+	<option value="Limited">Limited</option>
+	<option value="GAPP">GAPP</option>
+	<option value="Full">Full</option>
+      </select>
+      </td>
+
+      <td>&nbsp;&nbsp;</td>
+
+      <td valign="middle" align="right"><b>Date:</b></td>
+      <td valign="middle"><input type="text" name="FORM_DATE" size="10"><br>
+      <font size="-1">mm-dd-yyyy</font></center></td>
+
+      <td>&nbsp;&nbsp;</td>
+
+      <td align="right"><b>No-shows:</b></td>
+      <td><select name="NO_SHOWS" size="1">
+        <option value="0" selected="selected">None</option>
+	<option value="1">Missed 1</option>
+	<option value="2">Missed 2</option>
+	<option value="3">Missed 3</option>
+      </select>
+      </td>
+    </tr>
+
+    <tr>
+      <td align="right"><b>Injury:</b> </td>
+      <td align="left" colspan="7"><input type="text" name="INJURY" size="40" value="#POSITION# #BODY_PART# #INJURY_TYPE#">
+    </tr>
+    <tr>
+      <td align="right"><b>Associated injury(ies):</b> </td>
+      <td align="left" colspan="7"><select name="ASSOCIATED_INJURIES[]" size="5" multiple="multiple">
+        <option value="None">None</option>
+	#OPEN_INJURIES[]#
+	#PEC_HEAD#
+	#PEC_UNCONSCIOUS#
+	#PEC_SHOULDER#
+	#PEC_NECK#
+	#PEC_BACK#
+	#PEC_RIBS#
+	#PEC_HIPS#
+	#PEC_LOWER_LEG#
+	#PEC_THIGH#
+	#PEC_KNEE#
+	#PEC_ANKLE#
+	#PEC_ELBOW#
+	#PEC_HAND_WRIST#
+        #PEC_ALLERGIES_ASTHMA#
+        #PEC_ANEMIA_SICKLE_CELL#
+        #PEC_BLEEDING_TENDENCIES#
+        #PEC_DIABETES_GOUT#
+        #PEC_CANCER_TUMOR#
+        #PEC_EPILEPSY#
+        #PEC_YELLOW_JAUNDICE#
+        #PEC_MISSING_ORGANS#
+        #PEC_HIGH_BLOOD_PRESSURE#
+        #PEC_KIDNEY_BLADDER_TROUBLE#
+        #PEC_ULCER#
+        #PEC_RHEUMATIC_FEVER#
+        #PEC_RHEUMATISM_ARTHRITIS#
+        #PEC_HEART_TROUBLE#
+      </select></td>
+    </tr>
+  </table>
+
+  <p><b>Treatment and Comments:</b><br>
+  <textarea rows="5" name="COMMENTS" cols="60" wrap="virtual"></textarea></p>
+
+  <p><input type="submit" value="Submit"></p>
+
+</form>
+</body>
+</html>
+

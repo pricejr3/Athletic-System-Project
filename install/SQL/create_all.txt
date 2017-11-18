@@ -1,0 +1,5 @@
+\i create_tables.txt
+\i create_and_populate_lv_tables.txt
+\i grant_table_access.txt
+\i create_sequences.txt
+\i create_indexes.txt

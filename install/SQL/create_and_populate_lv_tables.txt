@@ -1,0 +1,80 @@
+create table athlete_lv as
+   select * from athlete where athlete_id in
+      (select max (athlete_id) from athlete group by orig_version_id);
+
+create table coaches_report_lv as
+   select * from coaches_report where coaches_report_id in
+      (select max (coaches_report_id) from coaches_report group by orig_version_id);
+
+create table family_history_lv as
+   select * from family_history where family_history_id in
+      (select max (family_history_id) from family_history group by orig_version_id);
+
+create table health_appraisal_lv as
+   select * from health_appraisal where health_appraisal_id in
+      (select max (health_appraisal_id) from health_appraisal group by orig_version_id);
+
+create table health_history_lv as
+   select * from health_history where health_history_id in
+      (select max (health_history_id) from health_history group by orig_version_id);
+
+create table injury_addtnl_info_lv as
+   select * from injury_addtnl_info where injury_addtnl_info_id in
+      (select max (injury_addtnl_info_id) from injury_addtnl_info group by orig_version_id);
+
+create table injury_report_lv as
+   select * from injury_report where injury_report_id in
+      (select max (injury_report_id) from injury_report group by orig_version_id);
+
+create table insurance_lv as
+   select * from insurance where insurance_id in
+      (select max (insurance_id) from insurance group by orig_version_id);
+
+create table personal_addtnl_info_lv as
+   select * from personal_addtnl_info where personal_addtnl_info_id in
+      (select max (personal_addtnl_info_id) from personal_addtnl_info group by orig_version_id);
+
+create table physical_lv as
+   select * from physical where physical_id in
+      (select max (physical_id) from physical group by orig_version_id);
+
+create table physician_remark_lv as
+   select * from physician_remark where physician_remark_id in
+      (select max (physician_remark_id) from physician_remark group by orig_version_id);
+
+create table recommended_treatment_lv as
+   select * from recommended_treatment where recommended_treatment_id in
+      (select max (recommended_treatment_id) from recommended_treatment group by orig_version_id);
+
+create table treatment_addtnl_info_lv as
+   select * from treatment_addtnl_info where treatment_addtnl_info_id in
+      (select max (treatment_addtnl_info_id) from treatment_addtnl_info group by orig_version_id);
+
+create table treatment_record_lv as
+   select * from treatment_record where treatment_record_id in
+      (select max (treatment_record_id) from treatment_record group by orig_version_id);
+
+create table treatment_remark_lv as
+   select * from treatment_remark where treatment_remark_id in
+      (select max (treatment_remark_id) from treatment_remark group by orig_version_id);
+
+create table waiver_lv as
+   select * from waiver where waiver_id in
+      (select max (waiver_id) from waiver group by orig_version_id);
+
+create table athlete_release_lv as
+   select * from athlete_release where athlete_release_id in
+      (select max (athlete_release_id) from athlete_release group by orig_version_id);
+
+create table ferpa_release_lv as
+   select * from ferpa_release where ferpa_release_id in
+      (select max (ferpa_release_id) from ferpa_release group by orig_version_id);
+
+create table health_info_release_lv as
+   select * from health_info_release where health_info_release_id in
+      (select max (health_info_release_id) from health_info_release group by orig_version_id);
+
+create table health_history2_lv as
+   select * from health_history2 where health_history2_id in
+      (select max (health_history2_id) from health_history2 group by orig_version_id);
+

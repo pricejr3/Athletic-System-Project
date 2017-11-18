@@ -1,0 +1,157 @@
+<html>
+
+<head>
+  <title>Declaration of Medical Condition Form</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+FORM_DATE: not null
+FORM_DATE: date
+FORM_DATE_PARENT: date
+TERMS_SIGNED_BY_ATHLETE: not null
+TERMS_SIGNED_BY_ATHLETE: format=^(Yes|No)$
+TERMS_SIGNED_BY_PARENT: not null
+TERMS_SIGNED_BY_PARENT: format=^(Yes|No)$
+--- END DATA VERIFICATION ---
+
+
+INSERT_CLEARANCE=ATHLETE
+VIEW_CLEARANCE=ATHLETE
+EDIT_CLEARANCE=STUDENT
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT,
+TO_CHAR(now(), 'MM-DD-YYYY') as FORM_DATE
+
+FROM athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+insert into medical_condition_declaration
+(
+
+MEDICAL_CONDITION_DECLARATION_ID, ORIG_VERSION_ID, ATHLETE_ID, FORM_DATE,
+TERMS_SIGNED_BY_ATHLETE, TERMS_SIGNED_BY_PARENT, FORM_DATE_PARENT,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+)
+VALUES
+(
+
+nextval('new_medical_condition_declaration_id'), $ORIG_VERSION_ID, $ORIG_ATHLETE_ID,
+TO_DATE($FORM_DATE, 'MM-DD-YYYY'), $TERMS_SIGNED_BY_ATHLETE,
+$TERMS_SIGNED_BY_PARENT, $FORM_DATE_PARENT, $FORM_SIGN_USER_ID, now(),
+$FORM_SIGNATURE
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+MEDICAL_CONDITION_DECLARATION_ID, ORIG_VERSION_ID, ATHLETE_ID as ORIG_ATHLETE_ID,
+TO_CHAR(FORM_DATE, 'MM-DD-YYYY') as FORM_DATE,
+TERMS_SIGNED_BY_ATHLETE, TERMS_SIGNED_BY_PARENT,
+TO_CHAR(FORM_DATE_PARENT, 'MM-DD-YYYY') as FORM_DATE_PARENT,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+FROM medical_condition_declaration
+
+WHERE MEDICAL_CONDITION_DECLARATION_ID = $MEDICAL_CONDITION_DECLARATION_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+<body background="/www/background.gif">
+
+<form name="medical_condition_declaration" method="POST" action="/bin/process_form">
+<input type="hidden" name="FORM_NAME" value="MEDICAL_CONDITION_DECLARATION">
+
+<div align="center"><p><b>Miami University Sports Medicine<br/>
+Student-Athlete Declaration of Medical Condition Acknowledgement</b></p></div>
+
+<p>I, #FIRST_NAME# #LAST_NAME#, am aware that participation as a
+student-athlete in #SPORT# puts me at risk for serious injuries and/or
+medical conditions.  I understand that sharing information with Miami
+University’s medical staff is important to helping maintain my safety,
+and I agree to the following instructions:</p>
+
+<ul>
+
+<li>Before I start practice, I will inform the Miami University Sports
+Medicine Department about any injury, orthopedic issue, and/or general
+medical condition in order to receive appropriate medical
+attention.</li>
+
+<li>In the event that I develop any injury, orthopedic issue and/or
+general medical condition during my sports season, I will immediately
+inform the Miami University Sports Medicine Department in order to
+receive appropriate medical attention.</li>
+
+<li>I will be responsible for disclosing any injury, orthopedic issue
+and/or general medical condition during my Exit Physical Examination
+which I must schedule with Miami University Sports Medicine before the
+end of the academic year and/or athletic competitive season (whichever
+is later) in which I have exhausted my athletic eligibility or opted
+to discontinue participation in intervarsity athletics (whichever is
+sooner).</li>
+
+</ul>
+
+<p>I understand that if I fail to disclose any known or suspected
+injury, orthopedic issue and/or general medical condition to the Miami
+University Sports Medicine Department and seek medical treatment then
+I release Miami University from any and all responsibility and
+liability for such injuries/medical condition(s).</p>
+
+<div align="center">
+<table border="0" width="100%"><tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Student Athlete:</b></td>
+   <td align="right"><b>Signed by Athlete?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="TERMS_SIGNED_BY_ATHLETE" checked="checked" value="Yes">Yes&nbsp; 
+<input type="radio" name="TERMS_SIGNED_BY_ATHLETE" value="No">No</td>
+   <td width="50"></td>
+   <td><b>Signature date:</b></td>
+   <td><div align="center"><center><p><input type="text" name="FORM_DATE" size="10"><br>
+      mm-dd-yyyy</td>
+</tr>
+<tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Parent or Guardian (If Student Athlete is under 18 years of age)</b></td>
+   <td align="right"><b>Signed by Parent or Guardian?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="TERMS_SIGNED_BY_PARENT" value="Yes">Yes&nbsp; 
+<input type="radio" name="TERMS_SIGNED_BY_PARENT" value="No" checked="checked">No</td>
+   <td width="50"></td>
+   <td><b>Signature date:</b></td>
+   <td><div align="center"><center><p><input type="text" name="FORM_DATE_PARENT" size="10"><br>
+      mm-dd-yyyy</td>
+</tr></table>
+
+</div>
+
+<div align="center"><p><input type="submit" value="Submit"></p></div>
+
+</form>
+
+<div align="center"><p><b>IF YOU HAVE QUESTIONS, PLEASE CONTACT
+MIAMI UNIVERSITY SPORTS MEDICINE DEPARTMENT AT:<br/>
+<br/>
+Miami University Sports Medicine Department<br/>
+144 Yager Stadium<br/>
+Oxford, OH 45056<br/>
+513-529-3113<br/>
+513-529-6218</p></div>
+
+</body>
+</html>

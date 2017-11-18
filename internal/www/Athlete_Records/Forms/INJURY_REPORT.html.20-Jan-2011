@@ -1,0 +1,407 @@
+<html>
+
+<head>
+  <title>INJURY REPORT</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+SPORT: maxsize=50
+POSITION: not null
+POSITION: maxsize=50
+BODY_PART: not null
+BODY_PART: maxsize=50
+INJURY_TYPE: not null
+INJURY_TYPE: maxsize=50
+INJURY_STATUS: not null
+INJURY_STATUS: maxsize=10
+DATE_OCCURRED: date
+DATE_REPORTED: not null
+DATE_REPORTED: date
+INJURY_COURSE: maxsize=50
+INJURY_ENVIRONMENT: maxsize=50
+--- END DATA VERIFICATION ---
+
+
+REVIEW_REQUIRED_CLEARANCE=STAFF
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT,
+TO_CHAR(now(), 'MM-DD-YYYY') as DATE_OCCURRED,
+TO_CHAR(now(), 'MM-DD-YYYY') as DATE_REPORTED
+
+FROM athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+
+
+
+SELECT '<option>[IR:' || ORIG_VERSION_ID || '] ' || POSITION || ', ' || BODY_PART || ', ' ||
+   INJURY_TYPE || ' (' || TO_CHAR(DATE_REPORTED, 'MM-DD-YYYY') || ')</option>' as "OPEN_INJURIES[]"
+FROM injury_report_lv where athlete_id = $ORIG_ATHLETE_ID
+AND injury_status = 'Open'
+order by DATE_REPORTED desc;
+
+
+SELECT
+ '<option>PEC: Head (' || TO_CHAR(PEC_HEAD_DATE_OCCURRED, 'MM-DD-YYYY') || ')</option>' as PEC_HEAD,
+ '<option>PEC: Unconscious (' || TO_CHAR(PEC_UNCONSCIOUS_DATE_OCCURRED, 'MM-DD-YYYY') || ')</option>' as PEC_UNCONSCIOUS,
+ '<option>PEC: Shoulder (' || TO_CHAR(PEC_SHOULDER_DATE_OCCURRED, 'MM-DD-YYYY') || ')</option>' as PEC_SHOULDER,
+ '<option>PEC: Neck (' || TO_CHAR(PEC_NECK_DATE_OCCURRED, 'MM-DD-YYYY') || ')</option>' as PEC_NECK,
+ '<option>PEC: Back (' || TO_CHAR(PEC_BACK_DATE_OCCURRED, 'MM-DD-YYYY') || ')</option>' as PEC_BACK,
+ '<option>PEC: Ribs (' || TO_CHAR(PEC_RIBS_DATE_OCCURRED, 'MM-DD-YYYY') || ')</option>' as PEC_RIBS,
+ '<option>PEC: Hips (' || TO_CHAR(PEC_HIPS_DATE_OCCURRED, 'MM-DD-YYYY') || ')</option>' as PEC_HIPS,
+ '<option>PEC: Lower leg (' || TO_CHAR(PEC_LOWER_LEG_DATE_OCCURRED, 'MM-DD-YYYY') || ')</option>' as PEC_LOWER_LEG,
+ '<option>PEC: Thigh (' || TO_CHAR(PEC_THIGH_DATE_OCCURRED, 'MM-DD-YYYY') || ')</option>' as PEC_THIGH,
+ '<option>PEC: Knee (' || TO_CHAR(PEC_KNEE_DATE_OCCURRED, 'MM-DD-YYYY') || ')</option>' as PEC_KNEE,
+ '<option>PEC: Ankle (' || TO_CHAR(PEC_ANKLE_DATE_OCCURRED, 'MM-DD-YYYY') || ')</option>' as PEC_ANKLE,
+ '<option>PEC: Elbow (' || TO_CHAR(PEC_ELBOW_DATE_OCCURRED, 'MM-DD-YYYY') || ')</option>' as PEC_ELBOW,
+ '<option>PEC: Hand/Wrist (' || TO_CHAR(PEC_HAND_WRIST_DATE_OCCURRED, 'MM-DD-YYYY') || ')</option>' as PEC_HAND_WRIST
+
+FROM health_history2_lv where ATHLETE_ID = $ORIG_ATHLETE_ID
+AND health_history2_id = (select MAX (health_history2_id) from health_history2_lv where athlete_id = $ORIG_ATHLETE_ID);
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+insert into injury_report (
+
+INJURY_REPORT_ID, ORIG_VERSION_ID, ATHLETE_ID, SPORT, INJURY_STATUS,
+POSITION, BODY_PART, BODY_PART_DETAIL, INJURY_TYPE,
+INJURY_TYPE_DETAIL, DATE_OCCURRED, DATE_REPORTED, INJURY_COURSE,
+INJURY_ENVIRONMENT, INJURY_ENVIRONMENT_OTHER, HISTORY,
+VISUAL_INSPECTION, PALPATION, CIRCULATORY_NEUROLOGICAL,
+RANGE_OF_MOTION, STRENGTH, SPECIAL_TESTS, FUNCTIONAL, ADDTNL_REMARKS,
+IMPRESSION_EVALUATION, INITIAL_TREATMENT, DOCTOR_REFERRAL,
+REVIEW_REQUIRED, CONFIDENTIAL, FORM_SIGN_USER_ID, FORM_SIGN_DATE,
+FORM_SIGNATURE, ASSOCIATED_INJURIES
+
+) VALUES (
+
+nextval('new_injury_report_id'), $ORIG_VERSION_ID, $ORIG_ATHLETE_ID,
+$SPORT, $INJURY_STATUS, $POSITION, $BODY_PART, $BODY_PART_DETAIL,
+$INJURY_TYPE, $INJURY_TYPE_DETAIL, TO_DATE($DATE_OCCURRED,
+'MM-DD-YYYY'), TO_DATE($DATE_REPORTED, 'MM-DD-YYYY'), $INJURY_COURSE,
+$INJURY_ENVIRONMENT, $INJURY_ENVIRONMENT_OTHER, $HISTORY,
+$VISUAL_INSPECTION, $PALPATION, $CIRCULATORY_NEUROLOGICAL,
+$RANGE_OF_MOTION, $STRENGTH, $SPECIAL_TESTS, $FUNCTIONAL,
+$ADDTNL_REMARKS, $IMPRESSION_EVALUATION, $INITIAL_TREATMENT,
+$DOCTOR_REFERRAL, $REVIEW_REQUIRED, $CONFIDENTIAL, $FORM_SIGN_USER_ID,
+now(), $FORM_SIGNATURE, $ASSOCIATED_INJURIES[]
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+INJURY_REPORT_ID, ORIG_VERSION_ID, ATHLETE_ID as ORIG_ATHLETE_ID,
+SPORT, INJURY_STATUS, POSITION, BODY_PART, BODY_PART_DETAIL,
+INJURY_TYPE, INJURY_TYPE_DETAIL, TO_CHAR(DATE_OCCURRED, 'MM-DD-YYYY')
+as DATE_OCCURRED, TO_CHAR(DATE_REPORTED, 'MM-DD-YYYY') as
+DATE_REPORTED, INJURY_COURSE, INJURY_ENVIRONMENT,
+INJURY_ENVIRONMENT_OTHER, HISTORY, VISUAL_INSPECTION, PALPATION,
+CIRCULATORY_NEUROLOGICAL, RANGE_OF_MOTION, STRENGTH, SPECIAL_TESTS,
+FUNCTIONAL, ADDTNL_REMARKS, IMPRESSION_EVALUATION, INITIAL_TREATMENT,
+DOCTOR_REFERRAL, REVIEW_REQUIRED, CONFIDENTIAL, FORM_SIGN_USER_ID,
+FORM_SIGN_DATE, FORM_SIGNATURE, ASSOCIATED_INJURIES as "ASSOCIATED_INJURIES[]"
+
+from injury_report
+
+WHERE INJURY_REPORT_ID = $INJURY_REPORT_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+<body background="/www/background.gif">
+
+<form name="injury_report" method="POST" action="/bin/process_form">
+
+<input type="hidden" name="FORM_NAME" value="INJURY_REPORT">
+
+  <div align="center"><center><p><b>MIAMI UNIVERSITY SPORTS MEDICINE<br>
+  INJURY REPORT</b><br>
+  </p>
+  </center></div><table border="0" width="100%">
+    <tr>
+      <td><b>Athlete: </b>#LAST_NAME#, #FIRST_NAME# #MIDDLE_NAME#</td>
+      <td><p><b>Sport: </b><select name="SPORT" size="1">
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+      <td align="right"><b>Injury Status: </b><select name="INJURY_STATUS" size="1">
+        <option value="Open">Open</option>
+	<option value="Closed">Closed</option>
+      </select></td>
+    </tr>
+  </table>
+  <table border="0">
+    <tr>
+      <td valign="top"><b>Position:</b> </td>
+      <td valign="top"><select name="POSITION" size="1">
+        <option value="Left">Left</option>
+        <option value="Right">Right</option>
+        <option value="Bilateral">Bilateral</option>
+	<option value="Other">Other</option>
+      </select></td>
+      <td valign="top"></td>
+      <td valign="top"><b>Body Part: </b></td>
+      <td valign="bottom"><select name="BODY_PART" size="1">
+        <option value="Abdomen">Abdomen</option>
+        <option value="Achilles">Achilles</option>
+        <option value="Adductor">Adductor</option>
+        <option value="Ankle">Ankle</option>
+        <option value="Carpal">Carpal</option>
+        <option value="Cervical Region">Cervical Region</option>
+        <option value="Chest">Chest</option>
+        <option value="Ear">Ear</option>
+        <option value="Elbow">Elbow</option>
+        <option value="Eye">Eye</option>
+        <option value="Face">Face</option>
+        <option value="Femur">Femur</option>
+        <option value="Foot">Foot</option>
+        <option value="Forearm">Forearm</option>
+        <option value="Gluteals">Gluteals</option>
+        <option value="Groin">Groin</option>
+        <option value="Hamstring">Hamstring</option>
+        <option value="Hand">Hand</option>
+        <option value="Head">Head</option>
+        <option value="Heart">Heart</option>
+        <option value="Hips">Hips</option>
+        <option value="Illness">Illness</option>
+        <option value="Internal Organ">Internal Organ</option>
+        <option value="Knee">Knee</option>
+        <option value="Lower Leg">Lower Leg</option>
+        <option value="Lumbar Region">Lumbar Region</option>
+        <option value="Lung">Lung</option>
+        <option value="Metacarpal">Metacarpal</option>
+        <option value="Metatarsal">Metatarsal</option>
+        <option value="Mouth">Mouth</option>
+        <option value="Nose">Nose</option>
+        <option value="Pelvis">Pelvis</option>
+        <option value="Phalange">Phalange</option>
+        <option value="Quadricep">Quadricep</option>
+        <option value="Sacral Region">Sacral Region</option>
+        <option value="Shoulder">Shoulder</option>
+        <option value="Skin">Skin</option>
+        <option value="Tarsal">Tarsal</option>
+        <option value="Teeth">Teeth</option>
+        <option value="Thoracic Region">Thoracic Region</option>
+        <option value="Tongue">Tongue</option>
+        <option value="Upper Arm">Upper Arm</option>
+        <option value="Wrist">Wrist</option>
+        <option value="Other">Other</option>
+      </select></td>
+      <td valign="top"></td>
+      <td valign="top"><b>Detail: </b></td>
+      <td valign="top"><input type="text" name="BODY_PART_DETAIL" size="20"></td>
+    </tr>
+    <tr>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"><b>Injury Type:</b> </td>
+      <td valign="bottom"><select name="INJURY_TYPE" size="1">
+        <option value="Abrasion">Abrasion</option>
+        <option value="Asthma">Asthma</option>
+        <option value="Avulsion">Avulsion</option>
+        <option value="Bursitis">Bursitis</option>
+        <option value="Carpal Tunnel">Carpal Tunnel</option>
+        <option value="Compartment Syndrome">Compartment Syndrome</option>
+        <option value="Concussion">Concussion</option>
+        <option value="Contusion">Contusion</option>
+        <option value="Disc Bulge">Disc Bulge</option>
+        <option value="Disc Herniation">Disc Herniation</option>
+        <option value="Dislocation">Dislocation</option>
+        <option value="Epicondylitis">Epicondylitis</option>
+        <option value="Facet Syndrome">Facet Syndrome</option>
+        <option value="Fracture">Fracture</option>
+        <option value="Head Injury">Head Injury</option>
+        <option value="Hernia">Hernia</option>
+        <option value="Illness">Illness</option>
+	<option value="Impingement">Impingement</option>
+        <option value="Incision">Incision</option>
+        <option value="Laceration">Laceration</option>
+        <option value="MRSA">MRSA</option>
+        <option value="Nerve Injury">Nerve Injury</option>
+	<option value="PFD">PFD</option>
+	<option value="Plantar Fasciatus">Plantar Fasciatus</option>
+        <option value="Puncture">Puncture</option>
+	<option value="Shin Splints">Shin Splints</option>
+        <option value="Skin Disorder">Skin Disorder</option>
+	<option value="Spondylolysis">Spondylolysis</option>
+	<option value="Spondylothesis">Spondylothesis</option>
+        <option value="Sprain">Sprain</option>
+        <option value="Staphylococcus Aureus">Staphylococcus Aureus</option>
+        <option value="Stress Fracture">Stress Fracture</option>
+        <option value="Strain">Strain</option>
+        <option value="Subluxation">Subluxation</option>
+        <option value="Tendonitis">Tendonitis</option>
+        <option value="Tenosynovitis">Tenosynovitis</option>
+        <option value="TFCC">TFCC</option>
+        <option value="Thoracic Outlet">Thoracic Outlet</option>
+        <option value="Other">Other</option>
+      </select></td>
+      <td valign="top"></td>
+      <td valign="top"><b>Detail:</b></td>
+      <td valign="top"><input type="text" name="INJURY_TYPE_DETAIL" size="20"></td>
+    </tr>
+    <tr>
+      <td align="left"><b>Associated injury(ies):</b>&nbsp; </td>
+      <td align="left"><select name="ASSOCIATED_INJURIES[]" size="5" multiple="multiple">
+        <option value="None">None</option>
+	#OPEN_INJURIES[]#
+	#PEC_HEAD#
+	#PEC_UNCONSCIOUS#
+	#PEC_SHOULDER#
+	#PEC_NECK#
+	#PEC_BACK#
+	#PEC_RIBS#
+	#PEC_HIPS#
+	#PEC_LOWER_LEG#
+	#PEC_THIGH#
+	#PEC_KNEE#
+	#PEC_ANKLE#
+	#PEC_ELBOW#
+	#PEC_HAND_WRIST#
+       </select></td>
+    </tr>
+  </table>
+  <table border="0">
+    <tr>
+      <td valign="top"><b>Date Occurred:</b>&nbsp; </td>
+      <td><table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td><input type="text" name="DATE_OCCURRED" size="10"><br>
+          mm-dd-yyyy</td>
+        </tr>
+      </table>
+      </td>
+      <td align="center">&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td valign="top" align="center"><b>Date Reported:&nbsp; </b></td>
+      <td align="center"><table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td><input type="text" name="DATE_REPORTED" size="10"><br>
+          mm-dd-yyyy</td>
+        </tr>
+      </table>
+      </td>
+    </tr>
+  </table>
+  <div align="left"><table border="0">
+    <tr>
+      <td valign="top"><b>Injury Course:</b></td>
+      <td valign="bottom"><select name="INJURY_COURSE" size="1">
+        <option value="Acute">Acute</option>
+        <option value="Chronic">Chronic</option>
+      </select></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Injury Environment:&nbsp; </b></td>
+      <td valign="bottom"><select name="INJURY_ENVIRONMENT" size="1">
+        <option value="Competition: Beginning">Competition: Beginning</option>
+        <option value="Competition: Middle">Competition: Middle</option>
+        <option value="Competition: End">Competition: End</option>
+        <option value="Conditioning">Conditioning</option>
+        <option value="Individual Workout">Individual Workout</option>
+        <option value="Practice: Beginning">Practice: Beginning</option>
+        <option value="Practice: Middle">Practice: Middle</option>
+        <option value="Practice: End">Practice: End</option>
+        <option value="Weight Room">Weight Room</option>
+        <option value="Other">Other</option>
+      </select></td>
+      <td valign="top"></td>
+      <td valign="top"><b>Other:</b></td>
+      <td valign="top"><input type="text" name="INJURY_ENVIRONMENT_OTHER" size="30"></td>
+    </tr>
+  </table>
+  </div><div align="left"><p><br>
+  <b>History (How, When, Where, Why, Meds, etc.):</b><br>
+  <textarea rows="3" name="HISTORY" cols="60" wrap="virtual"></textarea></p>
+  </div><div align="left"><p><b>PHYSICAL EVALUATION:</b></p>
+  </div><div align="left"><p><b>Visual Inspection:</b><br>
+  <textarea rows="3" name="VISUAL_INSPECTION" cols="60" wrap="virtual"></textarea><br>
+  <br>
+  <b>Palpation:</b><br>
+  <textarea rows="3" name="PALPATION" cols="60" wrap="virtual"></textarea><br>
+  <br>
+  <b>Circulatory/Neurological:</b><br>
+  <textarea rows="3" name="CIRCULATORY_NEUROLOGICAL" cols="60" wrap="virtual"></textarea><br>
+  <br>
+  <b>Range of Motion:</b><br>
+  <textarea rows="3" name="RANGE_OF_MOTION" cols="60" wrap="virtual"></textarea><br>
+  <br>
+  <b>Strength:</b><br>
+  <textarea rows="3" name="STRENGTH" cols="60" wrap="virtual"></textarea><br>
+  <br>
+  <b>Special Tests:</b><br>
+  <textarea rows="3" name="SPECIAL_TESTS" cols="60" wrap="virtual"></textarea><br>
+  <br>
+  <b>Functional:</b><br>
+  <textarea rows="3" name="FUNCTIONAL" cols="60" wrap="virtual"></textarea><br>
+  <br>
+  <b>Additional Remarks:<br>
+  </b><textarea rows="3" name="ADDTNL_REMARKS" cols="60" wrap="virtual"></textarea><br>
+  </p>
+  </div><div align="left"><table border="0">
+    <tr>
+      <td align="right"><b>Impression/Evaluation: </b></td>
+      <td></td>
+      <td><input type="text" name="IMPRESSION_EVALUATION" size="40"></td>
+    </tr>
+    <tr>
+      <td align="right"><b>Initial Treatment:</b></td>
+      <td></td>
+      <td><input type="text" name="INITIAL_TREATMENT" size="40"></td>
+    </tr>
+    <tr>
+      <td align="right"><b>Doctor Referral:</b></td>
+      <td></td>
+      <td><input type="text" name="DOCTOR_REFERRAL" size="40"></td>
+    </tr>
+  </table>
+  </div><div align="center"><center><table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+    </tr>
+  </table>
+  </center></div><div align="left"><table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td valign="top"><font color="#FF0000"><b>CONFIDENTIAL<br>
+      </b>(staff members only)&nbsp;&nbsp;&nbsp; </font></td>
+      <td valign="top"><input type="radio" value="No" name="CONFIDENTIAL" checked>No - allow all
+      authorized users to view this information.<br>
+      <input type="radio" name="CONFIDENTIAL" value="Yes">Yes - allow only staff members to view
+      this information.</td>
+    </tr>
+  </table>
+  </div><div align="left"><p><input type="submit" value="Submit Form"></p>
+  </div>
+</form>
+</body>
+</html>
+

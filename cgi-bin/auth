@@ -1,0 +1,60 @@
+#!/usr/bin/perl
+
+#
+# auth
+#
+# Copyright 1999, Melampus Enterprises, Inc.
+# Author: Michael J. Duff
+# Last modified: March 25, 1999
+#
+# Description: Authenticates the user.  If successful, fetches the
+#              specified HTML page.
+
+
+require "global.pl";
+require "auth_user.pl";
+require "html_utilities.pl";
+
+
+auth_user ($CLEARANCE_ATHLETE);
+
+$path_info = $ENV{'PATH_INFO'};
+
+# Do not allow referencing outside of intended path
+if ($path_info =~ /\.\./) { exit; }
+
+$path_info =~ /\.(.*?)$/;
+$filename_extension = $1;
+$filename_extension =~ tr/A-Z/a-z/;
+
+$MIME_TYPES_FILE = "/etc/mime.types";
+
+
+if ($filename_extension eq "html") {
+    &print_http_header();
+    open (FH, "$WWW_INTERNAL_DIR/$path_info");
+    print <FH>;
+    close (FH);
+
+
+} else {
+    open (MT, "$MIME_TYPES_FILE");
+    while (<MT>) {
+	if (/^\#/ || /^\s*$/) { next; }  # skip comment lines and blank lines
+	my ($type, @extensions) = split (/\s+/);
+	foreach (@extensions) { $mime_types{$_} = $type; }
+    }
+    close (MT);
+
+    $num_bytes = (stat ("$WWW_INTERNAL_DIR/$path_info"))[7];
+    print "Content-type: " . $mime_types{$filename_extension} . "\n";
+    print "Content-length: $num_bytes" . "\n\n";
+
+    open (FH, "$WWW_INTERNAL_DIR/$path_info");
+    while (read FH, $buffer, 16384) { print $buffer; }    # Read a little at a time
+    close (FH);
+}
+
+
+exit;
+

@@ -1,0 +1,19 @@
+create table recommended_treatment
+(
+recommended_treatment_id	int		not null  primary key,
+orig_version_id			int		not null,
+athlete_id			int		not null  references athlete (athlete_id) on delete cascade,
+sport				varchar (50),
+form_date			date,
+treatment_facility		varchar (50),
+treatment_date			date,
+treatment_time			varchar (2),
+injury				text,
+recommended_treatment		text,
+review_required			varchar (3),
+form_sign_user_id		varchar (50)	not null,
+form_sign_date			timestamp	not null,
+form_signature			text,
+participation_status		varchar (50),
+associated_injuries             varchar (500)
+);

@@ -1,0 +1,76 @@
+<html>
+
+<head>
+<base target="main">
+<title></title>
+
+<script language="JavaScript">
+<!--
+  if (document.images) {
+     logout_on = new Image (53, 13);
+     logout_on.src = "Images/logout_on.gif";
+     logout_off = new Image (53, 13);
+     logout_off.src = "Images/logout_off.gif";
+  }
+
+  function highlight (imgName) {
+      if (document.images) {
+         document.images[imgName].src = eval (imgName + "_on.src");
+      }
+  }
+
+  function unhighlight (imgName) {
+      if (document.images) {
+         document.images[imgName].src = eval (imgName + "_off.src");
+      }
+  }
+
+//  -->
+</script>
+
+</head>
+
+<body bgcolor="#ffffff" topmargin="0" leftmargin="0">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" align="left" bgcolor="#000000">
+<tr>
+
+<td nowrap="nowrap" valign="top" align="left"><img src="Images/intranet_header.gif" width="358" height="33"></td>
+
+<td nowrap="nowrap" valign="bottom" align="right"><form name="quick_list">
+<font size="-1"><b>
+<select name="page" onChange="window.open(this.options[this.selectedIndex].value, 'main')">
+<option value="/bin/homepage">Home</option>
+<option value="../Athlete_Records/Search/athlete_records_frames.html">Search Athletes</option>
+<option value="../Athlete_Records/Forms/ADD_NEW_ATHLETE.html">Add New Athlete</option>
+<option value="/bin/bulletin_board.pl">Bulletin Board</option>
+<option value="../Document_Center/document_center.html">Document Center</option>
+<option value="../Staff_Directory/staff_directory.html">Staff Directory</option>
+<option value="../Views/views_list.html">Views</option>
+<option value="../Views/Coaches_Reports/coaches_reports_frames.html"> -- Coaches Reports</option>
+<option value="../Views/Functional_Movement/criteria_and_results_frame.html"> -- Functional Movement Screen Reports</option>
+<option value="../Views/Functional_Movement/graphs.html"> -- Functional Movement Screen Graphs</option>
+<option value="../Views/Injury_Reports/criteria_and_results_frame.html"> -- Injury Reports</option>
+<option value="../Views/Injury_Report_Graphs/criteria_and_results_frame.html"> -- Injury Report Graphs</option>
+<option value="../Views/Insurance_Worksheets/criteria_and_results_frame.html"> -- Insurance Worksheets</option>
+<option value="../Views/Insurance_Worksheet_Entries/criteria_and_results_frame.html"> -- Insurance Worksheet Entries</option>
+<option value="../Views/Multiple_Athlete_Forms/criteria_and_results_frame.html"> -- Multiple Athlete Forms</option>
+<option value="../Views/Recommended_Treatments/criteria_and_results_frame.html"> -- Recommended Treatments</option>
+<option value="../Views/Time_Lost/criteria_and_results_frame.html"> -- Time Lost</option>
+<option value="../Views/Unsigned_Forms/criteria_and_results_frame.html"> -- Unsigned Forms</option>
+<option value="../WWW_Links/www_links.html">WWW Links</option>
+<option value="../Logout/logout.html">Logout</option>
+</select>
+
+<input type="button" value=" Go " onClick="window.open(document.quick_list.page.options[document.quick_list.page.selectedIndex].value, 'main')">
+</b></font>
+
+<a href="../Logout/logout.html"
+ onMouseOver="highlight('logout')" onMouseOut="unhighlight('logout')"
+ target="main"><img src="Images/logout_off.gif" BORDER="0" name="logout" hspace="10" width="53" height="13"></a>
+</form></td>
+
+</tr>
+</table>
+
+</body>
+</html>

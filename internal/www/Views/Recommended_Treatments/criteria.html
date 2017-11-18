@@ -1,0 +1,104 @@
+<html>
+
+<head>
+  <title>Recommended Treatment View - Search Criteria</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+
+<body background="/www/background.gif" onLoad="document.recommended_treatments_view.TREATMENT_DATE1.focus();">
+
+<form name="recommended_treatments_view" method="GET" action="/bin/recommended_treatments_view.pl" target="recommended_treatments_view_results">
+
+<center>
+<p><strong>Facility:</strong>
+  <select name="TREATMENT_FACILITY" size="1">
+    <option selected value="">All</option>
+    <option value="Goggin">Goggin</option>
+    <option value="Millett">Millett</option>
+    <option value="Rec Center">Rec Center</option>
+    <option value="Withrow">Withrow</option>
+    <option value="Yager">Yager</option>
+  </select>&nbsp;&nbsp;
+
+<strong>Time: </strong><select name="TREATMENT_TIME" size="1">
+    <option selected value="">All</option>
+    <option value="AM">AM</option>
+    <option value="PM">PM</option>
+  </select>
+
+  <strong>Show Links? </strong><input type="radio" value="YES" name="SHOW_LINKS">Yes
+  &nbsp;
+  <input type="radio" name="SHOW_LINKS" value="NO" checked>No
+  
+  
+  
+<br/>
+
+<table border="0">
+  <tr>
+      <td align="right" valign="middle"><b>Sex:</b></td>
+      <td valign="middle"><select name="SEX" size="1">
+        <option selected value="">All</option>
+        <option value="Female">Female</option>
+        <option value="Male">Male</option>
+      </select></td>
+      <td valign="middle">&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td align="right" valign="middle"><b>Sport:</b></td>
+      <td valign="middle"><select name="SPORT" size="1">
+        <option selected value="">All</option>
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+	  
+	&nbsp;
+    <strong>Edit Recommended Treatment? </strong>
+	<input type="radio" value="YES" name="EDIT_TREATMENT">Yes
+    &nbsp;
+    <input type="radio" name="EDIT_TREATMENT" value="NO" checked>No
+	  
+    </tr>
+</table>
+
+<table border="0">
+  <tr>
+    <td valign="middle"><strong>Treatment Date Between:</strong></td>
+    <td align="center"><p><input type="text" name="TREATMENT_DATE1" size="10"></td>
+    <td align="center"><strong>&nbsp; and</strong> </td>
+    <td align="center"><p><input type="text" name="TREATMENT_DATE2" size="10"></td>
+  </tr>
+  <tr align="center">
+    <td valign="top"></td>
+    <td align="center"><small><p>mm-dd-yyyy</small></td>
+    <td align="center"></td>
+    <td align="center"><small>mm-dd-yyyy</small></td>
+  </tr>
+</table>
+
+
+<p>
+<input type="submit" value=" Submit Query ">
+<input type="reset" value=" Reset Fields ">
+</p>
+
+</center>
+
+</form>
+</body>
+</html>
+

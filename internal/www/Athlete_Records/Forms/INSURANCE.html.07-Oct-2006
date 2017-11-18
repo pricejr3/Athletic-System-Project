@@ -1,0 +1,544 @@
+<html>
+
+<head>
+<title>INSURANCE QUESTIONNAIRE</title>
+</head>
+
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+SCHOOL_YEAR: maxsize=50
+FORM_DATE: not null
+FORM_DATE: date
+SPORT: maxsize=50
+PERM_PHONE: maxsize=50
+BIRTHDATE: date
+SSN: format=^(\d\d\d-\d\d-\d\d\d\d)?$
+PERM_ADDRESS: maxsize=500
+GUARDIAN1_NAME: maxsize=50
+GUARDIAN1_RELATION: maxsize=50
+GUARDIAN1_BIRTHDATE: date
+GUARDIAN1_SSN: format=^(\d\d\d-\d\d-\d\d\d\d)?$
+GUARDIAN1_ADDRESS: maxsize=500
+GUARDIAN1_PHONE: maxsize=50
+GUARDIAN1_EMPLOYER_NAME: maxsize=200
+GUARDIAN1_EMPLOYER_ADDRESS: maxsize=500
+GUARDIAN1_EMPLOYER_PHONE: maxsize=50
+GUARDIAN1_INS_NAME: maxsize=200
+GUARDIAN1_INS_ADDRESS: maxsize=500
+GUARDIAN1_INS_PHONE: maxsize=50
+GUARDIAN1_INS_POLICY_NUM: maxsize=200
+GUARDIAN1_INS_ID_NUM: maxsize=200
+GUARDIAN2_NAME: maxsize=50
+GUARDIAN2_RELATION: maxsize=50
+GUARDIAN2_BIRTHDATE: date
+GUARDIAN2_SSN: format=^(\d\d\d-\d\d-\d\d\d\d)?$
+GUARDIAN2_ADDRESS: maxsize=500
+GUARDIAN2_PHONE: maxsize=50
+GUARDIAN2_EMPLOYER_NAME: maxsize=200
+GUARDIAN2_EMPLOYER_ADDRESS: maxsize=500
+GUARDIAN2_EMPLOYER_PHONE: maxsize=50
+GUARDIAN2_INS_NAME: maxsize=200
+GUARDIAN2_INS_ADDRESS: maxsize=500
+GUARDIAN2_INS_PHONE: maxsize=50
+GUARDIAN2_INS_POLICY_NUM: maxsize=200
+GUARDIAN2_INS_ID_NUM: maxsize=200
+--- END DATA VERIFICATION ---
+
+
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT, TO_CHAR(now(),
+'MM-DD-YYYY') as FORM_DATE, PERM_PHONE, PERM_ADDRESS,
+TO_CHAR(BIRTHDATE, 'MM-DD-YYYY') as BIRTHDATE, SSN
+
+FROM athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+INSERT into insurance
+(
+
+INSURANCE_ID, ORIG_VERSION_ID, ATHLETE_ID, SCHOOL_YEAR, FORM_DATE,
+SPORT, PERM_PHONE, BIRTHDATE, SSN, PERM_ADDRESS, GUARDIAN1_NAME,
+GUARDIAN1_RELATION, GUARDIAN1_BIRTHDATE, GUARDIAN1_SSN,
+GUARDIAN1_ADDRESS, GUARDIAN1_PHONE, GUARDIAN1_EMPLOYER_NAME,
+GUARDIAN1_EMPLOYER_ADDRESS, GUARDIAN1_EMPLOYER_PHONE,
+GUARDIAN1_INS_NAME, GUARDIAN1_INS_ADDRESS, GUARDIAN1_INS_PHONE,
+GUARDIAN1_INS_POLICY_NUM, GUARDIAN1_INS_ID_NUM, GUARDIAN1_PRIMARY_INS,
+GUARDIAN2_NAME, GUARDIAN2_RELATION, GUARDIAN2_BIRTHDATE,
+GUARDIAN2_SSN, GUARDIAN2_ADDRESS, GUARDIAN2_PHONE,
+GUARDIAN2_EMPLOYER_NAME, GUARDIAN2_EMPLOYER_ADDRESS,
+GUARDIAN2_EMPLOYER_PHONE, GUARDIAN2_INS_NAME, GUARDIAN2_INS_ADDRESS,
+GUARDIAN2_INS_PHONE, GUARDIAN2_INS_POLICY_NUM, GUARDIAN2_INS_ID_NUM,
+GUARDIAN2_PRIMARY_INS, LIMIT_SERVS, LIMIT_SERVS_ADDTNL_INFO,
+LIMIT_SERVS_GUARDIAN, OPIN_SURG, OPIN_SURG_ADDTNL_INFO,
+OPIN_SURG_GUARDIAN, DIAG_TEST, DIAG_TEST_ADDTNL_INFO,
+DIAG_TEST_GUARDIAN, AGE_LIMIT, AGE_LIMIT_ADDTNL_INFO,
+AGE_LIMIT_GUARDIAN, DENTAL_INJ, DENTAL_INJ_ADDTNL_INFO,
+DENTAL_INJ_GUARDIAN, MIAMI_INS, MIAMI_INS_ADDTNL_INFO,
+MIAMI_INS_GUARDIAN, SIGNED_BY_GUARDIAN, SIGNED_BY_ATHLETE,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+)
+
+values
+
+(
+
+nextval('new_insurance_id'), $ORIG_VERSION_ID, $ORIG_ATHLETE_ID,
+$SCHOOL_YEAR, TO_DATE($FORM_DATE, 'MM-DD-YYYY'), $SPORT, $PERM_PHONE,
+TO_DATE($BIRTHDATE, 'MM-DD-YYYY'), $SSN, $PERM_ADDRESS,
+$GUARDIAN1_NAME, $GUARDIAN1_RELATION, TO_DATE($GUARDIAN1_BIRTHDATE,
+'MM-DD-YYYY'), $GUARDIAN1_SSN, $GUARDIAN1_ADDRESS, $GUARDIAN1_PHONE,
+$GUARDIAN1_EMPLOYER_NAME, $GUARDIAN1_EMPLOYER_ADDRESS,
+$GUARDIAN1_EMPLOYER_PHONE, $GUARDIAN1_INS_NAME,
+$GUARDIAN1_INS_ADDRESS, $GUARDIAN1_INS_PHONE,
+$GUARDIAN1_INS_POLICY_NUM, $GUARDIAN1_INS_ID_NUM,
+$GUARDIAN1_PRIMARY_INS, $GUARDIAN2_NAME, $GUARDIAN2_RELATION,
+TO_DATE($GUARDIAN2_BIRTHDATE, 'MM-DD-YYYY'), $GUARDIAN2_SSN,
+$GUARDIAN2_ADDRESS, $GUARDIAN2_PHONE, $GUARDIAN2_EMPLOYER_NAME,
+$GUARDIAN2_EMPLOYER_ADDRESS, $GUARDIAN2_EMPLOYER_PHONE,
+$GUARDIAN2_INS_NAME, $GUARDIAN2_INS_ADDRESS, $GUARDIAN2_INS_PHONE,
+$GUARDIAN2_INS_POLICY_NUM, $GUARDIAN2_INS_ID_NUM,
+$GUARDIAN2_PRIMARY_INS, $LIMIT_SERVS, $LIMIT_SERVS_ADDTNL_INFO,
+$LIMIT_SERVS_GUARDIAN, $OPIN_SURG, $OPIN_SURG_ADDTNL_INFO,
+$OPIN_SURG_GUARDIAN, $DIAG_TEST, $DIAG_TEST_ADDTNL_INFO,
+$DIAG_TEST_GUARDIAN, $AGE_LIMIT, $AGE_LIMIT_ADDTNL_INFO,
+$AGE_LIMIT_GUARDIAN, $DENTAL_INJ, $DENTAL_INJ_ADDTNL_INFO,
+$DENTAL_INJ_GUARDIAN, $MIAMI_INS, $MIAMI_INS_ADDTNL_INFO,
+$MIAMI_INS_GUARDIAN, $SIGNED_BY_GUARDIAN, $SIGNED_BY_ATHLETE,
+$FORM_SIGN_USER_ID, now(), $FORM_SIGNATURE
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+INSURANCE_ID, ORIG_VERSION_ID, ATHLETE_ID as ORIG_ATHLETE_ID,
+SCHOOL_YEAR, TO_CHAR(FORM_DATE, 'MM-DD-YYYY') as FORM_DATE, SPORT,
+PERM_PHONE, TO_CHAR(BIRTHDATE, 'MM-DD-YYYY') as BIRTHDATE, SSN,
+PERM_ADDRESS, GUARDIAN1_NAME, GUARDIAN1_RELATION,
+TO_CHAR(GUARDIAN1_BIRTHDATE, 'MM-DD-YYYY') as GUARDIAN1_BIRTHDATE,
+GUARDIAN1_SSN, GUARDIAN1_ADDRESS, GUARDIAN1_PHONE,
+GUARDIAN1_EMPLOYER_NAME, GUARDIAN1_EMPLOYER_ADDRESS,
+GUARDIAN1_EMPLOYER_PHONE, GUARDIAN1_INS_NAME, GUARDIAN1_INS_ADDRESS,
+GUARDIAN1_INS_PHONE, GUARDIAN1_INS_POLICY_NUM, GUARDIAN1_INS_ID_NUM,
+GUARDIAN1_PRIMARY_INS, GUARDIAN2_NAME, GUARDIAN2_RELATION,
+TO_CHAR(GUARDIAN2_BIRTHDATE, 'MM-DD-YYYY') as GUARDIAN2_BIRTHDATE,
+GUARDIAN2_SSN, GUARDIAN2_ADDRESS, GUARDIAN2_PHONE,
+GUARDIAN2_EMPLOYER_NAME, GUARDIAN2_EMPLOYER_ADDRESS,
+GUARDIAN2_EMPLOYER_PHONE, GUARDIAN2_INS_NAME, GUARDIAN2_INS_ADDRESS,
+GUARDIAN2_INS_PHONE, GUARDIAN2_INS_POLICY_NUM, GUARDIAN2_INS_ID_NUM,
+GUARDIAN2_PRIMARY_INS, LIMIT_SERVS, LIMIT_SERVS_ADDTNL_INFO,
+LIMIT_SERVS_GUARDIAN, OPIN_SURG, OPIN_SURG_ADDTNL_INFO,
+OPIN_SURG_GUARDIAN, DIAG_TEST, DIAG_TEST_ADDTNL_INFO,
+DIAG_TEST_GUARDIAN, AGE_LIMIT, AGE_LIMIT_ADDTNL_INFO,
+AGE_LIMIT_GUARDIAN, DENTAL_INJ, DENTAL_INJ_ADDTNL_INFO,
+DENTAL_INJ_GUARDIAN, MIAMI_INS, MIAMI_INS_ADDTNL_INFO,
+MIAMI_INS_GUARDIAN, SIGNED_BY_GUARDIAN, SIGNED_BY_ATHLETE,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+FROM insurance
+
+WHERE INSURANCE_ID = $INSURANCE_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+
+<body background="/www/background.gif">
+
+<form name="insurance" method="POST" action="/bin/process_form">
+
+<input type="hidden" name="FORM_NAME" value="INSURANCE">
+
+  <div align="center"><center><p><strong>MIAMI UNIVERSITY SPORTS MEDICINE<br>
+  INSURANCE QUESTIONNAIRE</strong></p>
+  </center></div><div align="right"><p><strong>School Year: </strong><input type="text" name="SCHOOL_YEAR" size="10"><br>
+  <strong>Date: </strong><input type="text" name="FORM_DATE" size="10"></p>
+  </div><table border="0" width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><strong>Athlete: </strong>#LAST_NAME#, #FIRST_NAME# #MIDDLE_NAME#</td>
+      <td><div align="right"><p><strong>Sport: </strong><select name="SPORT" size="1">
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+    </tr>
+  </table>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td width="100%"><br>
+      </td>
+    </tr>
+  </table>
+  <table border="0" cellpadding="0" width="100%" cellspacing="0">
+    <tr>
+      <td width="33%" valign="top"><table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td nowrap valign="top"><strong>Permanent Phone: </strong></td>
+          <td><input type="text" name="PERM_PHONE" size="14"></td>
+        </tr>
+        <tr>
+          <td nowrap valign="top"><strong>Permanent Address: </strong></td>
+          <td><textarea rows="2" name="PERM_ADDRESS" cols="25" wrap="virual"></textarea></td>
+        </tr>
+      </table>
+      </td>
+      <td width="33%" valign="top" nowrap><div align="center"><center><p><strong>Birthdate: </strong><input type="text" name="BIRTHDATE" size="10"></td>
+      <td width="34%" valign="top" nowrap align="center"><div align="right"><p><strong>SSN: </strong><input type="text" name="SSN" size="11"></td>
+    </tr>
+  </table>
+  <div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td width="100%"><hr>
+      </td>
+    </tr>
+  </table>
+  </center></div><div align="center"><center><table border="0" cellpadding="0" width="100%" cellspacing="0">
+    <tr>
+      <td width="50%"><strong>GUARDIAN INFORMATION</strong><br>
+      <br>
+      <table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top"><strong>Name:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN1_NAME" size="30"></td>
+        </tr>
+        <tr>
+          <td colspan="2" nowrap valign="top"><strong>Relationship to Athlete: </strong><input type="text" name="GUARDIAN1_RELATION" size="20"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>SSN:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN1_SSN" size="11"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Birthdate:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN1_BIRTHDATE" size="10"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Address:</strong></td>
+          <td valign="top"><textarea rows="2" name="GUARDIAN1_ADDRESS" cols="30" wrap="virtual"></textarea></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Phone:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN1_PHONE" size="14"></td>
+        </tr>
+        <tr>
+          <td valign="top"><br>
+          <br>
+          </td>
+          <td valign="top"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Employer:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN1_EMPLOYER_NAME" size="30"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Address:</strong></td>
+          <td valign="top"><textarea rows="2" name="GUARDIAN1_EMPLOYER_ADDRESS" cols="30" wrap="virtual"></textarea></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Phone:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN1_EMPLOYER_PHONE" size="14"></td>
+        </tr>
+        <tr>
+          <td valign="top"><br>
+          <br>
+          </td>
+          <td valign="top"></td>
+        </tr>
+        <tr>
+          <td valign="top" colspan="2" nowrap><strong>Medical Insurance Co.: </strong><input type="text" name="GUARDIAN1_INS_NAME" size="22"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Address:</strong></td>
+          <td valign="top"><textarea rows="2" name="GUARDIAN1_INS_ADDRESS" cols="30" wrap="virtual"></textarea></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Phone:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN1_INS_PHONE" size="14"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Policy#:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN1_INS_POLICY_NUM" size="25"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>ID#:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN1_INS_ID_NUM" size="25"></td>
+        </tr>
+        <tr>
+          <td valign="top" colspan="2" nowrap><strong><br>
+          PRIMARY insurance covering the athlete?:<br>
+          </strong><input type="radio" value="Yes" name="GUARDIAN1_PRIMARY_INS">Yes&nbsp; 
+<input type="radio" name="GUARDIAN1_PRIMARY_INS" value="No">No</td>
+        </tr>
+      </table>
+      </td>
+      <td width="50%"><strong>GUARDIAN INFORMATION<br>
+      <br>
+      </strong><table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td valign="top"><strong>Name:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN2_NAME" size="30"></td>
+        </tr>
+        <tr>
+          <td colspan="2" nowrap valign="top"><strong>Relationship to Athlete: </strong><input type="text" name="GUARDIAN2_RELATION" size="20"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>SSN:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN2_SSN" size="11"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Birthdate:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN2_BIRTHDATE" size="10"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Address:</strong></td>
+          <td valign="top"><textarea rows="2" name="GUARDIAN2_ADDRESS" cols="30" wrap="virtual"></textarea></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Phone:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN2_PHONE" size="14"></td>
+        </tr>
+        <tr>
+          <td valign="top"><br>
+          <br>
+          </td>
+          <td valign="top"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Employer:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN2_EMPLOYER_NAME" size="30"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Address:</strong></td>
+          <td valign="top"><textarea rows="2" name="GUARDIAN2_EMPLOYER_ADDRESS" cols="30" wrap="virtual"></textarea></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Phone:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN2_EMPLOYER_PHONE" size="14"></td>
+        </tr>
+        <tr>
+          <td valign="top"><br>
+          <br>
+          </td>
+          <td valign="top"></td>
+        </tr>
+        <tr>
+          <td valign="top" colspan="2" nowrap><strong>Medical Insurance Co.: </strong><input type="text" name="GUARDIAN2_INS_NAME" size="22"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Address:</strong></td>
+          <td valign="top"><textarea rows="2" name="GUARDIAN2_INS_ADDRESS" cols="30" wrap="virtual"></textarea></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Phone:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN2_INS_PHONE" size="14"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>Policy#:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN2_INS_POLICY_NUM" size="25"></td>
+        </tr>
+        <tr>
+          <td valign="top"><strong>ID#:</strong> </td>
+          <td valign="top"><input type="text" name="GUARDIAN2_INS_ID_NUM" size="25"></td>
+        </tr>
+        <tr>
+          <td valign="top" colspan="2" nowrap><strong><br>
+          PRIMARY insurance covering the athlete?:<br>
+          </strong><input type="radio" value="Yes" name="GUARDIAN2_PRIMARY_INS">Yes&nbsp; 
+<input type="radio" name="GUARDIAN2_PRIMARY_INS" value="No">No</td>
+        </tr>
+      </table>
+      </td>
+    </tr>
+  </table>
+  </center></div><div align="center"><center><table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td nowrap valign="top" colspan="3"><hr>
+      <p><strong>POLICY QUESTIONS (answer only for PRIMARY insurance coverage):<br>
+      </strong></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" value="Yes" name="LIMIT_SERVS">Yes&nbsp; 
+<input type="radio" name="LIMIT_SERVS" value="No">No</td>
+      <td valign="top">&nbsp;&nbsp; </td>
+      <td valign="top">Is this policy a Health Maintenance Organization (HMO) or a Preferred
+      Provider Organization (PPO) which is limited to coverage of services provided by certain
+      physicians?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td valign="top" nowrap></td>
+      <td valign="top" nowrap>Additional Comments:&nbsp; <input type="text" name="LIMIT_SERVS_ADDTNL_INFO" size="25"></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top" width="200%" nowrap><strong>Initialed by
+      Guardian?&nbsp;&nbsp;&nbsp;&nbsp; </strong><input type="radio" value="Yes" name="LIMIT_SERVS_GUARDIAN">Yes&nbsp; 
+<input type="radio" name="LIMIT_SERVS_GUARDIAN" value="No">No</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><br>
+      </td>
+      <td valign="top"></td>
+      <td valign="top" width="200%" nowrap></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" name="OPIN_SURG" value="Yes">Yes&nbsp; 
+<input type="radio" name="OPIN_SURG" value="No">No</td>
+      <td valign="top"></td>
+      <td valign="top">Does your policy require second opinions before surgery?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top">Additional Comments:&nbsp; <input type="text" name="OPIN_SURG_ADDTNL_INFO" size="25"></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"><strong>Initialed by Guardian?&nbsp;&nbsp;&nbsp;&nbsp; </strong><input type="radio" value="Yes" name="OPIN_SURG_GUARDIAN">Yes&nbsp; 
+<input type="radio" name="OPIN_SURG_GUARDIAN" value="No">No</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><br>
+      </td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" name="DIAG_TEST" value="Yes">Yes&nbsp; 
+<input type="radio" name="DIAG_TEST" value="No">No</td>
+      <td valign="top"></td>
+      <td valign="top">Does your policy require prior approval for diagnostic testing? (ie.
+      MRI's, Bone Scans, etc.)</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top">Additional Comments:&nbsp; <input type="text" name="DIAG_TEST_ADDTNL_INFO" size="25"></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"><strong>Initialed by Guardian?&nbsp;&nbsp;&nbsp;&nbsp; </strong><input type="radio" value="Yes" name="DIAG_TEST_GUARDIAN">Yes&nbsp; 
+<input type="radio" name="DIAG_TEST_GUARDIAN" value="No">No</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><br>
+      </td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" name="AGE_LIMIT" value="Yes">Yes&nbsp; 
+<input type="radio" name="AGE_LIMIT" value="No">No</td>
+      <td valign="top"></td>
+      <td valign="top">Does this policy have an age limit restriction for your son/daughter?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top">If yes, what age:&nbsp; <input type="text" name="AGE_LIMIT_ADDTNL_INFO" size="25"></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"><strong>Initialed by Guardian?&nbsp;&nbsp;&nbsp;&nbsp; </strong><input type="radio" value="Yes" name="AGE_LIMIT_GUARDIAN">Yes&nbsp; 
+<input type="radio" name="AGE_LIMIT_GUARDIAN" value="No">No</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><br>
+      </td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" name="DENTAL_INJ" value="Yes">Yes&nbsp; 
+<input type="radio" name="DENTAL_INJ" value="No">No</td>
+      <td valign="top"></td>
+      <td valign="top">Does your policy cover dental injuries?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top">Additional Comments:&nbsp; <input type="text" name="DENTAL_INJ_ADDTNL_INFO" size="25"></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"><strong>Initialed by Guardian?&nbsp;&nbsp;&nbsp;&nbsp; </strong><input type="radio" value="Yes" name="DENTAL_INJ_GUARDIAN">Yes&nbsp; 
+<input type="radio" name="DENTAL_INJ_GUARDIAN" value="No">No</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><br>
+      </td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" name="MIAMI_INS" value="Yes">Yes&nbsp; 
+<input type="radio" name="MIAMI_INS" value="No">No</td>
+      <td valign="top"></td>
+      <td valign="top">Does your son/daughter have the Student Health Insurance offered by Miami
+      University?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top">Additional Comments:&nbsp; <input type="text" name="MIAMI_INS_ADDTNL_INFO" size="25"></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"><strong>Initialed by Guardian?&nbsp;&nbsp;&nbsp;&nbsp; </strong><input type="radio" value="Yes" name="MIAMI_INS_GUARDIAN">Yes&nbsp; 
+<input type="radio" name="MIAMI_INS_GUARDIAN" value="No">No</td>
+    </tr>
+  </table>
+  </center></div><hr align="center">
+  <div align="left"><p><strong>FORM SIGNATURES</strong></p>
+  </div><div align="left"><table border="0">
+    <tr>
+      <td><strong>Signed by Guardian? </strong></td>
+      <td></td>
+      <td><input type="radio" value="Yes" name="SIGNED_BY_GUARDIAN">Yes&nbsp; 
+<input type="radio" name="SIGNED_BY_GUARDIAN" value="No">No</td>
+    </tr>
+    <tr>
+      <td><strong>Signed by Athlete?</strong></td>
+      <td></td>
+      <td><input type="radio" value="Yes" name="SIGNED_BY_ATHLETE">Yes&nbsp; 
+<input type="radio" name="SIGNED_BY_ATHLETE" value="No">No</td>
+    </tr>
+  </table>
+  </div><div align="left"><p><input type="submit" value="Submit"></p>
+  </div>
+</form>
+</body>
+</html>
+

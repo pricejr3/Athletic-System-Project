@@ -1,0 +1,257 @@
+<html>
+
+<head>
+  <title>ACKNOWLEDGEMENT AND WAIVER</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+SPORT: maxsize=50
+FORM_DATE: not null
+FORM_DATE: date
+FORM_DATE_PARENT: date
+--- END DATA VERIFICATION ---
+
+
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT,
+TO_CHAR(now(), 'MM-DD-YYYY') as FORM_DATE
+
+FROM athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+insert into waiver
+(
+
+WAIVER_ID, ORIG_VERSION_ID, ATHLETE_ID, SPORT, FORM_DATE,
+TERMS_SIGNED_BY_ATHLETE, VIOLENT_SIGNED_BY_ATHLETE, FORM_SIGN_USER_ID,
+FORM_SIGN_DATE, FORM_SIGNATURE, TERMS_SIGNED_BY_PARENT,
+VIOLENT_SIGNED_BY_PARENT, FORM_DATE_PARENT
+
+)
+VALUES
+(
+
+nextval('new_waiver_id'), $ORIG_VERSION_ID, $ORIG_ATHLETE_ID, $SPORT,
+TO_DATE($FORM_DATE, 'MM-DD-YYYY'), $TERMS_SIGNED_BY_ATHLETE,
+$VIOLENT_SIGNED_BY_ATHLETE, $FORM_SIGN_USER_ID, now(),
+$FORM_SIGNATURE, $TERMS_SIGNED_BY_PARENT, $VIOLENT_SIGNED_BY_PARENT,
+TO_DATE($FORM_DATE_PARENT, 'MM-DD-YYYY')
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+WAIVER_ID, ORIG_VERSION_ID, ATHLETE_ID as ORIG_ATHLETE_ID, SPORT,
+TO_CHAR(FORM_DATE, 'MM-DD-YYYY') as FORM_DATE,
+TERMS_SIGNED_BY_ATHLETE, VIOLENT_SIGNED_BY_ATHLETE, FORM_SIGN_USER_ID,
+FORM_SIGN_DATE, FORM_SIGNATURE, TERMS_SIGNED_BY_PARENT,
+VIOLENT_SIGNED_BY_PARENT, TO_CHAR(FORM_DATE_PARENT, 'MM-DD-YYYY') as
+FORM_DATE_PARENT
+
+FROM waiver
+
+WHERE WAIVER_ID = $WAIVER_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+
+<body background="/www/background.gif">
+
+<form name="waiver" method="POST" action="/bin/process_form">
+<input type="hidden" name="FORM_NAME" value="WAIVER">
+
+  <div align="center"><center><p><b>MIAMI UNIVERSITY SPORTS MEDICINE<br>
+  ACKNOWLEDGEMENT AND WAIVER</b></p>
+  </center></div><table border="0" width="100%">
+    <tr>
+      <td><b>Athlete: </b>#LAST_NAME#, #FIRST_NAME# #MIDDLE_NAME#</td>
+      <td><div align="right"><p><b>Sport: </b><select name="SPORT" size="1">
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+    </tr>
+  </table>
+
+  <div align="left"><p><br>
+  I am aware that playing or practicing to play/participate in any sport can be a dangerous
+  activity involving MANY RISKS OF INJURY.&nbsp; I understand that the dangers and risks of
+  playing or practicing to play/participate in the above sport include, but are not limited
+  to, death, serious neck and spinal injuries which may result in complete or partial
+  paralysis, brain damage, serious injury to virtually all internal organs, serious injury
+  to virtually all bones, joints, ligaments, muscles, tendons and other aspects of the
+  muscular skeletal system, and serious injury or impairment to other aspects of my body,
+  general health and well-being.&nbsp; I understand that the dangers and risks of playing or
+  practicing to play/participate in the above sport may result not only in serious injury,
+  but in a serious impairment of my future abilities to earn a living, to engage in other
+  business, social and recreational activities and generally to enjoy life.<br>
+  <br>
+  I also acknowledge that it is essential for my well-being that I not participate or
+  practice to play/participate in the above sport unless I am in good health and physical
+  condition.&nbsp; With this in mind, I have correctly answered the questions on the
+  attached Health Appraisal Form, and I have advised the Director of Sports Medicine/team
+  physician of any limitations on my activities for medical reasons.<br>
+  <br>
+  Because of the dangers of participating in the above sport, I recognize the importance of
+  following coaches' instructions regarding playing techniques, training and other team
+  rules, etc., and to agree to obey such instructions. I also recognize the importance of
+  following orders given by team physicians and athletic trainers regarding any limitations
+  or treatments they feel necessary for my health and well-being.<br>
+  <br>
+  In consideration of Miami University permitting me to try out for/participate on the Miami
+  University <select name="SPORT" size="1">
+    <option value="Baseball">Baseball</option>
+    <option value="Basketball">Basketball</option>
+    <option value="Cheerleading">Cheerleading</option>
+    <option value="Cross Country">Cross Country</option>
+    <option value="Dance Team">Dance Team</option>
+    <option value="Field Hockey">Field Hockey</option>
+    <option value="Football">Football</option>
+    <option value="Golf">Golf</option>
+    <option value="Ice Hockey">Ice Hockey</option>
+    <option value="Soccer">Soccer</option>
+    <option value="Softball">Softball</option>
+    <option value="Swimming and Diving">Swimming and Diving</option>
+    <option value="Synchronized Skating">Synchronized Skating</option>
+    <option value="Tennis">Tennis</option>
+    <option value="Track">Track</option>
+    <option value="Volleyball">Volleyball</option>
+    <option value="Wrestling">Wrestling</option>
+  </select>(sport) team and to engage in all activities related to the team, including, but
+  not limited to, trying out, practicing or playing/participating in that sport, I hereby
+  assume all the risks associated with participation and agree to hold Miami University, its
+  employees, agents, representatives, coaches, physicians, athletic trainers and volunteers,
+  harmless from any and all liability, actions, causes of action, debts, claims or demand of
+  any kind and nature whatsoever which may arise by or in connection with my participation
+  in any activities related to the Miami University <select name="SPORT" size="1">
+    <option value="Baseball">Baseball</option>
+    <option value="Basketball">Basketball</option>
+    <option value="Cheerleading">Cheerleading</option>
+    <option value="Cross Country">Cross Country</option>
+    <option value="Dance Team">Dance Team</option>
+    <option value="Field Hockey">Field Hockey</option>
+    <option value="Football">Football</option>
+    <option value="Golf">Golf</option>
+    <option value="Ice Hockey">Ice Hockey</option>
+    <option value="Soccer">Soccer</option>
+    <option value="Softball">Softball</option>
+    <option value="Swimming and Diving">Swimming and Diving</option>
+    <option value="Synchronized Skating">Synchronized Skating</option>
+    <option value="Tennis">Tennis</option>
+    <option value="Track">Track</option>
+    <option value="Volleyball">Volleyball</option>
+    <option value="Wrestling">Wrestling</option>
+  </select>(sport) team. The terms hereof shall serve as a release and assumption of risk
+  for my heirs, estate, executor, administrator, assignees, and for all members of my
+  family.</p>
+  </div>
+
+
+<div align="center">
+<table border="0" width="100%"><tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Student Athlete</b></td>
+   <td align="right"><b>Signed by Athlete?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="TERMS_SIGNED_BY_ATHLETE" checked="checked" value="Yes">Yes&nbsp; 
+<input type="radio" name="TERMS_SIGNED_BY_ATHLETE" value="No">No</td>
+   <td width="50"></td>
+   <td><b>Signature date:</b></td>
+   <td><div align="center"><center><p><input type="text" name="FORM_DATE" size="10"><br>
+      mm-dd-yyyy</td>
+</tr>
+<tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Parent or Guardian (If Student Athlete is under 18 years of age)</b></td>
+   <td align="right"><b>Signed by Parent or Guardian?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="TERMS_SIGNED_BY_PARENT" value="Yes">Yes&nbsp; 
+<input type="radio" name="TERMS_SIGNED_BY_PARENT" value="No" checked="checked">No</td>
+   <td width="50"></td>
+   <td><b>Signature date:</b></td>
+   <td><div align="center"><center><p><input type="text" name="FORM_DATE_PARENT" size="10"><br>
+      mm-dd-yyyy</td>
+</tr></table>
+</div>
+
+
+<div align="left"><p>THE FOLLOWING TO BE COMPLETED ONLY IF THE SPORT IS FOOTBALL,
+  WRESTLING, SYNCHRONIZED SKATING, ICE HOCKEY, FIELD HOCKEY, SOCCER, SOFTBALL, BASEBALL OR
+  BASKETBALL.<br>
+  <br>
+  I specifically acknowledge that <select name="SPORT" size="1">
+    <option value="Baseball">Baseball</option>
+    <option value="Basketball">Basketball</option>
+    <option value="Cheerleading">Cheerleading</option>
+    <option value="Cross Country">Cross Country</option>
+    <option value="Dance Team">Dance Team</option>
+    <option value="Field Hockey">Field Hockey</option>
+    <option value="Football">Football</option>
+    <option value="Golf">Golf</option>
+    <option value="Ice Hockey">Ice Hockey</option>
+    <option value="Soccer">Soccer</option>
+    <option value="Softball">Softball</option>
+    <option value="Swimming and Diving">Swimming and Diving</option>
+    <option value="Synchronized Skating">Synchronized Skating</option>
+    <option value="Tennis">Tennis</option>
+    <option value="Track">Track</option>
+    <option value="Volleyball">Volleyball</option>
+    <option value="Wrestling">Wrestling</option>
+  </select> is a VIOLENT CONTACT SPORT involving even greater risk of injury than other
+  sports.</p>
+  </div>
+
+
+<div align="center">
+<table border="0" width="100%"><tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Student Athlete</b></td>
+   <td align="right"><b>Signed by Athlete?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="VIOLENT_SIGNED_BY_ATHLETE" checked="checked" value="Yes">Yes&nbsp; 
+<input type="radio" name="VIOLENT_SIGNED_BY_ATHLETE" value="No">No</td>
+   <td width="50"></td>
+</tr>
+<tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Parent or Guardian (If Student Athlete is under 18 years of age)</b></td>
+   <td align="right"><b>Signed by Parent or Guardian?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="VIOLENT_SIGNED_BY_PARENT" value="Yes">Yes&nbsp; 
+<input type="radio" name="VIOLENT_SIGNED_BY_PARENT" value="No" checked="checked">No</td>
+   <td width="50"></td>
+</tr></table>
+</div>
+
+<div align="center"><p><input type="submit" value="Submit"></p></div>
+
+</form>
+</body>
+</html>
+

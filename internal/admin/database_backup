@@ -1,0 +1,80 @@
+#!/usr/local/bin/perl
+
+# Database backup
+#
+# Takes an argument - either "complete" or "incremental" to
+# indicate whether an incremental or full backup of the database
+# should be performed.
+#
+
+$ORACLE_HOME = "/database";
+$ORACLE_AUTH = "system/wvT26fQ4";
+$EXPORT_DIR = "$ORACLE_HOME/export";
+$LOG_DIR = "/usr/intranet/internal/logs";
+$EXPORT_LOG = "$LOG_DIR/database_backup";
+
+$DATE = "/bin/date";
+$ECHO = "/bin/echo";
+$EXPORT = "$ORACLE_HOME/bin/exp";
+$RM = "/bin/rm";
+$TAPE = "/usr/bin/tape";
+$TAR = "/usr/bin/tar";
+
+$TAPE_DEV = "/dev/nrct0";
+
+# Get export mode argument ("complete" or "incremental"):
+$complete_or_incremental = shift;
+
+if ($complete_or_incremental !~ /^incremental$/i &&
+    $complete_or_incremental !~ /^complete$/i) {
+    die ("Invalid argument: $complete_or_incremental\n");
+}
+
+
+# Get the current date in the format mm-dd-yyyy:
+chop ( $date = `$DATE '+%m-%d-%Y'` );
+
+
+if ( $complete_or_incremental =~ /incremental/i ) {  # Incremental backup
+    $export_filename = "musm_daily_backup_" . $date . ".dmp";
+    
+    # Perform incremental backup (only to disk):
+    print "Performing incremental backup; writing to $EXPORT_DIR/$export_filename...\n";
+    system ( "$EXPORT $ORACLE_AUTH file='$EXPORT_DIR/$export_filename' FULL=Y INCTYPE=INCREMENTAL >> $EXPORT_LOG 2>&1" );
+    system ( "$ECHO ---------------------------------------------------------- >> $EXPORT_LOG");
+
+
+    # Now write to tape:
+    print "Writing backup to tape:\n";
+    system ( "$TAPE rewind $TAPE_DEV" );  # First rewind the tape
+    system ( "$TAPE eod $TAPE_DEV" );   # Wind tape to end of written data
+    system ( "$TAR cvf $TAPE_DEV $EXPORT_DIR/$export_filename" );
+
+
+} else {    # Complete backup
+    # Remove previous complete backup(s) from disk:
+    system ( "$RM $EXPORT_DIR/musm_complete_backup*" );
+    
+    $export_filename = "musm_complete_backup_" . $date . ".dmp";
+
+    # First perform full backup to disk:
+    print "Performing full backup; writing to $EXPORT_DIR/$export_filename...\n";
+    system ( "$EXPORT $ORACLE_AUTH file='$EXPORT_DIR/$export_filename' CONSISTENT=Y FULL=Y >> $EXPORT_LOG 2>&1" );
+    system ( "$ECHO ---------------------------------------------------------- >> $EXPORT_LOG");
+    
+    # Now write to tape:
+    print "Writing the full backup to tape...\n";
+    system ( "$TAPE rewind $TAPE_DEV" );  # First rewind the tape
+    system ( "$TAPE eod $TAPE_DEV" );  # Wind to end of data
+    system ( "$TAR cvf $TAPE_DEV $EXPORT_DIR/$export_filename" );
+    
+    # Remove previous week''s daily backups from disk:
+    print "Removing previous incremental backups from disk ($EXPORT_DIR)...\n";
+    system ( "$RM $EXPORT_DIR/musm_daily_backup*" );
+
+}
+
+
+exit (0);
+
+

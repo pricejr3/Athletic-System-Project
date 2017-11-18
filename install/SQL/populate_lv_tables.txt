@@ -1,0 +1,63 @@
+insert into athlete_lv
+   select * from athlete where athlete_id in
+      (select max (athlete_id) from athlete group by orig_version_id);
+
+insert into coaches_report_lv
+   select * from coaches_report where coaches_report_id in
+      (select max (coaches_report_id) from coaches_report group by orig_version_id);
+
+insert into family_history_lv
+   select * from family_history where family_history_id in
+      (select max (family_history_id) from family_history group by orig_version_id);
+
+insert into health_appraisal_lv
+   select * from health_appraisal where health_appraisal_id in
+      (select max (health_appraisal_id) from health_appraisal group by orig_version_id);
+
+insert into health_history_lv
+   select * from health_history where health_history_id in
+      (select max (health_history_id) from health_history group by orig_version_id);
+
+insert into injury_addtnl_info_lv
+   select * from injury_addtnl_info where injury_addtnl_info_id in
+      (select max (injury_addtnl_info_id) from injury_addtnl_info group by orig_version_id);
+
+insert into injury_report_lv
+   select * from injury_report where injury_report_id in
+      (select max (injury_report_id) from injury_report group by orig_version_id);
+
+insert into insurance_lv
+   select * from insurance where insurance_id in
+      (select max (insurance_id) from insurance group by orig_version_id);
+
+insert into personal_addtnl_info_lv
+   select * from personal_addtnl_info where personal_addtnl_info_id in
+      (select max (personal_addtnl_info_id) from personal_addtnl_info group by orig_version_id);
+
+insert into physical_lv
+   select * from physical where physical_id in
+      (select max (physical_id) from physical group by orig_version_id);
+
+insert into physician_remark_lv
+   select * from physician_remark where physician_remark_id in
+      (select max (physician_remark_id) from physician_remark group by orig_version_id);
+
+insert into recommended_treatment_lv
+   select * from recommended_treatment where recommended_treatment_id in
+      (select max (recommended_treatment_id) from recommended_treatment group by orig_version_id);
+
+insert into treatment_addtnl_info_lv
+   select * from treatment_addtnl_info where treatment_addtnl_info_id in
+      (select max (treatment_addtnl_info_id) from treatment_addtnl_info group by orig_version_id);
+
+insert into treatment_record_lv
+   select * from treatment_record where treatment_record_id in
+      (select max (treatment_record_id) from treatment_record group by orig_version_id);
+
+insert into treatment_remark_lv
+   select * from treatment_remark where treatment_remark_id in
+      (select max (treatment_remark_id) from treatment_remark group by orig_version_id);
+
+insert into waiver_lv
+   select * from waiver where waiver_id in
+      (select max (waiver_id) from waiver group by orig_version_id);

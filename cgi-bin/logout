@@ -1,0 +1,83 @@
+#!/usr/bin/perl
+
+# logout
+#
+# Copyright 1999, Melampus Enterprises, Inc.
+# Author: Michael J. Duff
+# Last modified: March 20, 1999
+#
+# Description: Logs user out of Melampus System
+#
+# Provides button to return to default screen, but should be set to
+# reload and return to that screen after a specified amount of time
+# (e.g. 20 seconds).
+#
+# Also displays the amount of time that the user has been logged in.
+#
+
+require "global.pl";
+require "auth_user.pl";
+require "html_utilities.pl";
+require "commands.pl";
+
+
+($login_id, $clearance) = auth_user ($CLEARANCE_ATHLETE);
+
+
+# Attempt to log user out:
+if (logout_user()) {
+    print_refresh_header ("MUSM Intrant Logout", $BASE_HREF, "2; URL=/bin/welcome");
+
+print <<HERE;
+
+<br><br>
+
+<h1 align="center"><font color="#000078">User Logout</font></h1>
+
+<br><br>
+
+<center>
+<h2>User "$login_id" has been successfully logged out.</h2>
+</center>
+HERE
+;
+
+    print_html_trailer();
+
+
+} else {
+    print_html_header ( "Melampus: Failed Logout" );
+    print "<P>", "\n";
+    print "I'm sorry, but you could not be logged out.", "\n";
+    print_html_trailer();
+}
+
+
+exit;
+
+
+
+# logout_user assumes that user has already been authenticated
+
+sub logout_user
+{
+    # Environment variable-supplied:
+    my $remote_hostname   = $ENV{'REMOTE_HOST'};
+    my $remote_ip_address = $ENV{'REMOTE_ADDR'};
+
+    unlink ("$AUTH_DIR/$login_id.auth");   # Log user out
+
+    print_log ("user $login_id logged out from $remote_hostname ($remote_ip_address)");
+
+    # Write "lastlog" file into user account:
+    # MJD (16-May-2007): This will fail for athlete logins
+    my $date = `$DATE '+%A, %B %d, %Y at %I:%M %p'`;
+    open  (LASTLOG, ">$USER_ACCOUNTS_DIR/$login_id/lastlog");
+    print LASTLOG $date;
+    close (LASTLOG);
+
+    return 1;
+}
+
+
+

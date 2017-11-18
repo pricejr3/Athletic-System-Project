@@ -1,0 +1,62 @@
+<html>
+
+<head>
+  <title>Recommended Treatment View - Search Criteria</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+
+<body background="/www/background.gif" onLoad="document.recommended_treatments_view.TREATMENT_DATE1.focus();">
+
+<form name="recommended_treatments_view" method="GET" action="/bin/recommended_treatments_view.pl" target="recommended_treatments_view_results">
+
+<center>
+<p><strong>Facility:</strong>
+  <select name="TREATMENT_FACILITY" size="1">
+    <option selected value="">All</option>
+    <option value="Goggin">Goggin</option>
+    <option value="Millett">Millett</option>
+    <option value="Rec Center">Rec Center</option>
+    <option value="Withrow">Withrow</option>
+    <option value="Yager">Yager</option>
+  </select>&nbsp;&nbsp;
+
+<strong>Time: </strong><select name="TREATMENT_TIME" size="1">
+    <option selected value="">All</option>
+    <option value="AM">AM</option>
+    <option value="PM">PM</option>
+  </select>
+
+  <strong>Show Links? </strong><input type="radio" value="YES" name="SHOW_LINKS">Yes
+  &nbsp;
+  <input type="radio" name="SHOW_LINKS" value="NO" checked>No
+
+<br>
+
+<table border="0">
+  <tr>
+    <td valign="middle"><strong>Treatment Date Between:</strong></td>
+    <td align="center"><p><input type="text" name="TREATMENT_DATE1" size="10"></td>
+    <td align="center"><strong>&nbsp; and</strong> </td>
+    <td align="center"><p><input type="text" name="TREATMENT_DATE2" size="10"></td>
+  </tr>
+  <tr align="center">
+    <td valign="top"></td>
+    <td align="center"><small><p>mm-dd-yyyy</small></td>
+    <td align="center"></td>
+    <td align="center"><small>mm-dd-yyyy</small></td>
+  </tr>
+</table>
+
+
+<p>
+<input type="submit" value=" Submit Query ">
+<input type="reset" value=" Reset Fields ">
+</p>
+
+</center>
+
+</form>
+</body>
+</html>
+

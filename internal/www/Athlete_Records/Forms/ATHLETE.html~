@@ -1,0 +1,217 @@
+<html>
+
+<head>
+  <title>ATHLETE INFORMATION</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+LAST_NAME: not null
+LAST_NAME: maxsize=50
+FIRST_NAME: not null
+FIRST_NAME: maxsize=50
+BIRTHDATE: date
+SSN: not null
+SSN: format=^\d\d\d-\d\d-\d\d\d\d$
+LOCAL_ADDRESS: maxsize=500
+LOCAL_PHONE: maxsize=50
+PERM_ADDRESS: maxsize=500
+PERM_PHONE: maxsize=50
+EMAIL: maxsize=500
+--- END DATA VERIFICATION ---
+
+
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+ '<li>Head: ' || TO_CHAR(PEC_HEAD_DATE_OCCURRED, 'MM-DD-YYYY') || '</li>' as PEC_HEAD,
+ '<li>Unconscious: ' || TO_CHAR(PEC_UNCONSCIOUS_DATE_OCCURRED, 'MM-DD-YYYY') || '</li>' as PEC_UNCONSCIOUS,
+ '<li>Shoulder: ' || TO_CHAR(PEC_SHOULDER_DATE_OCCURRED, 'MM-DD-YYYY') || '</li>' as PEC_SHOULDER,
+ '<li>Neck: ' || TO_CHAR(PEC_NECK_DATE_OCCURRED, 'MM-DD-YYYY') || '</li>' as PEC_NECK,
+ '<li>Back: ' || TO_CHAR(PEC_BACK_DATE_OCCURRED, 'MM-DD-YYYY') || '</li>' as PEC_BACK,
+ '<li>Ribs: ' || TO_CHAR(PEC_RIBS_DATE_OCCURRED, 'MM-DD-YYYY') || '</li>' as PEC_RIBS,
+ '<li>Hips: ' || TO_CHAR(PEC_HIPS_DATE_OCCURRED, 'MM-DD-YYYY') || '</li>' as PEC_HIPS,
+ '<li>Lower leg: ' || TO_CHAR(PEC_LOWER_LEG_DATE_OCCURRED, 'MM-DD-YYYY') || '</li>' as PEC_LOWER_LEG,
+ '<li>Thigh: ' || TO_CHAR(PEC_THIGH_DATE_OCCURRED, 'MM-DD-YYYY') || '</li>' as PEC_THIGH,
+ '<li>Knee: ' || TO_CHAR(PEC_KNEE_DATE_OCCURRED, 'MM-DD-YYYY') || '</li>' as PEC_KNEE,
+ '<li>Ankle: ' || TO_CHAR(PEC_ANKLE_DATE_OCCURRED, 'MM-DD-YYYY') || '</li>' as PEC_ANKLE,
+ '<li>Elbow: ' || TO_CHAR(PEC_ELBOW_DATE_OCCURRED, 'MM-DD-YYYY') || '</li>' as PEC_ELBOW,
+ '<li>Hand/Wrist: ' || TO_CHAR(PEC_HAND_WRIST_DATE_OCCURRED, 'MM-DD-YYYY') || '</li>' as PEC_HAND_WRIST
+
+FROM health_history2_lv where ATHLETE_ID = $ORIG_VERSION_ID
+AND health_history2_id = (select MAX (health_history2_id) from health_history2_lv where athlete_id = $ORIG_VERSION_ID);
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+INSERT into athlete
+     ( ATHLETE_ID, ORIG_VERSION_ID, LAST_NAME, FIRST_NAME,
+       MIDDLE_NAME, SPORT, BIRTHDATE, SEX, SSN, LOCAL_ADDRESS,
+       LOCAL_PHONE, PERM_ADDRESS, PERM_PHONE, EMAIL, NOTE,
+       ALLERGIES_TO_MEDS, OTHER_ALLERGIES, STATUS, FORM_SIGN_USER_ID,
+       FORM_SIGN_DATE, FORM_SIGNATURE )
+
+     VALUES
+
+     ( nextval('new_athlete_id'), $ORIG_VERSION_ID, $LAST_NAME,
+       $FIRST_NAME, $MIDDLE_NAME, $SPORT, TO_DATE($BIRTHDATE,
+       'MM-DD-YYYY'), $SEX, $SSN, $LOCAL_ADDRESS, $LOCAL_PHONE,
+       $PERM_ADDRESS, $PERM_PHONE, $EMAIL, $NOTE, $ALLERGIES_TO_MEDS,
+       $OTHER_ALLERGIES, $STATUS, $FORM_SIGN_USER_ID, now(),
+       $FORM_SIGNATURE );
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+       ORIG_VERSION_ID, LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT,
+       TO_CHAR(BIRTHDATE, 'MM-DD-YYYY') as BIRTHDATE, SEX, SSN,
+       LOCAL_ADDRESS, LOCAL_PHONE, PERM_ADDRESS, PERM_PHONE, EMAIL, NOTE,
+       ALLERGIES_TO_MEDS, OTHER_ALLERGIES, STATUS, FORM_SIGN_USER_ID,
+       FORM_SIGN_DATE, FORM_SIGNATURE
+
+     from athlete
+
+     WHERE ATHLETE_ID = $ATHLETE_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+<body bgcolor="#f7d4bd">
+
+
+<form name="athlete" method="POST" action="/bin/process_form">
+
+<input type=hidden name="FORM_NAME" value="ATHLETE">
+
+<table border="0">
+    <tr>
+      <td><b>Last:</b></td>
+      <td nowrap><input type="text" name="LAST_NAME" size="20"><b>,</b></td>
+    </tr>
+    <tr>
+      <td><b>First:</b></td>
+      <td><input type="text" name="FIRST_NAME" size="20"></td>
+    </tr>
+    <tr>
+      <td><b>Middle:</b></td>
+      <td><input type="text" name="MIDDLE_NAME" size="20"></td>
+    </tr>
+  </table>
+  <hr>
+  <table border="0">
+    <tr>
+      <td valign="top" align="left"><b>Sport:</b></td>
+      <td align="left"><select name="SPORT" size="1">
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+    </tr>
+    <tr align="center">
+      <td valign="top" align="left"><b>Sex:</b></td>
+      <td align="left"><select name="SEX" size="1">
+        <option selected value="Female">Female</option>
+        <option value="Male">Male</option>
+      </select></td>
+    </tr>
+    <tr align="center">
+      <td valign="top" align="left"><b>Born:</b></td>
+      <td align="left"><input type="text" name="BIRTHDATE" size="10"><br>
+          mm-dd-yyyy</td>
+    </tr>
+    <tr align="center">
+      <td valign="top" align="left"><b>SSN:</b></td>
+      <td align="left"><input type="text" name="SSN" size="11"><br>
+          xxx-xx-xxxx</td>
+    </tr>
+  </table>
+  <div align="left"><p><b>Note:<br>
+  <textarea rows="3" name="NOTE" wrap="virtual" cols="30"></textarea></b></p>
+  </div><hr align="center">
+  <div align="left"><p><b>Allergies to Medication:</b><br>
+  <b><textarea rows="3" name="ALLERGIES_TO_MEDS" wrap="virtual" cols="30"></textarea></b></p>
+  </div><div align="left"><p><b>Other Allergies:<br>
+  <textarea rows="3" name="OTHER_ALLERGIES" wrap="virtual" cols="30"></textarea></b></p>
+  </div>
+
+
+<p><table border="0">
+    <tr>
+      <td><b>Pre-existing conditions:</b></td>
+    <tr>
+      <td><ul>
+#PEC_HEAD#
+#PEC_UNCONSCIOUS#
+#PEC_SHOULDER#
+#PEC_NECK#
+#PEC_BACK#
+#PEC_RIBS#
+#PEC_HIPS#
+#PEC_LOWER_LEG#
+#PEC_THIGH#
+#PEC_KNEE#
+#PEC_ANKLE#
+#PEC_ELBOW#
+#PEC_HAND_WRIST#
+<ul></td>
+    </tr>
+</table>
+
+<hr align="center">
+
+  <div align="left"><table border="0">
+    <tr>
+      <td valign="top"><div align="left"><p><b>Local Address:</b></td>
+      <td><textarea rows="3" name="LOCAL_ADDRESS" wrap="virtual" cols="25"></textarea></td>
+    </tr>
+    <tr>
+      <td valign="top"><div align="left"><p><b>Phone:</b></td>
+      <td><input type="text" name="LOCAL_PHONE" size="14"></td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Perm Address:</b></td>
+      <td><textarea rows="3" name="PERM_ADDRESS" wrap="virtual" cols="25"></textarea></td>
+    </tr>
+    <tr>
+      <td valign="top"><div align="left"><p><b>Phone:</b></td>
+      <td><input type="text" name="PERM_PHONE" size="14"></td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Email:</b></td>
+      <td><input type="text" name="EMAIL" size="25"></td>
+    </tr>
+</table></div>
+
+<hr align="center">
+
+  <div align="left"><p><b>Database Status:</b>&nbsp; <select name="STATUS" size="1">
+    <option selected value="Active">Active</option>
+    <option value="Archived">Archived</option>
+  </select></p>
+  </div>
+
+  </div><div align="left"><p><input type="submit" value="Submit" name=" Submit "></p>
+  </div>
+
+</form>
+</body>
+</html>

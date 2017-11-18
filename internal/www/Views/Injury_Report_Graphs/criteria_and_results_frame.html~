@@ -1,0 +1,17 @@
+<html>
+
+<head>
+<title>Injury Report Graphs</title>
+</head>
+
+<frameset rows="30%,70%">
+  <frame name="top" src="criteria.html" scrolling="auto">
+  <frame name="bottom" src="blank_results.html" scrolling="auto">
+  <noframes>
+  <body>
+  <p>This page uses frames, but your browser doesn't support them.</p>
+  </body>
+  </noframes>
+</frameset>
+</html>
+

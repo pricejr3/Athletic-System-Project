@@ -1,0 +1,388 @@
+
+# Exploring:
+hostname
+/sbin/ifconfig -a
+icslamsp01.mcs.muohio.edu (10.0.6.11) -- 134.53.17.222???
+RHEL 5.5
+
+# Can ping icalnx01.mcs.muohio.edu, but not ssh to it
+
+df -k
+
+ps -elf
+
+top
+RAM: 2GB
+Swap: 2GB
+
+date
+(using ntp)
+
+rpm -qa
+
+sudo tcsh
+/sbin/chkconfig --list
+
+
+/usr/sbin/groupadd musm_intranet
+cat /etc/group
+
+
+# Create /usr/local/musm/:
+
+cd /usr/local/
+mkdir musm
+chgrp musm_intranet musm
+chmod 770 musm
+ls -l
+
+
+# Configure Apache/httpd:
+
+cd /etc/httpd/conf/
+cp httpd.conf httpd.conf.06-Jan-2011
+
+/etc/httpd/conf/httpd.conf
+
+cd /etc/httpd/conf.d/
+cp ssl.conf ssl.conf.06-Jan-2011
+/etc/httpd/conf.d/ssl.conf
+
+# Disable all other *.conf files
+
+
+cd /etc/httpd/conf/
+mkdir ssl.crt
+mkdir ssl.key
+chmod 700 ssl.crt ssl.key
+
+# Copy over the crt and key files
+/etc/httpd/conf/ssl.crt/musm.ica.muohio.edu.crt
+chmod 644 /etc/httpd/conf/ssl.crt/musm.ica.muohio.edu.crt
+
+/etc/httpd/conf/ssl.crt/miami_cert_chain.crt
+chmod 644 /etc/httpd/conf/ssl.crt/miami_cert_chain.crt
+
+/etc/httpd/conf/ssl.key/musm.ica.muohio.edu.key
+chmod 400 /etc/httpd/conf/ssl.key/musm.ica.muohio.edu.key
+
+
+/sbin/chkconfig httpd on
+/etc/init.d/httpd start
+
+
+# Need DBD-Pg and DBI Perl modules:
+
+[root@icalamsp01 musm]# rpm -qa | grep -i dbd
+libdbi-dbd-mysql-0.8.1a-1.2.2
+perl-DBD-MySQL-3.0007-2.el5
+perl-DBD-Pg-1.49-2.el5_3.1
+
+
+[root@icalamsp01 musm]# rpm -qa | grep -i dbi
+perl-DBI-1.52-2.el5
+
+
+# Need GD and GIFgraph Perl modules:
+perl -MCPAN -e 'install GIFgraph'  -- cannot access CPAN
+
+
+tar xvzf GD-2.45.tar.gz
+cd GD-2.45
+perl Makefile.PL
+make
+make test
+make install
+
+
+tar xvzf GIFGraph-1.20.tar.gz
+cd GIFgraph-1.20
+perl Makefile.PL
+make
+make test
+make install
+
+
+tar xvzf GDTextUtil-0.86.tar.gz
+cd GDTextUtil-0.86
+perl Makefile.PL
+make
+make test
+make install
+
+
+tar xvzf GDGraph-1.43.tar.gz
+cd GDgraph-1.43
+perl Makefile.PL
+make
+make test
+make install
+
+
+
+# List functions / stored procedures:
+
+\df
+\df+ {function name}
+
+
+# Copy over the /usr/local/musm/ files:
+
+
+# Set ownership:
+cd /usr/local/musm/
+chgrp -R musm_intranet *
+
+
+/usr/sbin/useradd musmdb_admin
+
+
+# Configure Postgres database:
+
+/sbin/chkconfig postgresql on
+/etc/init.d/postgresql start
+
+
+# Create Postgres DB users
+
+su postgres
+
+% createuser -P musmdb_admin
+Enter password for new role: 
+Enter it again: 
+Shall the new role be a superuser? (y/n) y
+Shall the new role be allowed to create databases? (y/n) y
+Shall the new role be allowed to create more new roles? (y/n) y
+
+exit
+
+
+[musmdb_admin@icalamsp01 ~]$ createuser -U musmdb_admin -P musmdb_user
+Enter password for new role: 
+Enter it again: 
+Shall the new role be a superuser? (y/n) n
+Shall the new role be allowed to create databases? (y/n) n
+Shall the new role be allowed to create more new roles? (y/n) n
+CREATE ROLE
+
+[musmdb_admin@icalamsp01 ~]$ createuser -U musmdb_admin -P musmdb_purge
+Enter password for new role: 
+Enter it again: 
+Shall the new role be a superuser? (y/n) n
+Shall the new role be allowed to create databases? (y/n) n
+Shall the new role be allowed to create more new roles? (y/n) n
+CREATE ROLE
+
+
+
+su musmdb_admin
+createdb -U musmdb_admin -E SQL_ASCII musmdb
+
+
+# Configure for local Postgres connections:
+
+# /var/lib/pgsql/data/pg_hba.conf - added:
+
+# "local" is for Unix domain socket connections only
+#local   all         all                               ident sameuser
+local   all         all                               md5
+# IPv4 local connections:
+#host    all         all         127.0.0.1/32          ident sameuser
+host    all         all         127.0.0.1/32          md5
+# IPv6 local connections:
+#host    all         all         ::1/128               ident sameuser
+host    all         all         ::1/128               md5
+
+
+/etc/init.d/postgresql reload
+
+
+
+# Dump database data:
+pg_dump musmdb -U musmdb_admin -Ft -f /home/mjduff/musmdb_xxx.tar
+
+# Testing:
+pg_dump musmdb -U musmdb_admin -Fp -s
+
+
+# View character encoding (should be SQL_ASCII):
+psql -U musmdb_admin -l musmdb
+
+
+[root@icalamsp01 install]# psql -U musmdb_admin -l musmdb
+Password for user musmdb_admin: 
+          List of databases
+   Name    |    Owner     | Encoding  
+-----------+--------------+-----------
+ musmdb    | musmdb_admin | SQL_ASCII
+ postgres  | postgres     | UTF8
+ template0 | postgres     | UTF8
+ template1 | postgres     | UTF8
+(4 rows)
+
+
+
+# Restore the database:
+pg_restore -l musmdb_xxx.tar
+
+createlang -l musmdb -U musmdb_admin
+
+su postgres
+createlang plpgsql musmdb
+
+bash-3.2$ createlang -l musmdb
+Procedural Languages
+  Name   | Trusted? 
+---------+----------
+ plpgsql | yes
+
+
+CREATE FUNCTION plpgsql_call_handler() RETURNS OPAQUE AS '/usr/lib/pgsql/plpgsql.so' LANGUAGE 'C';
+CREATE LANGUAGE 'plpgsql' HANDLER plpgsql_call_handler LANCOMPILER 'PL/pgSQL';
+
+
+pg_restore -d musmdb -U musmdb_admin -c musmdb_xxx.tar
+
+
+#####################################################################################
+# Final transition:
+
+
+# On old server, do final backup copy of files:
+cd /usr/local/
+tar cvzf /home/mjduff/musm_backup_25-Jan-2011.tgz musm
+
+
+# Generate md5sums:
+find musm -type f -exec md5sum {} \; | perl -e 'while (<>) { chop;  @fields = split();  print $fields[1] . " " . $fields[0] . "\n"; }' | sort > /home/mjduff/musm_checksums_old_25-Jan-2011.txt
+
+chown mjduff /home/mjduff/musm*
+
+
+# Copy over recently modified files:
+cd /usr/local/musm/internal/www/Athlete_Records/Forms/
+scp 'mjduff@icalnx01.mcs.muohio.edu:*.html*' .
+
+cd /usr/local/musm/cgi-bin/
+scp 'mjduff@icalnx01.mcs.muohio.edu:time_lost_view.pl*' .
+
+
+# Compare file checksums and resolve any differences:
+find musm -type f -exec md5sum {} \; | perl -e 'while (<>) { chop;  @fields = split();  print $fields[1] . " " . $fields[0] . "\n"; }' | sort > /home/mjduff/musm_checksums_new_25-Jan-2011.txt
+
+diff /home/mjduff/musm_checksums_old_25-Jan-2011.txt /home/mjduff/musm_checksums_new_25-Jan-2011.txt
+
+
+# Confirm plpgsql language created:
+su postgres
+createlang -l musmdb
+
+
+# Confirm character encoding (should be SQL_ASCII):
+psql -U musmdb_admin -l musmdb
+
+
+
+# Test dump database data:
+pg_dump musmdb -U musmdb_admin -Ft -f /home/mjduff/musmdb_25-Jan-2011_test.tar
+
+chown mjduff /home/mjduff/musm*
+
+
+# Transfer files to new server:
+mkdir /usr/local/musm/backups/
+cd /usr/local/musm/backups/
+scp mjduff@icalnx01.mcs.muohio.edu:musm* .
+
+
+# On new server:
+pg_restore -d musmdb -U musmdb_admin -c musmdb_25-Jan-2011_test.tar
+
+
+# View character encoding (should be SQL_ASCII):
+psql -U musmdb_admin -l musmdb
+
+
+# Vacuum the database:
+vacuum;
+
+# View triggers:
+select * from pg_trigger;
+
+# Optimize the database indexes:
+analyze;
+
+
+# Test new website:
+https://134.53.17.222/
+
+
+# On new server, shut down web server:
+/etc/init.d/httpd stop
+
+
+# Update /etc/hosts file(?):
+134.53.17.222   musm.ica.muohio.edu  musm
+
+
+# Change the server hostname in /usr/local/musm/cgi-bin/global.pl:
+$HOSTNAME          = 'musm.ica.muohio.edu';
+
+
+##################################################
+# On old server, shut down web server:
+/etc/init.d/httpd stop
+
+
+# Dump database data:
+pg_dump musmdb -U musmdb_admin -Ft -f /home/mjduff/musmdb_25-Jan-2011.tar
+
+chown mjduff /home/mjduff/musm*
+
+
+# Copy files to local backup via WinSCP
+
+
+# Transfer files to new server:
+mkdir /usr/local/musm/backups/
+cd /usr/local/musm/backups/
+scp mjduff@icalnx01.mcs.muohio.edu:musm* .
+
+
+# On new server:
+pg_restore -d musmdb -U musmdb_admin -c musmdb_25-Jan-2011.tar
+
+
+# View character encoding (should be SQL_ASCII):
+psql -U musmdb_admin -l musmdb
+
+
+# Vacuum the database:
+vacuum
+
+
+# Optimize the database indexes:
+analyze
+
+
+# View database objects:
+psql -U musmdb_admin musmdb
+\dt
+\di
+\ds
+
+
+# Start the web server and test:
+/etc/init.d/httpd start
+
+
+# Check on DNS update (should change to 134.53.17.222):
+nslookup musm.ica.muohio.edu
+
+
+# Test website:
+https://musm.ica.muohio.edu/
+
+
+# Test server load:
+top

@@ -1,0 +1,45 @@
+#!/usr/bin/perl
+
+# welcome
+#
+# Copyright 1999, Melampus Enterprises, Inc.
+# Author: Michael J. Duff
+# Last modified: March 14, 1999
+#
+# Description: Sets up frames for login page
+#
+
+print "Content-type: text/html" . "\n";
+print "Pragma: no-cache" . "\n\n";
+
+
+print <<EOF;
+<!-- Copyright 1999, Melampus Enterprises, Inc. -->
+
+<html>
+<head>
+  <title>Miami University Sports Medicine Intranet</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+<frameset framespacing="0" border="false" frameborder="0" rows="100%,*"
+ marginheight="0" marginwidth="0">
+
+  <frame name="welcome" src="/bin/login_page" scrolling="auto"
+   marginwidth="0" marginheight="0">
+      
+  <noframes>
+  <body>
+  <p>This page uses frames, but your browser does not support them.</p>
+  </body>
+  </noframes>
+
+</frameset>
+
+</html>
+EOF
+    ;
+
+exit;
+
+

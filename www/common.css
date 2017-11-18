@@ -1,0 +1,37 @@
+body
+{
+ font: 11pt Arial,Helvetica,Verdana,sans-serif;
+}
+
+a:link
+{
+ color: #22229C;
+}
+
+a:visited
+{
+ color: #22229C;
+}
+
+a:hover, a:active
+{
+ color: #FF3300;
+}
+
+tr {
+ page-break-inside: avoid;
+}
+
+.tborder
+{
+ color: #000000;
+ border: 1px solid #0b198c;
+}
+
+.dataTable
+{
+ border-width: 1px;
+ border-style: inset;
+ border-color: #0b198c;
+ border-collapse: collapse;
+}

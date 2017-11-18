@@ -1,0 +1,83 @@
+su
+
+su postgres
+
+createuser -P musmdb_admin
+# Shall the new user be allowed to create databases? (y/n) y
+# Shall the new user be allowed to create more new users? (y/n) y
+
+exit
+
+# /var/lib/pgsql/data/pg_hba.conf - added:
+local 	    all						 md5
+host        all         192.168.0.0   255.255.255.0      md5
+
+/etc/init.d/rhdb restart
+
+
+# To make DB table changes, modify /var/lib/pgsql/data/pg_hba.conf to do sameuser authentication
+# Then kill -HUP {postmaster PID}, su to musmdb_admin user, and do: psql musmdb
+
+# Login with password:
+psql -U musmdb_admin musmdb
+
+# Change password:
+ALTER USER musmdb_admin WITH PASSWORD 'xxxxxxxxx';
+
+
+# psql is in /usr/bin/
+
+
+createdb -D /musmdb -U musmdb_admin musmdb
+
+createuser -U musmdb_admin -P musmdb_user
+# Enter password for user "musmdb_user": 
+# Enter it again: 
+# Shall the new user be allowed to create databases? (y/n) n
+# Shall the new user be allowed to create more new users? (y/n) n
+# Password:
+
+createuser -U musmdb_admin -P musmdb_purge
+# Enter password for user "musmdb_purge": 
+# Enter it again: 
+# Shall the new user be allowed to create databases? (y/n) n
+# Shall the new user be allowed to create more new users? (y/n) n
+# Password:
+
+psql -D /musmdb -U musmdb_admin musmdb
+
+psql -U musmdb_admin musmdb
+
+# To perform SQL commands (from psql interface):
+\i {filename}
+
+# To get next value of sequence:
+select nextval('{sequence name}');
+
+# To set the current value of a sequence:
+select setval('{sequence name}', {new value});
+
+# To optimize the database (should be run periodically):
+vacuumdb -U musmdb_admin musmdb
+
+# Need DBD-Pg and DBI Perl modules
+
+# Building DBD-Oracle:
+tar xvzf DBD-Oracle-1.12.tar.gz 
+cd DBD-Oracle-1.12
+# set ORACLE_HOME environment variable:
+export ORACLE_HOME=/database/u01/app/oracle/product/8.0.5
+
+perl Makefile.PL -8
+make
+
+# Configure tsnames.ora:
+
+# set ORACLE_SID variable:
+export ORACLE_SID=MUSM
+
+# set database password:
+export ORACLE_USERID=intranet_user/uGsmB9e1
+
+make test
+make

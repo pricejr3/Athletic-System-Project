@@ -1,0 +1,276 @@
+-- CREATE FUNCTION plpgsql_call_handler() RETURNS OPAQUE AS '/usr/lib/pgsql/plpgsql.so' LANGUAGE 'C';
+-- CREATE LANGUAGE 'plpgsql' HANDLER plpgsql_call_handler LANCOMPILER 'PL/pgSQL';
+
+CREATE OR REPLACE FUNCTION athlete_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM athlete_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO athlete_lv
+         (SELECT * FROM athlete WHERE athlete_id = NEW.athlete_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER athlete_lv AFTER INSERT ON athlete
+   FOR EACH ROW EXECUTE PROCEDURE athlete_lv();
+
+
+CREATE OR REPLACE FUNCTION coaches_report_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM coaches_report_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO coaches_report_lv
+         (SELECT * FROM coaches_report WHERE coaches_report_id = NEW.coaches_report_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER coaches_report AFTER INSERT ON coaches_report
+   FOR EACH ROW EXECUTE PROCEDURE coaches_report_lv();
+
+
+CREATE OR REPLACE FUNCTION family_history_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM family_history_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO family_history_lv
+         (SELECT * FROM family_history WHERE family_history_id = NEW.family_history_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER family_history_lv AFTER INSERT ON family_history
+   FOR EACH ROW EXECUTE PROCEDURE family_history_lv();
+
+
+CREATE OR REPLACE FUNCTION health_appraisal_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM health_appraisal_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO health_appraisal_lv
+         (SELECT * FROM health_appraisal WHERE health_appraisal_id = NEW.health_appraisal_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER health_appraisal_lv AFTER INSERT ON health_appraisal
+   FOR EACH ROW EXECUTE PROCEDURE health_appraisal_lv();
+
+
+CREATE OR REPLACE FUNCTION health_history_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM health_history_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO health_history_lv
+         (SELECT * FROM health_history WHERE health_history_id = NEW.health_history_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER health_history_lv AFTER INSERT ON health_history
+   FOR EACH ROW EXECUTE PROCEDURE health_history_lv();
+
+
+CREATE OR REPLACE FUNCTION injury_addtnl_info_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM injury_addtnl_info_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO injury_addtnl_info_lv
+         (SELECT * FROM injury_addtnl_info WHERE injury_addtnl_info_id = NEW.injury_addtnl_info_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER injury_addtnl_info_lv AFTER INSERT ON injury_addtnl_info
+   FOR EACH ROW EXECUTE PROCEDURE injury_addtnl_info_lv();
+
+
+CREATE OR REPLACE FUNCTION injury_report_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM injury_report_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO injury_report_lv
+         (SELECT * FROM injury_report WHERE injury_report_id = NEW.injury_report_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER injury_report_lv AFTER INSERT ON injury_report
+   FOR EACH ROW EXECUTE PROCEDURE injury_report_lv();
+
+
+CREATE OR REPLACE FUNCTION insurance_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM insurance_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO insurance_lv
+         (SELECT * FROM insurance WHERE insurance_id = NEW.insurance_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER insurance_lv AFTER INSERT ON insurance
+   FOR EACH ROW EXECUTE PROCEDURE insurance_lv();
+
+
+CREATE OR REPLACE FUNCTION personal_addtnl_info_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM personal_addtnl_info_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO personal_addtnl_info_lv
+         (SELECT * FROM personal_addtnl_info WHERE personal_addtnl_info_id = NEW.personal_addtnl_info_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER personal_addtnl_info_lv AFTER INSERT ON personal_addtnl_info
+   FOR EACH ROW EXECUTE PROCEDURE personal_addtnl_info_lv();
+
+
+CREATE OR REPLACE FUNCTION physical_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM physical_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO physical_lv
+         (SELECT * FROM physical WHERE physical_id = NEW.physical_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER physical_lv AFTER INSERT ON physical
+   FOR EACH ROW EXECUTE PROCEDURE physical_lv();
+
+
+CREATE OR REPLACE FUNCTION physician_remark_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM physician_remark_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO physician_remark_lv
+         (SELECT * FROM physician_remark WHERE physician_remark_id = NEW.physician_remark_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER physician_remark_lv AFTER INSERT ON physician_remark
+   FOR EACH ROW EXECUTE PROCEDURE physician_remark_lv();
+
+
+CREATE OR REPLACE FUNCTION recommended_treatment_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM recommended_treatment_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO recommended_treatment_lv
+         (SELECT * FROM recommended_treatment WHERE recommended_treatment_id = NEW.recommended_treatment_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER recommended_treatment_lv AFTER INSERT ON recommended_treatment
+   FOR EACH ROW EXECUTE PROCEDURE recommended_treatment_lv();
+
+
+CREATE OR REPLACE FUNCTION treatment_addtnl_info_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM treatment_addtnl_info_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO treatment_addtnl_info_lv
+         (SELECT * FROM treatment_addtnl_info WHERE treatment_addtnl_info_id = NEW.treatment_addtnl_info_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER treatment_addtnl_info_lv AFTER INSERT ON treatment_addtnl_info
+   FOR EACH ROW EXECUTE PROCEDURE treatment_addtnl_info_lv();
+
+
+CREATE OR REPLACE FUNCTION treatment_record_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM treatment_record_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO treatment_record_lv
+         (SELECT * FROM treatment_record WHERE treatment_record_id = NEW.treatment_record_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER treatment_record_lv AFTER INSERT ON treatment_record
+   FOR EACH ROW EXECUTE PROCEDURE treatment_record_lv();
+
+
+CREATE OR REPLACE FUNCTION treatment_remark_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM treatment_remark_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO treatment_remark_lv
+         (SELECT * FROM treatment_remark WHERE treatment_remark_id = NEW.treatment_remark_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER treatment_remark_lv AFTER INSERT ON treatment_remark
+   FOR EACH ROW EXECUTE PROCEDURE treatment_remark_lv();
+
+
+CREATE OR REPLACE FUNCTION waiver_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM waiver_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO waiver_lv
+         (SELECT * FROM waiver WHERE waiver_id = NEW.waiver_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER waiver_lv AFTER INSERT ON waiver
+   FOR EACH ROW EXECUTE PROCEDURE waiver_lv();
+
+
+
+CREATE OR REPLACE FUNCTION athlete_release_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM athlete_release_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO athlete_release_lv
+         (SELECT * FROM athlete_release WHERE athlete_release_id = NEW.athlete_release_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER athlete_release_lv AFTER INSERT ON athlete_release
+   FOR EACH ROW EXECUTE PROCEDURE athlete_release_lv();
+
+
+
+CREATE OR REPLACE FUNCTION ferpa_release_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM ferpa_release_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO ferpa_release_lv
+         (SELECT * FROM ferpa_release WHERE ferpa_release_id = NEW.ferpa_release_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER ferpa_release_lv AFTER INSERT ON ferpa_release
+   FOR EACH ROW EXECUTE PROCEDURE ferpa_release_lv();
+
+
+
+CREATE OR REPLACE FUNCTION health_info_release_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM health_info_release_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO health_info_release_lv
+         (SELECT * FROM health_info_release WHERE health_info_release_id = NEW.health_info_release_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER health_info_release_lv AFTER INSERT ON health_info_release
+   FOR EACH ROW EXECUTE PROCEDURE health_info_release_lv();
+
+
+CREATE OR REPLACE FUNCTION health_history2_lv() RETURNS OPAQUE AS '
+   BEGIN
+      DELETE FROM health_history2_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO health_history2_lv
+         (SELECT * FROM health_history2 WHERE health_history2_id = NEW.health_history2_id);
+      RETURN NEW;
+   END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER health_history2_lv AFTER INSERT ON health_history2
+   FOR EACH ROW EXECUTE PROCEDURE health_history2_lv();
+
+CREATE OR REPLACE FUNCTION mental_health_lv() RETURNS OPAQUE AS '
+    BEGIN
+      DELETE FROM mental_health_lv WHERE orig_version_id = NEW.orig_version_id;
+      INSERT INTO mental_health_lv
+          (SELECT * FROM mental_health WHERE mental_health_id = NEW.mental_health_id);
+      RETURN NEW;
+    END;
+' LANGUAGE 'plpgsql';
+
+CREATE TRIGGER mental_health_lv AFTER INSERT ON mental_health
+    FOR EACH ROW EXECUTE PROCEDURE mental_health_lv();

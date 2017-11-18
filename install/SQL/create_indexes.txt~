@@ -1,0 +1,136 @@
+
+create index athlete_ovid			 on athlete (orig_version_id);
+create index athlete_ovid_lv			 on athlete_lv (orig_version_id);
+create index athlete_fsd			 on athlete_lv (form_sign_date);
+create index athlete_last_name			 on athlete_lv (upper (last_name));
+create index athlete_middle_name		 on athlete_lv (upper (middle_name));
+create index athlete_first_name			 on athlete_lv (upper (first_name));
+create index athlete_sport			 on athlete_lv (sport);
+create index athlete_sex			 on athlete_lv (sex);
+create index athlete_status			 on athlete_lv (status);
+
+create index coaches_report_ovid		 on coaches_report (orig_version_id);
+create index coaches_report_ovid_lv		 on coaches_report_lv (orig_version_id);
+create index coaches_report_fsd			 on coaches_report_lv (form_sign_date);
+create index coaches_report_athlete		 on coaches_report_lv (athlete_id);
+create index coaches_report_sport		 on coaches_report_lv (sport);
+create index coaches_report_form_date		 on coaches_report_lv (form_date);
+create index coaches_report_status		 on coaches_report_lv (status);
+create index coaches_report_injury		 on coaches_report_lv (injury);
+
+create index family_history_ovid		 on family_history (orig_version_id);
+create index family_history_ovid_lv		 on family_history_lv (orig_version_id);
+create index family_history_fsd			 on family_history_lv (form_sign_date);
+create index family_history_athlete		 on family_history_lv (athlete_id);
+
+create index health_appraisal_ovid		 on health_appraisal (orig_version_id);
+create index health_appraisal_ovid_lv		 on health_appraisal_lv (orig_version_id);
+create index health_appraisal_fsd		 on health_appraisal_lv (form_sign_date);
+create index health_appraisal_athlete		 on health_appraisal_lv (athlete_id);
+
+create index health_history_ovid		 on health_history (orig_version_id);
+create index health_history_ovid_lv		 on health_history_lv (orig_version_id);
+create index health_history_fsd			 on health_history_lv (form_sign_date);
+create index health_history_athlete		 on health_history_lv (athlete_id);
+
+create index injury_addtnl_info_ovid		 on injury_addtnl_info (orig_version_id);
+create index injury_addtnl_info_ovid_lv		 on injury_addtnl_info_lv (orig_version_id);
+create index injury_addtnl_info_fsd		 on injury_addtnl_info_lv (form_sign_date);
+create index injury_addtnl_info_report		 on injury_addtnl_info_lv (injury_report_id);
+
+create index injury_report_ovid			 on injury_report (orig_version_id);
+create index injury_report_ovid_lv		 on injury_report_lv (orig_version_id);
+create index injury_report_fsd			 on injury_report_lv (form_sign_date);
+create index injury_report_athlete		 on injury_report_lv (athlete_id);
+create index injury_report_sport		 on injury_report_lv (sport);
+create index injury_report_position		 on injury_report_lv (position);
+create index injury_report_body_part		 on injury_report_lv (body_part);
+create index injury_report_injury_type		 on injury_report_lv (injury_type);
+create index injury_report_date_occurred	 on injury_report_lv (date_occurred);
+create index injury_report_date_reported	 on injury_report_lv (date_reported);
+create index injury_report_injury_course	 on injury_report_lv (injury_course);
+create index injury_report_injury_env		 on injury_report_lv (injury_environment);
+create index injury_report_injury_status	 on injury_report_lv (injury_status);
+create index injury_report_ai                    on injury_report_lv (associated_injuries);
+
+create index insurance_ovid			 on insurance (orig_version_id);
+create index insurance_ovid_lv			 on insurance_lv (orig_version_id);
+create index insurance_fsd			 on insurance_lv (form_sign_date);
+create index insurance_athlete			 on insurance_lv (athlete_id);
+
+create index personal_addtnl_info_ovid		 on personal_addtnl_info (orig_version_id);
+create index personal_addtnl_info_ovid_lv	 on personal_addtnl_info_lv (orig_version_id);
+create index personal_addtnl_info_fsd		 on personal_addtnl_info_lv (form_sign_date);
+create index personal_addtnl_info_athlete	 on personal_addtnl_info_lv (athlete_id);
+
+create index physical_ovid			 on physical (orig_version_id);
+create index physical_ovid_lv			 on physical_lv (orig_version_id);
+create index physical_fsd			 on physical_lv (form_sign_date);
+create index physical_athlete			 on physical_lv (athlete_id);
+
+create index physician_remark_ovid		 on physician_remark (orig_version_id);
+create index physician_remark_ovid_lv		 on physician_remark_lv (orig_version_id);
+create index physician_remark_fsd		 on physician_remark_lv (form_sign_date);
+create index physician_remark_injury_report	 on physician_remark_lv (injury_report_id);
+
+create index recommended_treatment_ovid		 on recommended_treatment (orig_version_id);
+create index recommended_treatment_ovid_lv	 on recommended_treatment_lv (orig_version_id);
+create index recommended_treatment_fsd		 on recommended_treatment_lv (form_sign_date);
+create index recommended_treatment_athlete	 on recommended_treatment_lv (athlete_id);
+create index recommended_treatment_facility	 on recommended_treatment_lv (treatment_facility);
+create index recommended_treatment_date		 on recommended_treatment_lv (treatment_date);
+create index recommended_treatment_time		 on recommended_treatment_lv (treatment_time);
+create index recommended_treatment_ai            on recommended_treatment_lv (associated_injuries);
+
+create index treatment_addtnl_info_ovid		 on treatment_addtnl_info (orig_version_id);
+create index treatment_addtnl_info_ovid_lv	 on treatment_addtnl_info_lv (orig_version_id);
+create index treatment_addtnl_info_fsd		 on treatment_addtnl_info_lv (form_sign_date);
+create index treatment_addtnl_info_athlete	 on treatment_addtnl_info_lv (athlete_id);
+create index treatment_addtnl_info_ai            on treatment_addtnl_info_lv (associated_injuries);
+
+create index treatment_record_ovid		 on treatment_record (orig_version_id);
+create index treatment_record_ovid_lv		 on treatment_record_lv (orig_version_id);
+create index treatment_record_fsd		 on treatment_record_lv (form_sign_date);
+create index treatment_record_athlete		 on treatment_record_lv (athlete_id);
+create index treatment_record_sport		 on treatment_record_lv (sport);
+create index treatment_record_facility		 on treatment_record_lv (treatment_facility);
+create index treatment_record_date		 on treatment_record_lv (treatment_date);
+create index treatment_record_time		 on treatment_record_lv (treatment_time);
+create index treatment_record_position		 on treatment_record_lv (position);
+create index treatment_record_body_part		 on treatment_record_lv (body_part);
+create index treatment_record_injury_type	 on treatment_record_lv (injury_type);
+create index treatment_record_ai                 on treatment_record_lv (associated_injuries);
+
+create index treatment_remark_ovid		 on treatment_remark (orig_version_id);
+create index treatment_remark_ovid_lv		 on treatment_remark_lv (orig_version_id);
+create index treatment_remark_fsd		 on treatment_remark_lv (form_sign_date);
+create index treatment_remark_injury_report	 on treatment_remark_lv (injury_report_id);
+
+create index waiver_ovid			 on waiver (orig_version_id);
+create index waiver_ovid_lv			 on waiver_lv (orig_version_id);
+create index waiver_fsd				 on waiver_lv (form_sign_date);
+create index waiver_athlete			 on waiver_lv (athlete_id);
+
+create index athlete_release_ovid		 on athlete_release (orig_version_id);
+create index athlete_release_ovid_lv		 on athlete_release_lv (orig_version_id);
+create index athlete_release_fsd		 on athlete_release_lv (form_sign_date);
+create index athlete_release_athlete		 on athlete_release_lv (athlete_id);
+
+create index ferpa_release_ovid			 on ferpa_release (orig_version_id);
+create index ferpa_release_ovid_lv		 on ferpa_release_lv (orig_version_id);
+create index ferpa_release_fsd			 on ferpa_release_lv (form_sign_date);
+create index ferpa_release_athlete		 on ferpa_release_lv (athlete_id);
+
+create index health_info_release_ovid		 on health_info_release (orig_version_id);
+create index health_info_release_ovid_lv	 on health_info_release_lv (orig_version_id);
+create index health_info_release_fsd		 on health_info_release_lv (form_sign_date);
+create index health_info_release_athlete	 on health_info_release_lv (athlete_id);
+
+create index athlete_access_enabled              on athlete_access (enabled);
+create index athlete_access_start		 on athlete_access (start_date);
+create index athlete_access_end			 on athlete_access (end_date);
+
+create index health_history2_ovid		 on health_history2 (orig_version_id);
+create index health_history2_ovid_lv		 on health_history2_lv (orig_version_id);
+create index health_history2_fsd		 on health_history2_lv (form_sign_date);
+create index health_history2_athlete		 on health_history2_lv (athlete_id);

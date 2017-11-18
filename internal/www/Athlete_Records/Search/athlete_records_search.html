@@ -1,0 +1,97 @@
+<html>
+
+<head>
+  <title>ATHLETE RECORDS SEARCH</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+<body background="/www/background.gif">
+
+<form method="get" action="/bin/search_for_athlete.pl" target="athlete_search_results">
+  <p>Enter a search criteria to find an
+  athlete or multiple athletes.</p>
+  <table border="0">
+    <tr>
+      <td></td>
+      <td colspan="2"><strong>Last</strong></td>
+      <td colspan="2"><strong>First</strong></td>
+      <td><strong>Middle</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Name:</strong></td>
+      <td nowrap colspan="2"><input type="text" name="LAST_NAME" size="20"> ,</td>
+      <td colspan="2"><input type="text" name="FIRST_NAME" size="20"></td>
+      <td><input type="text" name="MIDDLE_NAME" size="20"></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap></td>
+      <td nowrap></td>
+      <td colspan="2"></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong><div align="right"><p>Sport:</strong></td>
+      <td nowrap><strong><div align="left"><p></strong><select name="SPORT" size="1">
+        <option selected value="">All</option>
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+
+      <td nowrap><div align="right"><p><strong>Sex:</strong></td>
+      <td><div align="left"><p><select name="SEX" size="1">
+        <option selected value="">All</option>
+        <option value="Female">Female</option>
+        <option value="Male">Male</option>
+      </select></td>
+
+      <td><strong><div align="right"><p>SSN:</strong></td>
+      <td><table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td width="100%"><div align="center"><center><p><input type="text" name="SSN" size="11"><br>
+          xxx-xx-xxxx</td>
+        </tr>
+      </table>
+      </td>
+    </tr>
+
+    <tr>
+    <td nowrap align="right"><p><strong>Status:</strong></td>
+    <td><p><select name="STATUS" size="1">
+           <option value="">All</option>
+	   <option selected value="Active">Active</option>
+	   <option value="Archived">Archived</option>
+	   </select>
+    </td>
+
+    <td colspan=4>
+      <div align="left"><p><strong>Note:</strong>
+      <input type="text" name="NOTE" size="35"></p>
+    </td>
+    </tr>
+
+  </table>
+
+  <p><input type="submit" value=" Search For Athlete ">
+     <input type="reset" value=" Reset Fields ">
+  </p>
+
+</form>
+</body>
+</html>
+

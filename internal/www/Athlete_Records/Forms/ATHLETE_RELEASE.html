@@ -1,0 +1,185 @@
+<html>
+
+<head>
+  <title>ATHLETE RELEASE FORM</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+FORM_DATE: not null
+FORM_DATE: date
+FORM_DATE_PARENT: date
+TERMS_SIGNED_BY_ATHLETE: not null
+TERMS_SIGNED_BY_ATHLETE: format=^(Yes|No)$
+TERMS_SIGNED_BY_PARENT: not null
+TERMS_SIGNED_BY_PARENT: format=^(Yes|No)$
+--- END DATA VERIFICATION ---
+
+
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT,
+TO_CHAR(now(), 'MM-DD-YYYY') as FORM_DATE
+
+FROM athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+insert into athlete_release
+(
+
+ATHLETE_RELEASE_ID, ORIG_VERSION_ID, ATHLETE_ID, FORM_DATE,
+TERMS_SIGNED_BY_ATHLETE, TERMS_SIGNED_BY_PARENT, FORM_DATE_PARENT,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+)
+VALUES
+(
+
+nextval('new_athlete_release_id'), $ORIG_VERSION_ID, $ORIG_ATHLETE_ID,
+TO_DATE($FORM_DATE, 'MM-DD-YYYY'), $TERMS_SIGNED_BY_ATHLETE,
+$TERMS_SIGNED_BY_PARENT, $FORM_DATE_PARENT, $FORM_SIGN_USER_ID, now(),
+$FORM_SIGNATURE
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+ATHLETE_RELEASE_ID, ORIG_VERSION_ID, ATHLETE_ID as ORIG_ATHLETE_ID,
+TO_CHAR(FORM_DATE, 'MM-DD-YYYY') as FORM_DATE,
+TERMS_SIGNED_BY_ATHLETE, TERMS_SIGNED_BY_PARENT,
+TO_CHAR(FORM_DATE_PARENT, 'MM-DD-YYYY') as FORM_DATE_PARENT,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+FROM athlete_release
+
+WHERE ATHLETE_RELEASE_ID = $ATHLETE_RELEASE_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+
+<body background="/www/background.gif">
+
+<form name="athlete_release" method="POST" action="/bin/process_form">
+<input type="hidden" name="FORM_NAME" value="ATHLETE_RELEASE">
+
+<div align="center"><p><strong>MIAMI UNIVERSITY<br>
+DEPARTMENT OF INTERCOLLEGIATE ATHLETES<br>
+STUDENT ATHLETE RELEASE FORM</strong></p>
+</div>
+
+<table border="0" width="100%">
+<tr><td>
+<p><b>I, THE UNDERSIGNED STUDENT ATHLETE,</b> UNDERSTAND THAT THE
+FAMILY EDUCATION RIGHTS AND PRIVACY ACT (FERPA) GENERALLY LIMITS
+ACCESS TO MY EDUCATION RECORDS.  I, THEREFORE, GIVE MY CONSENT TO THE
+DISCLOUSRE OF THE FOLLIWNG INFORMATION AND EDUCATION RECORDS RELATED
+TO ME AND FOR THE PURPOSE AS STATED BELOW.</p>
+
+<ol>
+<li><b>ACADEMIC RECORDS</b><br>
+
+Records and information including course registration information,
+transcripts, semester and cumulative grade point averages, progress
+toward degree, NCAA eligibility, and information regarding academic
+performance and attendance.  Disclosures may be made to provide
+information to parent(s), step-parent(s), or legal guardians regarding
+my academic performance and progress, to determine departmental,
+university, conference and national awards, and to provide information
+to the media.<br><br>
+</li>
+
+<li><b>ATHLETIC HISTORY AND INFORMATION</b><br>
+
+Records and information regarding athletic performance and general
+family information.  The disclosures may be made to the media and
+general public.<br><br>
+</li>
+
+<li><b>FINANCIAL AND DISCIPLINARY RECORDS</b><br>
+
+Records and information including financial aid, athletic aid, loan
+records, employment records, all financial records and accounts as
+well as all university disciplinary matters, as well as my status as a
+team member based on performance, attitude, or effort.  The
+disclosures may be made to my parent(s), step-parent(s), or legal
+guardians.<br><br>
+</li>
+
+<li><b>MEDICAL INFORMATION</b><br>
+
+Records and information regarding my physical health and well being
+from physicians and other health care providers, including physical
+therapists and athletic training staff.  The disclosures to the media,
+scouts, and the general public will be limited to status of injuries
+and ability to participate in team workouts or athletic competition.
+The disclosures to my parent(s), step-parent(s), or legal guardians
+may include any medical or health information.<br><br>
+</li>
+
+<li><b>VISUAL IMPRESSIONS</b><br>
+
+Records include photographs, films, videotape, recorded visual images,
+digital or otherwise, relative to my participation in Intercollegiate
+Athletics at Miami University.  The disclosures may be made to the
+media and general public.<br>
+</li>
+
+</ol>
+
+<p><b>I UNDERSTAND FURTHER:</b> <b>(1)</b> That some of my records
+may be disclosed only on the condition that the party to whom the
+information is disclosed will not re-disclose the information to any
+other party without my written consent unless specifically allowed by
+law; <b>(2)</b> That disclosure to the news media means that such
+information may be publicly disclosed by the news media; <b>(3)</b>
+That I have the right not to consent to this release of my education
+records; <b>(4)</b> That I recognize that a copy of such records must
+be provided to me upon my request; and <b>(5)</b> That this consent
+remains in effect unless revoked by me in writing.</p>
+</td></tr></table>
+
+
+<div align="center">
+<table border="0" width="100%"><tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Student Athlete</b></td>
+   <td align="right"><b>Signed by Athlete?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="TERMS_SIGNED_BY_ATHLETE" checked="checked" value="Yes">Yes&nbsp; 
+<input type="radio" name="TERMS_SIGNED_BY_ATHLETE" value="No">No</td>
+   <td width="50"></td>
+   <td><b>Signature date:</b></td>
+   <td><div align="center"><center><p><input type="text" name="FORM_DATE" size="10"><br>
+      mm-dd-yyyy</td>
+</tr>
+<tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Parent or Guardian (If Student Athlete is under 18 years of age)</b></td>
+   <td align="right"><b>Signed by Parent or Guardian?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="TERMS_SIGNED_BY_PARENT" value="Yes">Yes&nbsp; 
+<input type="radio" name="TERMS_SIGNED_BY_PARENT" value="No" checked="checked">No</td>
+   <td width="50"></td>
+   <td><b>Signature date:</b></td>
+   <td><div align="center"><center><p><input type="text" name="FORM_DATE_PARENT" size="10"><br>
+      mm-dd-yyyy</td>
+</tr></table>
+</div>
+
+<div align="center"><p><input type="submit" value="Submit"></p></div>
+
+</form>
+</body>
+</html>
+

@@ -1,0 +1,59 @@
+#!/usr/bin/perl
+
+# process_form
+#
+# Copyright 1998, Melampus Enterprises, Inc.
+# Author: Michael J. Duff
+# Last modified: August 15, 1998
+#
+# Description: Processes forms for display, editing, and viewing
+#
+
+use DBI;
+
+require "global.pl";
+require "auth_user.pl";
+require "parse.pl";
+require "html_utilities.pl";
+require "logging.pl";
+require "form_utilities2.pl";
+require "athlete_access_utilities.pl";
+
+
+# Authenticate and authorize user:
+($login_id, $clearance) = auth_user ($CLEARANCE_ATHLETE);
+
+$cgi_data = parse_cgi_data();
+
+$operation = $cgi_data->{'OPERATION'};
+
+# Extra access control for athlete logins:
+if (is_athlete_login ($login_id)) {
+    my $athlete_id = get_athlete_id ($login_id);
+
+    # Limit the forms accessible by the athlete:
+    my $form_name = $cgi_data->{'FORM_NAME'};
+    my @ATHLETE_LOGIN_FORMS =
+	('ATHLETE_RELEASE', 'FAMILY_HISTORY', 'FERPA_RELEASE',
+	 'HEALTH_APPRAISAL', 'HEALTH_HISTORY2', 'HEALTH_INFO_RELEASE',
+	 'INSURANCE', 'WAIVER');
+    if (! grep (/^$form_name$/, @ATHLETE_LOGIN_FORMS)) {
+	html_header_and_die ("Athletes not permitted access to this form");
+    }
+
+    # Athletes can only insert forms for themselves:
+    if ($athlete_id != $cgi_data->{'ORIG_ATHLETE_ID'}) {
+	html_header_and_die ("Athletes can only submit and view their own forms");
+    }
+}
+
+# dispatch depending on operation:
+
+if    ($operation eq "PREPARE_BLANK_FORM" )  { prepare_blank_form(); }
+elsif ($operation eq "VIEW_FORM")            { view_form(); }
+elsif ($operation eq "EDIT_FORM")            { edit_form(); }
+elsif ($operation eq "SUBMIT_UNSIGNED_FORM") { submit_unsigned_form(); }
+elsif ($operation eq "SUBMIT_SIGNED_FORM")   { submit_signed_form(); }
+else                                         { submit_unsigned_form(); }
+
+exit;

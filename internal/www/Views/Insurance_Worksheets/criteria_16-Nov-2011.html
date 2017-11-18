@@ -1,0 +1,113 @@
+<html>
+
+<head>
+  <title>Insurance Worksheets View Criteria</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+<body background="/www/background.gif" onLoad="document.insurance_worksheets_view.LAST_NAME.focus();">
+
+<form name="insurance_worksheets_view" method="GET" action="/bin/insurance_worksheets_view.pl" target="insurance_worksheets_view_results">
+
+  <table border="0">
+    <tr>
+      <td valign="middle"><b>Name:</b></td>
+      <td nowrap valign="middle"><input type="text" name="LAST_NAME" size="20"><b> ,</b></td>
+      <td valign="middle"><input type="text" name="FIRST_NAME" size="20"></td>
+      <td valign="middle"><input type="text" name="MIDDLE_NAME" size="20"></td>
+    </tr>
+    <tr>
+      <td valign="top"></td>
+      <td valign="top"><b>Last</b></td>
+      <td valign="top"><b>First</b></td>
+      <td valign="top"><b>Middle</b></td>
+    </tr>
+    <tr>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+    </tr>
+  </table>
+  <table border="0">
+    <tr>
+      <td align="right" valign="middle"><b>Sex:</b></td>
+      <td valign="middle"><select name="SEX" size="1">
+        <option selected value="">All</option>
+        <option value="Female">Female</option>
+        <option value="Male">Male</option>
+      </select></td>
+      <td valign="middle">&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td align="right" valign="middle"><b>Sport:</b></td>
+      <td valign="middle"><select name="SPORT" size="1">
+        <option selected value="">All</option>
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+      <td valign="middle">&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td align="right" valign="middle"><b>Status:</b></td>
+      <td valign="middle"><select name="STATUS" size="1">
+        <option value="">All</option>
+        <option selected value="Active">Active</option>
+        <option value="Archived">Archived</option>
+      </select></td>
+    </tr>
+
+    <tr>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+    </tr>
+
+    <tr><td colspan="5">
+  <table border="0">
+    <tr>
+      <td valign="middle"><b>Balance Between:</b></td>
+      <td><input type="text" name="TOTAL_BALANCE1" size="10">
+      <td align="center"><b>&nbsp; and</b> </td>
+      <td align="center"><input type="text" name="TOTAL_BALANCE2" size="10">
+    </tr>
+  </table>
+  </td>
+
+ <td valign="middle"></td>
+ <td align="right"><b>Zero Balances: </b></td>
+  <td><select name="ZERO_BALANCES" size="1">
+         <option value="" selected>Show</option>
+         <option value="Hide">Hide</option>
+      </select>
+  </td>
+  </tr>
+</table>
+
+
+<p>
+<input type="submit" value=" List Insurance Worksheets ">
+<input type="reset" value=" Reset Fields ">
+</p>
+
+
+</form>
+</body>
+</html>
+

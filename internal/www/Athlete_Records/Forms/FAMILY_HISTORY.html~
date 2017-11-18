@@ -1,0 +1,695 @@
+<html>
+
+<head>
+  <title>FAMILY HISTORY</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+FORM_DATE: not null
+FORM_DATE: date
+FORM_DATE_PARENT: date
+--- END DATA VERIFICATION ---
+
+
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT,
+TO_CHAR(now(), 'MM-DD-YYYY') as FORM_DATE
+
+from athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+INSERT into family_history
+(
+
+FAMILY_HISTORY_ID, ORIG_VERSION_ID, ATHLETE_ID, FORM_DATE, YOUR_NAME,
+YOUR_GOOD_HEALTH, YOUR_POOR_HEALTH, YOUR_DATE_DEATH, YOUR_CAUSE_DEATH,
+YOUR_ALLERGIES_ASTHMA, YOUR_ANEMIA_SICKLE_CELL,
+YOUR_BLEEDING_TENDENCIES, YOUR_DIABETES_GOUT, YOUR_CANCER_TUMOR,
+YOUR_EPILEPSY, YOUR_YELLOW_JAUNDICE, YOUR_MISSING_ORGANS,
+YOUR_HIGH_BLOOD_PRESSURE, YOUR_KIDNEY_BLADDER_TROUBLE, YOUR_ULCER,
+YOUR_RHEUMATIC_FEVER, YOUR_RHEUMATISM_ARTHRITIS, YOUR_HEART_TROUBLE,
+FATHER_NAME, FATHER_GOOD_HEALTH, FATHER_POOR_HEALTH,
+FATHER_DATE_DEATH, FATHER_CAUSE_DEATH, FATHER_ALLERGIES_ASTHMA,
+FATHER_ANEMIA_SICKLE_CELL, FATHER_BLEEDING_TENDENCIES,
+FATHER_DIABETES_GOUT, FATHER_CANCER_TUMOR, FATHER_EPILEPSY,
+FATHER_YELLOW_JAUNDICE, FATHER_MISSING_ORGANS,
+FATHER_HIGH_BLOOD_PRESSURE, FATHER_KIDNEY_BLADDER_TROUBLE,
+FATHER_ULCER, FATHER_RHEUMATIC_FEVER, FATHER_RHEUMATISM_ARTHRITIS,
+FATHER_HEART_TROUBLE, MOTHER_NAME, MOTHER_GOOD_HEALTH,
+MOTHER_POOR_HEALTH, MOTHER_DATE_DEATH, MOTHER_CAUSE_DEATH,
+MOTHER_ALLERGIES_ASTHMA, MOTHER_ANEMIA_SICKLE_CELL,
+MOTHER_BLEEDING_TENDENCIES, MOTHER_DIABETES_GOUT, MOTHER_CANCER_TUMOR,
+MOTHER_EPILEPSY, MOTHER_YELLOW_JAUNDICE, MOTHER_MISSING_ORGANS,
+MOTHER_HIGH_BLOOD_PRESSURE, MOTHER_KIDNEY_BLADDER_TROUBLE,
+MOTHER_ULCER, MOTHER_RHEUMATIC_FEVER, MOTHER_RHEUMATISM_ARTHRITIS,
+MOTHER_HEART_TROUBLE, BROTHER_NAME, BROTHER_GOOD_HEALTH,
+BROTHER_POOR_HEALTH, BROTHER_DATE_DEATH, BROTHER_CAUSE_DEATH,
+BROTHER_ALLERGIES_ASTHMA, BROTHER_ANEMIA_SICKLE_CELL,
+BROTHER_BLEEDING_TENDENCIES, BROTHER_DIABETES_GOUT,
+BROTHER_CANCER_TUMOR, BROTHER_EPILEPSY, BROTHER_YELLOW_JAUNDICE,
+BROTHER_MISSING_ORGANS, BROTHER_HIGH_BLOOD_PRESSURE,
+BROTHER_KIDNEY_BLADDER_TROUBLE, BROTHER_ULCER,
+BROTHER_RHEUMATIC_FEVER, BROTHER_RHEUMATISM_ARTHRITIS,
+BROTHER_HEART_TROUBLE, SISTER_NAME, SISTER_GOOD_HEALTH,
+SISTER_POOR_HEALTH, SISTER_DATE_DEATH, SISTER_CAUSE_DEATH,
+SISTER_ALLERGIES_ASTHMA, SISTER_ANEMIA_SICKLE_CELL,
+SISTER_BLEEDING_TENDENCIES, SISTER_DIABETES_GOUT, SISTER_CANCER_TUMOR,
+SISTER_EPILEPSY, SISTER_YELLOW_JAUNDICE, SISTER_MISSING_ORGANS,
+SISTER_HIGH_BLOOD_PRESSURE, SISTER_KIDNEY_BLADDER_TROUBLE,
+SISTER_ULCER, SISTER_RHEUMATIC_FEVER, SISTER_RHEUMATISM_ARTHRITIS,
+SISTER_HEART_TROUBLE, SPOUSE_NAME, SPOUSE_GOOD_HEALTH,
+SPOUSE_POOR_HEALTH, SPOUSE_DATE_DEATH, SPOUSE_CAUSE_DEATH,
+SPOUSE_ALLERGIES_ASTHMA, SPOUSE_ANEMIA_SICKLE_CELL,
+SPOUSE_BLEEDING_TENDENCIES, SPOUSE_DIABETES_GOUT, SPOUSE_CANCER_TUMOR,
+SPOUSE_EPILEPSY, SPOUSE_YELLOW_JAUNDICE, SPOUSE_MISSING_ORGANS,
+SPOUSE_HIGH_BLOOD_PRESSURE, SPOUSE_KIDNEY_BLADDER_TROUBLE,
+SPOUSE_ULCER, SPOUSE_RHEUMATIC_FEVER, SPOUSE_RHEUMATISM_ARTHRITIS,
+SPOUSE_HEART_TROUBLE, CHILD_NAME, CHILD_GOOD_HEALTH,
+CHILD_POOR_HEALTH, CHILD_DATE_DEATH, CHILD_CAUSE_DEATH,
+CHILD_ALLERGIES_ASTHMA, CHILD_ANEMIA_SICKLE_CELL,
+CHILD_BLEEDING_TENDENCIES, CHILD_DIABETES_GOUT, CHILD_CANCER_TUMOR,
+CHILD_EPILEPSY, CHILD_YELLOW_JAUNDICE, CHILD_MISSING_ORGANS,
+CHILD_HIGH_BLOOD_PRESSURE, CHILD_KIDNEY_BLADDER_TROUBLE, CHILD_ULCER,
+CHILD_RHEUMATIC_FEVER, CHILD_RHEUMATISM_ARTHRITIS,
+CHILD_HEART_TROUBLE, ADDTNL_REMARKS, WEAR_EYE_GLASSES_CONTACTS,
+WEAR_GLASSES_DURING_COMPETE, WEAR_DENTAL_APPLIANCE, WEAR_PERM_BRIDGE,
+WEAR_PERM_CROWN_JACKET, WEAR_REMOVABLE_PARTIAL, WEAR_FULL_PLATE,
+HAVE_DEAD_TEETH, LOCATION_OF_DEAD_TEETH, HOSPITAL_YEAR_1,
+HOSPITAL_OPERATION_ILLNESS_1, HOSPITAL_NAME_1, HOSPITAL_LOCATION_1,
+HOSPITAL_YEAR_2, HOSPITAL_OPERATION_ILLNESS_2, HOSPITAL_NAME_2,
+HOSPITAL_LOCATION_2, HOSPITAL_YEAR_3, HOSPITAL_OPERATION_ILLNESS_3,
+HOSPITAL_NAME_3, HOSPITAL_LOCATION_3, HOSPITAL_YEAR_4,
+HOSPITAL_OPERATION_ILLNESS_4, HOSPITAL_NAME_4, HOSPITAL_LOCATION_4,
+HOSPITAL_YEAR_5, HOSPITAL_OPERATION_ILLNESS_5, HOSPITAL_NAME_5,
+HOSPITAL_LOCATION_5, ADDTNL_HOSPITALIZATIONS, CURRENT_MEDICATION,
+ALLERGIES_TO_MEDICATION, MENSTRUAL_AGE_OF_ONSET, MENSTRUAL_REGULAR,
+MENSTRUAL_CYCLE, MENSTRUAL_USUAL_DURATION, MENSTRUAL_FLOW,
+PAIN_CRAMPS, PAIN_CRAMPS_ADDTNL_INFO, DATE_OF_LAST_PERIOD,
+LUMPS_IN_BREAST, LUMPS_IN_BREAST_ADDTNL_INFO, NUM_PERIODS_LAST_YEAR,
+SIGNED_BY_ATHLETE, CONFIDENTIAL, FORM_SIGN_USER_ID, FORM_SIGN_DATE,
+FORM_SIGNATURE, SIGNED_BY_PARENT, FORM_DATE_PARENT
+
+)
+VALUES
+(
+
+nextval('new_family_history_id'), $ORIG_VERSION_ID, $ORIG_ATHLETE_ID,
+TO_DATE($FORM_DATE, 'MM-DD-YYYY'), $YOUR_NAME,
+$YOUR_GOOD_HEALTH, $YOUR_POOR_HEALTH, $YOUR_DATE_DEATH,
+$YOUR_CAUSE_DEATH, $YOUR_ALLERGIES_ASTHMA, $YOUR_ANEMIA_SICKLE_CELL,
+$YOUR_BLEEDING_TENDENCIES, $YOUR_DIABETES_GOUT, $YOUR_CANCER_TUMOR,
+$YOUR_EPILEPSY, $YOUR_YELLOW_JAUNDICE, $YOUR_MISSING_ORGANS,
+$YOUR_HIGH_BLOOD_PRESSURE, $YOUR_KIDNEY_BLADDER_TROUBLE, $YOUR_ULCER,
+$YOUR_RHEUMATIC_FEVER, $YOUR_RHEUMATISM_ARTHRITIS,
+$YOUR_HEART_TROUBLE, $FATHER_NAME, $FATHER_GOOD_HEALTH,
+$FATHER_POOR_HEALTH, $FATHER_DATE_DEATH, $FATHER_CAUSE_DEATH,
+$FATHER_ALLERGIES_ASTHMA, $FATHER_ANEMIA_SICKLE_CELL,
+$FATHER_BLEEDING_TENDENCIES, $FATHER_DIABETES_GOUT,
+$FATHER_CANCER_TUMOR, $FATHER_EPILEPSY, $FATHER_YELLOW_JAUNDICE,
+$FATHER_MISSING_ORGANS, $FATHER_HIGH_BLOOD_PRESSURE,
+$FATHER_KIDNEY_BLADDER_TROUBLE, $FATHER_ULCER,
+$FATHER_RHEUMATIC_FEVER, $FATHER_RHEUMATISM_ARTHRITIS,
+$FATHER_HEART_TROUBLE, $MOTHER_NAME, $MOTHER_GOOD_HEALTH,
+$MOTHER_POOR_HEALTH, $MOTHER_DATE_DEATH, $MOTHER_CAUSE_DEATH,
+$MOTHER_ALLERGIES_ASTHMA, $MOTHER_ANEMIA_SICKLE_CELL,
+$MOTHER_BLEEDING_TENDENCIES, $MOTHER_DIABETES_GOUT,
+$MOTHER_CANCER_TUMOR, $MOTHER_EPILEPSY, $MOTHER_YELLOW_JAUNDICE,
+$MOTHER_MISSING_ORGANS, $MOTHER_HIGH_BLOOD_PRESSURE,
+$MOTHER_KIDNEY_BLADDER_TROUBLE, $MOTHER_ULCER,
+$MOTHER_RHEUMATIC_FEVER, $MOTHER_RHEUMATISM_ARTHRITIS,
+$MOTHER_HEART_TROUBLE, $BROTHER_NAME, $BROTHER_GOOD_HEALTH,
+$BROTHER_POOR_HEALTH, $BROTHER_DATE_DEATH, $BROTHER_CAUSE_DEATH,
+$BROTHER_ALLERGIES_ASTHMA, $BROTHER_ANEMIA_SICKLE_CELL,
+$BROTHER_BLEEDING_TENDENCIES, $BROTHER_DIABETES_GOUT,
+$BROTHER_CANCER_TUMOR, $BROTHER_EPILEPSY, $BROTHER_YELLOW_JAUNDICE,
+$BROTHER_MISSING_ORGANS, $BROTHER_HIGH_BLOOD_PRESSURE,
+$BROTHER_KIDNEY_BLADDER_TROUBLE, $BROTHER_ULCER,
+$BROTHER_RHEUMATIC_FEVER, $BROTHER_RHEUMATISM_ARTHRITIS,
+$BROTHER_HEART_TROUBLE, $SISTER_NAME, $SISTER_GOOD_HEALTH,
+$SISTER_POOR_HEALTH, $SISTER_DATE_DEATH, $SISTER_CAUSE_DEATH,
+$SISTER_ALLERGIES_ASTHMA, $SISTER_ANEMIA_SICKLE_CELL,
+$SISTER_BLEEDING_TENDENCIES, $SISTER_DIABETES_GOUT,
+$SISTER_CANCER_TUMOR, $SISTER_EPILEPSY, $SISTER_YELLOW_JAUNDICE,
+$SISTER_MISSING_ORGANS, $SISTER_HIGH_BLOOD_PRESSURE,
+$SISTER_KIDNEY_BLADDER_TROUBLE, $SISTER_ULCER,
+$SISTER_RHEUMATIC_FEVER, $SISTER_RHEUMATISM_ARTHRITIS,
+$SISTER_HEART_TROUBLE, $SPOUSE_NAME, $SPOUSE_GOOD_HEALTH,
+$SPOUSE_POOR_HEALTH, $SPOUSE_DATE_DEATH, $SPOUSE_CAUSE_DEATH,
+$SPOUSE_ALLERGIES_ASTHMA, $SPOUSE_ANEMIA_SICKLE_CELL,
+$SPOUSE_BLEEDING_TENDENCIES, $SPOUSE_DIABETES_GOUT,
+$SPOUSE_CANCER_TUMOR, $SPOUSE_EPILEPSY, $SPOUSE_YELLOW_JAUNDICE,
+$SPOUSE_MISSING_ORGANS, $SPOUSE_HIGH_BLOOD_PRESSURE,
+$SPOUSE_KIDNEY_BLADDER_TROUBLE, $SPOUSE_ULCER,
+$SPOUSE_RHEUMATIC_FEVER, $SPOUSE_RHEUMATISM_ARTHRITIS,
+$SPOUSE_HEART_TROUBLE, $CHILD_NAME, $CHILD_GOOD_HEALTH,
+$CHILD_POOR_HEALTH, $CHILD_DATE_DEATH, $CHILD_CAUSE_DEATH,
+$CHILD_ALLERGIES_ASTHMA, $CHILD_ANEMIA_SICKLE_CELL,
+$CHILD_BLEEDING_TENDENCIES, $CHILD_DIABETES_GOUT, $CHILD_CANCER_TUMOR,
+$CHILD_EPILEPSY, $CHILD_YELLOW_JAUNDICE, $CHILD_MISSING_ORGANS,
+$CHILD_HIGH_BLOOD_PRESSURE, $CHILD_KIDNEY_BLADDER_TROUBLE,
+$CHILD_ULCER, $CHILD_RHEUMATIC_FEVER, $CHILD_RHEUMATISM_ARTHRITIS,
+$CHILD_HEART_TROUBLE, $ADDTNL_REMARKS, $WEAR_EYE_GLASSES_CONTACTS,
+$WEAR_GLASSES_DURING_COMPETE, $WEAR_DENTAL_APPLIANCE,
+$WEAR_PERM_BRIDGE, $WEAR_PERM_CROWN_JACKET, $WEAR_REMOVABLE_PARTIAL,
+$WEAR_FULL_PLATE, $HAVE_DEAD_TEETH, $LOCATION_OF_DEAD_TEETH,
+$HOSPITAL_YEAR_1, $HOSPITAL_OPERATION_ILLNESS_1, $HOSPITAL_NAME_1,
+$HOSPITAL_LOCATION_1, $HOSPITAL_YEAR_2, $HOSPITAL_OPERATION_ILLNESS_2,
+$HOSPITAL_NAME_2, $HOSPITAL_LOCATION_2, $HOSPITAL_YEAR_3,
+$HOSPITAL_OPERATION_ILLNESS_3, $HOSPITAL_NAME_3, $HOSPITAL_LOCATION_3,
+$HOSPITAL_YEAR_4, $HOSPITAL_OPERATION_ILLNESS_4, $HOSPITAL_NAME_4,
+$HOSPITAL_LOCATION_4, $HOSPITAL_YEAR_5, $HOSPITAL_OPERATION_ILLNESS_5,
+$HOSPITAL_NAME_5, $HOSPITAL_LOCATION_5, $ADDTNL_HOSPITALIZATIONS,
+$CURRENT_MEDICATION, $ALLERGIES_TO_MEDICATION,
+$MENSTRUAL_AGE_OF_ONSET, $MENSTRUAL_REGULAR, $MENSTRUAL_CYCLE,
+$MENSTRUAL_USUAL_DURATION, $MENSTRUAL_FLOW, $PAIN_CRAMPS,
+$PAIN_CRAMPS_ADDTNL_INFO, $DATE_OF_LAST_PERIOD, $LUMPS_IN_BREAST,
+$LUMPS_IN_BREAST_ADDTNL_INFO, $NUM_PERIODS_LAST_YEAR,
+$SIGNED_BY_ATHLETE, $CONFIDENTIAL, $FORM_SIGN_USER_ID, now(),
+$FORM_SIGNATURE, $SIGNED_BY_PARENT, TO_DATE($FORM_DATE_PARENT, 'MM-DD-YYYY')
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+FAMILY_HISTORY_ID, ORIG_VERSION_ID, ATHLETE_ID as ORIG_ATHLETE_ID,
+TO_CHAR(FORM_DATE, 'MM-DD-YYYY') as FORM_DATE, YOUR_NAME,
+YOUR_GOOD_HEALTH, YOUR_POOR_HEALTH, YOUR_DATE_DEATH, YOUR_CAUSE_DEATH,
+YOUR_ALLERGIES_ASTHMA, YOUR_ANEMIA_SICKLE_CELL,
+YOUR_BLEEDING_TENDENCIES, YOUR_DIABETES_GOUT, YOUR_CANCER_TUMOR,
+YOUR_EPILEPSY, YOUR_YELLOW_JAUNDICE, YOUR_MISSING_ORGANS,
+YOUR_HIGH_BLOOD_PRESSURE, YOUR_KIDNEY_BLADDER_TROUBLE, YOUR_ULCER,
+YOUR_RHEUMATIC_FEVER, YOUR_RHEUMATISM_ARTHRITIS, YOUR_HEART_TROUBLE,
+FATHER_NAME, FATHER_GOOD_HEALTH, FATHER_POOR_HEALTH,
+FATHER_DATE_DEATH, FATHER_CAUSE_DEATH, FATHER_ALLERGIES_ASTHMA,
+FATHER_ANEMIA_SICKLE_CELL, FATHER_BLEEDING_TENDENCIES,
+FATHER_DIABETES_GOUT, FATHER_CANCER_TUMOR, FATHER_EPILEPSY,
+FATHER_YELLOW_JAUNDICE, FATHER_MISSING_ORGANS,
+FATHER_HIGH_BLOOD_PRESSURE, FATHER_KIDNEY_BLADDER_TROUBLE,
+FATHER_ULCER, FATHER_RHEUMATIC_FEVER, FATHER_RHEUMATISM_ARTHRITIS,
+FATHER_HEART_TROUBLE, MOTHER_NAME, MOTHER_GOOD_HEALTH,
+MOTHER_POOR_HEALTH, MOTHER_DATE_DEATH, MOTHER_CAUSE_DEATH,
+MOTHER_ALLERGIES_ASTHMA, MOTHER_ANEMIA_SICKLE_CELL,
+MOTHER_BLEEDING_TENDENCIES, MOTHER_DIABETES_GOUT, MOTHER_CANCER_TUMOR,
+MOTHER_EPILEPSY, MOTHER_YELLOW_JAUNDICE, MOTHER_MISSING_ORGANS,
+MOTHER_HIGH_BLOOD_PRESSURE, MOTHER_KIDNEY_BLADDER_TROUBLE,
+MOTHER_ULCER, MOTHER_RHEUMATIC_FEVER, MOTHER_RHEUMATISM_ARTHRITIS,
+MOTHER_HEART_TROUBLE, BROTHER_NAME, BROTHER_GOOD_HEALTH,
+BROTHER_POOR_HEALTH, BROTHER_DATE_DEATH, BROTHER_CAUSE_DEATH,
+BROTHER_ALLERGIES_ASTHMA, BROTHER_ANEMIA_SICKLE_CELL,
+BROTHER_BLEEDING_TENDENCIES, BROTHER_DIABETES_GOUT,
+BROTHER_CANCER_TUMOR, BROTHER_EPILEPSY, BROTHER_YELLOW_JAUNDICE,
+BROTHER_MISSING_ORGANS, BROTHER_HIGH_BLOOD_PRESSURE,
+BROTHER_KIDNEY_BLADDER_TROUBLE, BROTHER_ULCER,
+BROTHER_RHEUMATIC_FEVER, BROTHER_RHEUMATISM_ARTHRITIS,
+BROTHER_HEART_TROUBLE, SISTER_NAME, SISTER_GOOD_HEALTH,
+SISTER_POOR_HEALTH, SISTER_DATE_DEATH, SISTER_CAUSE_DEATH,
+SISTER_ALLERGIES_ASTHMA, SISTER_ANEMIA_SICKLE_CELL,
+SISTER_BLEEDING_TENDENCIES, SISTER_DIABETES_GOUT, SISTER_CANCER_TUMOR,
+SISTER_EPILEPSY, SISTER_YELLOW_JAUNDICE, SISTER_MISSING_ORGANS,
+SISTER_HIGH_BLOOD_PRESSURE, SISTER_KIDNEY_BLADDER_TROUBLE,
+SISTER_ULCER, SISTER_RHEUMATIC_FEVER, SISTER_RHEUMATISM_ARTHRITIS,
+SISTER_HEART_TROUBLE, SPOUSE_NAME, SPOUSE_GOOD_HEALTH,
+SPOUSE_POOR_HEALTH, SPOUSE_DATE_DEATH, SPOUSE_CAUSE_DEATH,
+SPOUSE_ALLERGIES_ASTHMA, SPOUSE_ANEMIA_SICKLE_CELL,
+SPOUSE_BLEEDING_TENDENCIES, SPOUSE_DIABETES_GOUT, SPOUSE_CANCER_TUMOR,
+SPOUSE_EPILEPSY, SPOUSE_YELLOW_JAUNDICE, SPOUSE_MISSING_ORGANS,
+SPOUSE_HIGH_BLOOD_PRESSURE, SPOUSE_KIDNEY_BLADDER_TROUBLE,
+SPOUSE_ULCER, SPOUSE_RHEUMATIC_FEVER, SPOUSE_RHEUMATISM_ARTHRITIS,
+SPOUSE_HEART_TROUBLE, CHILD_NAME, CHILD_GOOD_HEALTH,
+CHILD_POOR_HEALTH, CHILD_DATE_DEATH, CHILD_CAUSE_DEATH,
+CHILD_ALLERGIES_ASTHMA, CHILD_ANEMIA_SICKLE_CELL,
+CHILD_BLEEDING_TENDENCIES, CHILD_DIABETES_GOUT, CHILD_CANCER_TUMOR,
+CHILD_EPILEPSY, CHILD_YELLOW_JAUNDICE, CHILD_MISSING_ORGANS,
+CHILD_HIGH_BLOOD_PRESSURE, CHILD_KIDNEY_BLADDER_TROUBLE, CHILD_ULCER,
+CHILD_RHEUMATIC_FEVER, CHILD_RHEUMATISM_ARTHRITIS,
+CHILD_HEART_TROUBLE, ADDTNL_REMARKS, WEAR_EYE_GLASSES_CONTACTS,
+WEAR_GLASSES_DURING_COMPETE, WEAR_DENTAL_APPLIANCE, WEAR_PERM_BRIDGE,
+WEAR_PERM_CROWN_JACKET, WEAR_REMOVABLE_PARTIAL, WEAR_FULL_PLATE,
+HAVE_DEAD_TEETH, LOCATION_OF_DEAD_TEETH, HOSPITAL_YEAR_1,
+HOSPITAL_OPERATION_ILLNESS_1, HOSPITAL_NAME_1, HOSPITAL_LOCATION_1,
+HOSPITAL_YEAR_2, HOSPITAL_OPERATION_ILLNESS_2, HOSPITAL_NAME_2,
+HOSPITAL_LOCATION_2, HOSPITAL_YEAR_3, HOSPITAL_OPERATION_ILLNESS_3,
+HOSPITAL_NAME_3, HOSPITAL_LOCATION_3, HOSPITAL_YEAR_4,
+HOSPITAL_OPERATION_ILLNESS_4, HOSPITAL_NAME_4, HOSPITAL_LOCATION_4,
+HOSPITAL_YEAR_5, HOSPITAL_OPERATION_ILLNESS_5, HOSPITAL_NAME_5,
+HOSPITAL_LOCATION_5, ADDTNL_HOSPITALIZATIONS, CURRENT_MEDICATION,
+ALLERGIES_TO_MEDICATION, MENSTRUAL_AGE_OF_ONSET, MENSTRUAL_REGULAR,
+MENSTRUAL_CYCLE, MENSTRUAL_USUAL_DURATION, MENSTRUAL_FLOW,
+PAIN_CRAMPS, PAIN_CRAMPS_ADDTNL_INFO, DATE_OF_LAST_PERIOD,
+LUMPS_IN_BREAST, LUMPS_IN_BREAST_ADDTNL_INFO, NUM_PERIODS_LAST_YEAR,
+SIGNED_BY_ATHLETE, CONFIDENTIAL, FORM_SIGN_USER_ID, FORM_SIGN_DATE,
+FORM_SIGNATURE, SIGNED_BY_PARENT, TO_CHAR(FORM_DATE_PARENT,
+'MM-DD-YYYY') as FORM_DATE_PARENT
+
+FROM family_history
+
+WHERE FAMILY_HISTORY_ID = $FAMILY_HISTORY_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+<body background="/www/background.gif">
+
+<p align="center"><b>MIAMI UNIVERSITY SPORTS MEDICINE<br>
+FAMILY HISTORY</b></p>
+
+<form name="family_history" method="POST" action="/bin/process_form">
+<input type="hidden" name="FORM_NAME" value="FAMILY_HISTORY">
+
+<table border="0" width="100%">
+    <tr>
+      <td><b>Athlete: </b>#LAST_NAME#, #FIRST_NAME# #MIDDLE_NAME#</td>
+      <td align="right"><b>Sport: #SPORT#</td>
+    </tr>
+  </table>
+
+  <hr align="center">
+  <div align="center"><center><p><b>FAMILY HISTORY:</b></p>
+  </center></div><div align="center"><center><table border="1" cellpadding="2" cellspacing="0" width="100%">
+    <tr>
+      <td nowrap align="center" valign="bottom">&nbsp;</td>
+      <td width="74" align="center" nowrap valign="bottom">Your Health</td>
+      <td width="63" align="center" valign="bottom" nowrap>Father</td>
+      <td width="65" align="center" valign="bottom" nowrap>Mother</td>
+      <td width="63" align="center" valign="bottom" nowrap>Brother(s)</td>
+      <td width="62" align="center" valign="bottom" nowrap>Sister(s)</td>
+      <td width="62" align="center" valign="bottom" nowrap>Spouse </td>
+      <td width="58" align="center" valign="bottom" nowrap>Children</td>
+    </tr>
+    <tr>
+      <td nowrap><b>Name</b></td>
+      <td width="74" align="center" nowrap><input type="text" name="YOUR_NAME" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="FATHER_NAME" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="MOTHER_NAME" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="BROTHER_NAME" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="SISTER_NAME" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="SPOUSE_NAME" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="CHILD_NAME" size="10"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>In Good Health</td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_GOOD_HEALTH" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_GOOD_HEALTH" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_GOOD_HEALTH" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_GOOD_HEALTH" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_GOOD_HEALTH" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_GOOD_HEALTH" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_GOOD_HEALTH" value="Yes"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>In Poor Health</td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_POOR_HEALTH" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_POOR_HEALTH" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_POOR_HEALTH" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_POOR_HEALTH" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_POOR_HEALTH" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_POOR_HEALTH" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_POOR_HEALTH" value="Yes"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>Date of Death (mm-dd-yyyy)</td>
+      <td width="74" align="center" nowrap><input type="text" name="YOUR_DATE_DEATH" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="FATHER_DATE_DEATH" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="MOTHER_DATE_DEATH" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="BROTHER_DATE_DEATH" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="SISTER_DATE_DEATH" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="SPOUSE_DATE_DEATH" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="CHILD_DATE_DEATH" size="10"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>Cause of Death</td>
+      <td width="74" align="center" nowrap><input type="text" name="YOUR_CAUSE_DEATH" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="FATHER_CAUSE_DEATH" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="MOTHER_CAUSE_DEATH" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="BROTHER_CAUSE_DEATH" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="SISTER_CAUSE_DEATH" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="SPOUSE_CAUSE_DEATH" size="10"><br></td>
+      <td width="74" align="center" nowrap><input type="text" name="CHILD_CAUSE_DEATH" size="10"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>&nbsp; </td>
+      <td width="74" align="center" nowrap>&nbsp;</td>
+      <td width="74" align="center" nowrap>&nbsp;</td>
+      <td width="74" align="center" nowrap>&nbsp;</td>
+      <td width="74" align="center" nowrap>&nbsp;</td>
+      <td width="74" align="center" nowrap>&nbsp;</td>
+      <td width="74" align="center" nowrap>&nbsp;</td>
+      <td width="74" align="center" nowrap>&nbsp;</td>
+    </tr>
+    <tr>
+      <td nowrap>Allergies or Asthma</td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_ALLERGIES_ASTHMA" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_ALLERGIES_ASTHMA" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_ALLERGIES_ASTHMA" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_ALLERGIES_ASTHMA" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_ALLERGIES_ASTHMA" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_ALLERGIES_ASTHMA" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_ALLERGIES_ASTHMA" value="Yes"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>Anemia or Sickle Cell</td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_ANEMIA_SICKLE_CELL" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_ANEMIA_SICKLE_CELL" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_ANEMIA_SICKLE_CELL" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_ANEMIA_SICKLE_CELL" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_ANEMIA_SICKLE_CELL" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_ANEMIA_SICKLE_CELL" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_ANEMIA_SICKLE_CELL" value="Yes"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>Bleeding tendencies</td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_BLEEDING_TENDENCIES" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_BLEEDING_TENDENCIES" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_BLEEDING_TENDENCIES" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_BLEEDING_TENDENCIES" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_BLEEDING_TENDENCIES" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_BLEEDING_TENDENCIES" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_BLEEDING_TENDENCIES" value="Yes"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>Diabetes / Gout</td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_DIABETES_GOUT" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_DIABETES_GOUT" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_DIABETES_GOUT" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_DIABETES_GOUT" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_DIABETES_GOUT" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_DIABETES_GOUT" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_DIABETES_GOUT" value="Yes"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>Cancer or Tumor</td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_CANCER_TUMOR" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_CANCER_TUMOR" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_CANCER_TUMOR" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_CANCER_TUMOR" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_CANCER_TUMOR" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_CANCER_TUMOR" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_CANCER_TUMOR" value="Yes"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>Epilepsy</td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_EPILEPSY" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_EPILEPSY" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_EPILEPSY" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_EPILEPSY" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_EPILEPSY" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_EPILEPSY" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_EPILEPSY" value="Yes"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>Yellow Jaundice</td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_YELLOW_JAUNDICE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_YELLOW_JAUNDICE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_YELLOW_JAUNDICE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_YELLOW_JAUNDICE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_YELLOW_JAUNDICE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_YELLOW_JAUNDICE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_YELLOW_JAUNDICE" value="Yes"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>Missing any Paired Organs</td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_MISSING_ORGANS" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_MISSING_ORGANS" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_MISSING_ORGANS" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_MISSING_ORGANS" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_MISSING_ORGANS" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_MISSING_ORGANS" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_MISSING_ORGANS" value="Yes"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>High Blood Pressure</td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_HIGH_BLOOD_PRESSURE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_HIGH_BLOOD_PRESSURE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_HIGH_BLOOD_PRESSURE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_HIGH_BLOOD_PRESSURE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_HIGH_BLOOD_PRESSURE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_HIGH_BLOOD_PRESSURE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_HIGH_BLOOD_PRESSURE" value="Yes"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>Kidney or Bladder Trouble&nbsp;&nbsp;&nbsp; </td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_KIDNEY_BLADDER_TROUBLE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_KIDNEY_BLADDER_TROUBLE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_KIDNEY_BLADDER_TROUBLE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_KIDNEY_BLADDER_TROUBLE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_KIDNEY_BLADDER_TROUBLE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_KIDNEY_BLADDER_TROUBLE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_KIDNEY_BLADDER_TROUBLE" value="Yes"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>Ulcer</td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_ULCER" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_ULCER" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_ULCER" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_ULCER" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_ULCER" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_ULCER" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_ULCER" value="Yes"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>Rheumatic Fever</td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_RHEUMATIC_FEVER" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_RHEUMATIC_FEVER" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_RHEUMATIC_FEVER" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_RHEUMATIC_FEVER" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_RHEUMATIC_FEVER" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_RHEUMATIC_FEVER" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_RHEUMATIC_FEVER" value="Yes"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>Rheumatism or Arthritis</td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_RHEUMATISM_ARTHRITIS" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_RHEUMATISM_ARTHRITIS" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_RHEUMATISM_ARTHRITIS" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_RHEUMATISM_ARTHRITIS" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_RHEUMATISM_ARTHRITIS" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_RHEUMATISM_ARTHRITIS" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_RHEUMATISM_ARTHRITIS" value="Yes"><br></td>
+    </tr>
+    <tr>
+      <td nowrap>Heart Trouble</td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="YOUR_HEART_TROUBLE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="FATHER_HEART_TROUBLE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="MOTHER_HEART_TROUBLE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="BROTHER_HEART_TROUBLE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SISTER_HEART_TROUBLE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="SPOUSE_HEART_TROUBLE" value="Yes"><br></td>
+      <td width="74" align="center" nowrap><input type="checkbox" name="CHILD_HEART_TROUBLE" value="Yes"><br></td>
+    </tr>
+  </table>
+  </center></div><div align="left"><p><b>Additional Remarks:<br>
+  <textarea rows="3" name="ADDTNL_REMARKS" cols="60" wrap="virtual"></textarea></b></p>
+  </div><hr align="center">
+  <div align="left"><p><b>EYE AND DENTAL HEALTH:</b></p>
+  </div><div align="left"><table border="0">
+    <tr>
+      <td nowrap valign="top"><input type="radio" value="Yes" name="WEAR_EYE_GLASSES_CONTACTS">Yes&nbsp;
+      <input type="radio" name="WEAR_EYE_GLASSES_CONTACTS" value="No">No</td>
+      <td valign="top">&nbsp;&nbsp; </td>
+      <td valign="top" nowrap align="right">1.</td>
+      <td colspan="2" valign="top">Do you wear eye glasses or contacts?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" name="WEAR_GLASSES_DURING_COMPETE" value="Yes">Yes&nbsp;
+      <input type="radio" name="WEAR_GLASSES_DURING_COMPETE" value="No">No</td>
+      <td valign="top"></td>
+      <td valign="top" nowrap align="right">2.</td>
+      <td colspan="2" valign="top">If answer to above is yes, do you wear them during athletic
+      participation?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" name="WEAR_DENTAL_APPLIANCE" value="Yes">Yes&nbsp;
+      <input type="radio" name="WEAR_DENTAL_APPLIANCE" value="No">No</td>
+      <td valign="top"></td>
+      <td valign="top" nowrap align="right">3.</td>
+      <td colspan="2" valign="top">Do you wear any dental appliance? If Yes, check the
+      appropriate appliance:</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top" colspan="3"></td>
+      <td valign="top" nowrap><input type="checkbox" name="WEAR_PERM_BRIDGE" value="Yes">Permanent
+      bridge</td>
+      <td valign="top" nowrap><input type="checkbox" name="WEAR_REMOVABLE_PARTIAL" value="Yes">Removable
+      Partial</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top" colspan="3"></td>
+      <td valign="top" nowrap><input type="checkbox" name="WEAR_PERM_CROWN_JACKET" value="Yes">Permanent
+      crown or jacket</td>
+      <td valign="top" nowrap><input type="checkbox" name="WEAR_FULL_PLATE" value="Yes">Full
+      Plate</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" name="HAVE_DEAD_TEETH" value="Yes">Yes&nbsp; 
+<input type="radio" name="HAVE_DEAD_TEETH" value="No">No</td>
+      <td valign="top"></td>
+      <td valign="top" nowrap align="right">4.</td>
+      <td colspan="2" valign="top">Do you have any dead teeth? Please indicate approximate
+      location of dead tooth or teeth: <input type="text" name="LOCATION_OF_DEAD_TEETH" size="25"></td>
+    </tr>
+  </table>
+  </div><hr align="center">
+  <div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td width="100%" height="80"><b>MAJOR HOSPITALIZATIONS:<br>
+      Write in your most recent hospitalizations below (noting most recent in the top row).</b></td>
+    </tr>
+    <tr>
+      <td width="100%" height="23"><table border="0" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td align="left" width="63"><b>Year</b></td>
+          <td align="left" width="198"><b>Operation or Illness</b></td>
+          <td align="left" width="203"><b>Name of Hospital</b></td>
+          <td align="left" width="215"><b>City and State</b></td>
+        </tr>
+        <tr>
+          <td width="63" height="25" align="left" valign="middle"><input type="text" name="HOSPITAL_YEAR_1" size="4"></td>
+          <td width="198" height="25" align="left" valign="middle">&nbsp;<input type="text" name="HOSPITAL_OPERATION_ILLNESS_1" size="20"></td>
+          <td width="203" height="25" align="left" valign="middle"><input type="text" name="HOSPITAL_NAME_1" size="20"></td>
+          <td width="215" height="25" align="left" valign="middle"><input type="text" name="HOSPITAL_LOCATION_1" size="20"></td>
+        </tr>
+        <tr>
+          <td width="63" height="25" align="left" valign="middle"><input type="text" name="HOSPITAL_YEAR_2" size="4"></td>
+          <td width="198" height="25" align="left" valign="middle">&nbsp;<input type="text" name="HOSPITAL_OPERATION_ILLNESS_2" size="20"></td>
+          <td width="203" height="25" align="left" valign="middle"><input type="text" name="HOSPITAL_NAME_2" size="20"></td>
+          <td width="215" height="25" align="left" valign="middle"><input type="text" name="HOSPITAL_LOCATION_2" size="20"></td>
+        </tr>
+        <tr>
+          <td width="63" height="25" align="left" valign="middle"><input type="text" name="HOSPITAL_YEAR_3" size="4"></td>
+          <td width="198" height="25" align="left" valign="middle">&nbsp;<input type="text" name="HOSPITAL_OPERATION_ILLNESS_3" size="20"></td>
+          <td width="203" height="25" align="left" valign="middle"><input type="text" name="HOSPITAL_NAME_3" size="20"></td>
+          <td width="215" height="25" align="left" valign="middle"><input type="text" name="HOSPITAL_LOCATION_3" size="20"></td>
+        </tr>
+        <tr>
+          <td width="63" height="25" align="left" valign="middle"><input type="text" name="HOSPITAL_YEAR_4" size="4"></td>
+          <td width="198" height="25" align="left" valign="middle">&nbsp;<input type="text" name="HOSPITAL_OPERATION_ILLNESS_4" size="20"></td>
+          <td width="203" height="25" align="left" valign="middle"><input type="text" name="HOSPITAL_NAME_4" size="20"></td>
+          <td width="215" height="25" align="left" valign="middle"><input type="text" name="HOSPITAL_LOCATION_4" size="20"></td>
+        </tr>
+        <tr>
+          <td width="63" height="25" align="left" valign="middle"><input type="text" name="HOSPITAL_YEAR_5" size="4"></td>
+          <td width="198" height="25" align="left" valign="middle">&nbsp;<input type="text" name="HOSPITAL_OPERATION_ILLNESS_5" size="20"></td>
+          <td width="203" height="25" align="left" valign="middle"><input type="text" name="HOSPITAL_NAME_5" size="20"></td>
+          <td width="215" height="25" align="left" valign="middle"><input type="text" name="HOSPITAL_LOCATION_5" size="20"></td>
+        </tr>
+      </table>
+      <p><b>Additional Hospitalizations:</b><br>
+      <b><textarea rows="3" name="ADDTNL_HOSPITALIZATIONS" cols="60" wrap="virtual"></textarea></b></td>
+    </tr>
+  </table>
+  </center></div><div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td width="100%" height="40" valign="top" colspan="2"><hr>
+      <p><b>MEDICINES:</b></td>
+    </tr>
+    <tr>
+      <td width="50%" height="25" valign="top"><b>List any medicines that you are currently
+      taking:&nbsp;&nbsp;&nbsp;&nbsp; </b></td>
+      <td width="50%" height="25" valign="top"><b>List any medicines that you are allergic
+      to:</b></td>
+    </tr>
+    <tr>
+      <td width="50%" height="25" valign="top"><textarea rows="2" name="CURRENT_MEDICATION" cols="30" wrap="virtual"></textarea></td>
+      <td width="50%" height="25" valign="top"><textarea rows="2" name="ALLERGIES_TO_MEDICATION" cols="30" wrap="virtual"></textarea></td>
+    </tr>
+  </table>
+  </center></div><hr align="center">
+  <div align="left"><p><b>FOR WOMEN ONLY: MENSTRUAL HISTORY</b></p>
+  </div><div align="left"><table border="0">
+    <tr>
+      <td valign="top"><b>Age of onset:</b></td>
+      <td valign="top"><input type="text" name="MENSTRUAL_AGE_OF_ONSET" size="2"></td>
+      <td valign="top">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td valign="top"><b>Pain or cramps?</b></td>
+      <td valign="top" nowrap><input type="radio" value="Yes" name="PAIN_CRAMPS">Yes&nbsp; 
+<input type="radio" name="PAIN_CRAMPS" value="No">No</td>
+      <td valign="top"><input type="text" name="PAIN_CRAMPS_ADDTNL_INFO" size="15"></td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Regular?</b></td>
+      <td valign="top"><input type="text" name="MENSTRUAL_REGULAR" size="15"></td>
+      <td valign="top"></td>
+      <td valign="top"><b>Date of last period:</b></td>
+      <td valign="top"><table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td><div align="center"><center><p><input type="text" name="DATE_OF_LAST_PERIOD" size="10"><br>
+          mm-dd-yyyy</td>
+        </tr>
+      </table>
+      </td>
+      <td valign="top" align="center"></td>
+    </tr>
+    <tr align="center">
+      <td valign="top"><b>Cycle?</b></td>
+      <td valign="top"><input type="text" name="MENSTRUAL_CYCLE" size="2">&nbsp; days</td>
+      <td valign="top"></td>
+      <td valign="top"><b>Lumps in breast?</b></td>
+      <td valign="top" nowrap><input type="radio" value="Yes" name="LUMPS_IN_BREAST">Yes&nbsp; 
+<input type="radio" name="LUMPS_IN_BREAST" value="No">No</td>
+      <td valign="top"><input type="text" name="LUMPS_IN_BREAST_ADDTNL_INFO" size="15"></td>
+    </tr>
+    <tr align="center">
+      <td valign="top"><b>Usual duration?</b></td>
+      <td valign="top"><input type="text" name="MENSTRUAL_USUAL_DURATION" size="2">&nbsp; days</td>
+      <td valign="top"></td>
+      <td colspan="2" valign="top"><b>Number of periods in the last year:</b></td>
+      <td valign="top"><input type="text" name="NUM_PERIODS_LAST_YEAR" size="2"></td>
+    </tr>
+    <tr align="center">
+      <td valign="top"></td>
+      <td valign="top" nowrap><input type="radio" name="MENSTRUAL_FLOW" value="Heavy">Heavy&nbsp;
+      <input type="radio" name="MENSTRUAL_FLOW" value="Medium">Medium&nbsp; 
+<input type="radio" name="MENSTRUAL_FLOW" value="Light">Light</td>
+      <td colspan="4" valign="top"></td>
+    </tr>
+  </table>
+  </div>
+
+<hr align="center">
+
+
+<div align="center">
+<table border="0" width="100%"><tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Student Athlete</b></td>
+   <td align="right"><b>Signed by Athlete?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="SIGNED_BY_ATHLETE" checked="checked" value="Yes">Yes&nbsp; 
+<input type="radio" name="SIGNED_BY_ATHLETE" value="No">No</td>
+   <td width="50"></td>
+   <td><b>Signature date:</b></td>
+   <td><div align="center"><center><p><input type="text" name="FORM_DATE" size="10"><br>
+      mm-dd-yyyy</td>
+</tr>
+<tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Parent or Guardian (If Student Athlete is under 18 years of age)</b></td>
+   <td align="right"><b>Signed by Parent or Guardian?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="SIGNED_BY_PARENT" value="Yes">Yes&nbsp; 
+<input type="radio" name="SIGNED_BY_PARENT" value="No" checked="checked">No</td>
+   <td width="50"></td>
+   <td><b>Signature date:</b></td>
+   <td><div align="center"><center><p><input type="text" name="FORM_DATE_PARENT" size="10"><br>
+      mm-dd-yyyy</td>
+</tr></table>
+</div>
+
+<div align="center"><p><input type="submit" value="Submit"></p></div>
+
+</form>
+</body>
+</html>

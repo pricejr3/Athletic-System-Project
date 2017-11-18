@@ -1,0 +1,54 @@
+<html>
+
+<head>
+<base target="main">
+<title></title>
+
+<script language="JavaScript">
+<!--
+  if (document.images) {
+     logout_on = new Image (53, 13);
+     logout_on.src = "Images/logout_on.gif";
+     logout_off = new Image (53, 13);
+     logout_off.src = "Images/logout_off.gif";
+  }
+
+  function highlight (imgName) {
+      if (document.images) {
+         document.images[imgName].src = eval (imgName + "_on.src");
+      }
+  }
+
+  function unhighlight (imgName) {
+      if (document.images) {
+         document.images[imgName].src = eval (imgName + "_off.src");
+      }
+  }
+    
+//  -->
+</script>
+
+</head>
+
+<body bgcolor="#FFFFFF" topmargin="0" leftmargin="0">
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%" align="left" bgcolor="#000000">
+<tr>
+
+<td nowrap valign="top" align="left">
+<img src="Images/intranet_header.gif" WIDTH="358" HEIGHT="33">
+</td>
+
+<td nowrap valign="middle" align="right">
+
+<a href="../Logout/logout.html"
+   onMouseOver="highlight('logout')" onMouseOut="unhighlight('logout')" target="main">
+   <img src="Images/logout_off.gif" BORDER="0" name="logout" hspace="10" WIDTH="53" HEIGHT="13"></a>
+</td>
+
+</tr>
+</table>
+
+</body>
+</html>
+

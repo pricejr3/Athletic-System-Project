@@ -1,0 +1,186 @@
+<html>
+
+<head>
+  <title>HEALTH INFO RELEASE FORM</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+FORM_DATE: not null
+FORM_DATE: date
+FORM_DATE_PARENT: date
+TERMS_SIGNED_BY_ATHLETE: not null
+TERMS_SIGNED_BY_ATHLETE: format=^(Yes|No)$
+TERMS_SIGNED_BY_PARENT: not null
+TERMS_SIGNED_BY_PARENT: format=^(Yes|No)$
+--- END DATA VERIFICATION ---
+
+
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, PERM_PHONE, TO_CHAR(BIRTHDATE,
+'MM-DD-YYYY') as BIRTHDATE, TO_CHAR(now(), 'MM-DD-YYYY') as FORM_DATE
+
+FROM athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+insert into health_info_release
+(
+
+HEALTH_INFO_RELEASE_ID, ORIG_VERSION_ID, ATHLETE_ID, FORM_DATE,
+TERMS_SIGNED_BY_ATHLETE, TERMS_SIGNED_BY_PARENT, FORM_DATE_PARENT,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+)
+VALUES
+(
+
+nextval('new_health_info_release_id'), $ORIG_VERSION_ID,
+$ORIG_ATHLETE_ID, TO_DATE($FORM_DATE, 'MM-DD-YYYY'),
+$TERMS_SIGNED_BY_ATHLETE, $TERMS_SIGNED_BY_PARENT, $FORM_DATE_PARENT,
+$FORM_SIGN_USER_ID, now(), $FORM_SIGNATURE
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+HEALTH_INFO_RELEASE_ID, ORIG_VERSION_ID, ATHLETE_ID as
+ORIG_ATHLETE_ID, TO_CHAR(FORM_DATE, 'MM-DD-YYYY') as FORM_DATE,
+TERMS_SIGNED_BY_ATHLETE, TERMS_SIGNED_BY_PARENT,
+TO_CHAR(FORM_DATE_PARENT, 'MM-DD-YYYY') as FORM_DATE_PARENT,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+FROM health_info_release
+
+WHERE HEALTH_INFO_RELEASE_ID = $HEALTH_INFO_RELEASE_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+<body background="/www/background.gif">
+
+<form name="health_info_release" method="POST" action="/bin/process_form">
+<input type="hidden" name="FORM_NAME" value="HEALTH_INFO_RELEASE">
+
+<div align="center"><p><b>AUTHORIZATION FOR RELEASE OF HEALTH INFORMATION</b></p>
+</div>
+
+
+<table border="0" width="100%"><tr>
+   <td align="left"><b>Athlete: </b>#LAST_NAME#, #FIRST_NAME# #MIDDLE_NAME#</td>
+   <td align="center"><b>Telephone: </b>#PERM_PHONE#</td>
+   <td align="right"><b>Date of birth: </b>#BIRTHDATE#</td>
+</tr></table>
+
+
+<p><b>I AUTHORIZE</b> all education agencies and institutions,
+physicians, athletic trainers, hospitals, clinics, and all other
+health care providers,</b>
+
+<p><b>TO RELEASE BY MEDICAL INFORMATON TO:</b>
+
+<div align="center"><table border="0">
+<tr><td><b>Miami University<br>
+Athletic Training Staff<br>
+Yager Stadium, Room 230<br>
+Oxford, OH  45056 3625<br></b></td></tr>
+</table></div>
+
+<p><b><u>EXPIRATION DATE OF THIS AUTHORIZATION</u>:</b> Six years from
+the date this Authorization was signed by me or by my personal
+representative.</p>
+
+<p><b><u>PURPOSE OF DISCLOSURE</u>:</b> To assist the Miami University
+Department of Intercollegiate Athletics coaches, athletic trainers and
+physicians in evaluating my fitness as it pertains to my ability to
+participate in my sport and in providing medical care to me.</p>
+
+<p><b><u>MEDICATION INFORMATION TO BE DISCLOSED</u>:</b> All records
+pertaining to my medical condition, whether past, present or future,
+including all physicals, athletic trainers' records, physicians'
+record, diagnoses, treatment information, medical histories, and
+prognoses of any and all injuries and illnesses, from your personal
+knowledge and/or records.</p>
+
+<p><b><u>AUTHORIZATION AND DIRECTION</u>:</b> I hereby authorize and
+direct the entities listed above and their respective employees to
+release the designated information.  I understand that a separate
+authorization is required for release of psychotherapy notes.  I
+understand and acknowledge that this Authorization extends to any and
+all information designated above that may pertain to treatment for
+physical and mental illness, and/or AIDS (Acquired Immunodeficiency
+Syndrome) and/or that may include results of an HIV test or the fact
+that an HIV test was performed.</p>
+
+<p><b><u>ACKNOWLEDGMENT OF INDIVIDUAL RIGHTS</u></b></p>
+
+<p>I have read and understood the following statements about my rights:</p>
+
+<ul>
+
+<li>I may revoke this Authorization at any time prior to its
+expiration date by notifying the disclosing entity in writing, but the
+revocation will not affect any action the disclosing entity took
+before it received the revocation.  In addition, I may revoke this
+Authorization at any time prior to its expiration date by notifying
+the Miami University, Head Athletic Trainer, in writing, who will then
+forward such notice to any entities who previously received the
+authorization from the Department of Intercollegiate Athletics.
+However, such revocation will not affect any actions the disclosing
+entities took before they received the notice from the Miami
+University Department of Intercollegiate Athletics.</li>
+
+<li>A health care provider may not condition my treatment or payment
+for health care upon whether I sign this Authorization, unless the
+treatment is research-related or the care was provided solely to
+provide information for a third party.</li>
+
+<li>The information that is disclosed pursuant to this Authorization
+may no longer be protected by federal privacy rules such as HIPAA.
+The information disclosed may be redisclosed by the receiving entity.
+By signing below, I specifically authorize such redisclosure.</li>
+
+</ul>
+
+<div align="center">
+<table border="0" width="100%"><tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Student Athlete</b></td>
+   <td align="right"><b>Signed by Athlete?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="TERMS_SIGNED_BY_ATHLETE" checked="checked" value="Yes">Yes&nbsp; 
+<input type="radio" name="TERMS_SIGNED_BY_ATHLETE" value="No">No</td>
+   <td width="50"></td>
+   <td><b>Signature date:</b></td>
+   <td><div align="center"><center><p><input type="text" name="FORM_DATE" size="10"><br>
+      mm-dd-yyyy</td>
+</tr>
+<tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Parent or Guardian (If Student Athlete is under 18 years of age)</b></td>
+   <td align="right"><b>Signed by Parent or Guardian?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="TERMS_SIGNED_BY_PARENT" value="Yes">Yes&nbsp; 
+<input type="radio" name="TERMS_SIGNED_BY_PARENT" value="No" checked="checked">No</td>
+   <td width="50"></td>
+   <td><b>Signature date:</b></td>
+   <td><div align="center"><center><p><input type="text" name="FORM_DATE_PARENT" size="10"><br>
+      mm-dd-yyyy</td>
+</tr></table>
+</div>
+
+<div align="center"><p><input type="submit" value="Submit"></p></div>
+
+</form>
+</body>
+</html>
+

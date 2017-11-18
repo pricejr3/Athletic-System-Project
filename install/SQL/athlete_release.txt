@@ -1,0 +1,13 @@
+create table athlete_release
+(
+athlete_release_id		int		not null  primary key,
+orig_version_id			int		not null,
+athlete_id			int		not null  references athlete (athlete_id) on delete cascade,
+form_date			date		not null,
+terms_signed_by_athlete		varchar (3)	not null,
+terms_signed_by_parent		varchar (3)	not null,
+form_date_parent		date,
+form_sign_user_id		varchar (50)	not null,
+form_sign_date			timestamp	not null,
+form_signature			text
+);

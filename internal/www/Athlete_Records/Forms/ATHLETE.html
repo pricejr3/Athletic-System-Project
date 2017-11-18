@@ -1,0 +1,390 @@
+<html>
+
+<head>
+  <title>ATHLETE INFORMATION</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+LAST_NAME: not null
+LAST_NAME: maxsize=50
+FIRST_NAME: not null
+FIRST_NAME: maxsize=50
+BIRTHDATE: date
+SSN: not null
+SSN: format=^\d\d\d-\d\d-\d\d\d\d$
+LOCAL_ADDRESS: maxsize=500
+LOCAL_PHONE: maxsize=50
+PERM_ADDRESS: maxsize=500
+PERM_PHONE: maxsize=50
+EMAIL: maxsize=500
+--- END DATA VERIFICATION ---
+
+
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+ '<li>PEC: Head (' || substr (PEC_HEAD, 0, 0) || COALESCE (TO_CHAR (PEC_HEAD1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</li>' as PEC_HEAD1,
+ '<li>PEC: Head (' || substr (PEC_HEAD, 0, 0) || TO_CHAR (PEC_HEAD2_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_HEAD2,
+ '<li>PEC: Head (' || substr (PEC_HEAD, 0, 0) || TO_CHAR (PEC_HEAD3_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_HEAD3,
+ '<li>PEC: Head (' || substr (PEC_HEAD, 0, 0) || TO_CHAR (PEC_HEAD4_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_HEAD4,
+ '<li>PEC: Head (' || substr (PEC_HEAD, 0, 0) || TO_CHAR (PEC_HEAD5_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_HEAD5,
+ '<li>PEC: Unconscious (' || substr (PEC_UNCONSCIOUS, 0, 0) || COALESCE (TO_CHAR (PEC_UNCONSCIOUS1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</li>' as PEC_UNCONSCIOUS,
+ '<li>PEC: Unconscious (' || substr (PEC_UNCONSCIOUS, 0, 0) || TO_CHAR (PEC_UNCONSCIOUS2_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_UNCONSCIOUS2,
+ '<li>PEC: Unconscious (' || substr (PEC_UNCONSCIOUS, 0, 0) || TO_CHAR (PEC_UNCONSCIOUS3_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_UNCONSCIOUS3,
+ '<li>PEC: Unconscious (' || substr (PEC_UNCONSCIOUS, 0, 0) || TO_CHAR (PEC_UNCONSCIOUS4_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_UNCONSCIOUS4,
+ '<li>PEC: Unconscious (' || substr (PEC_UNCONSCIOUS, 0, 0) || TO_CHAR (PEC_UNCONSCIOUS5_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_UNCONSCIOUS5,
+ '<li>PEC: Shoulder (' || substr (PEC_SHOULDER, 0, 0) || COALESCE (TO_CHAR (PEC_SHOULDER1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</li>' as PEC_SHOULDER1,
+ '<li>PEC: Shoulder (' || substr (PEC_SHOULDER, 0, 0) || TO_CHAR (PEC_SHOULDER2_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_SHOULDER2,
+ '<li>PEC: Shoulder (' || substr (PEC_SHOULDER, 0, 0) || TO_CHAR (PEC_SHOULDER3_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_SHOULDER3,
+ '<li>PEC: Shoulder (' || substr (PEC_SHOULDER, 0, 0) || TO_CHAR (PEC_SHOULDER4_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_SHOULDER4,
+ '<li>PEC: Shoulder (' || substr (PEC_SHOULDER, 0, 0) || TO_CHAR (PEC_SHOULDER5_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_SHOULDER5,
+ '<li>PEC: Neck (' || substr (PEC_NECK, 0, 0) || COALESCE (TO_CHAR (PEC_NECK1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</li>' as PEC_NECK1,
+ '<li>PEC: Neck (' || substr (PEC_NECK, 0, 0) || TO_CHAR (PEC_NECK2_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_NECK2,
+ '<li>PEC: Neck (' || substr (PEC_NECK, 0, 0) || TO_CHAR (PEC_NECK3_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_NECK3,
+ '<li>PEC: Neck (' || substr (PEC_NECK, 0, 0) || TO_CHAR (PEC_NECK4_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_NECK4,
+ '<li>PEC: Neck (' || substr (PEC_NECK, 0, 0) || TO_CHAR (PEC_NECK5_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_NECK5,
+ '<li>PEC: Back (' || substr (PEC_BACK, 0, 0) || COALESCE (TO_CHAR (PEC_BACK1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</li>' as PEC_BACK1,
+ '<li>PEC: Back (' || substr (PEC_BACK, 0, 0) || TO_CHAR (PEC_BACK2_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_BACK2,
+ '<li>PEC: Back (' || substr (PEC_BACK, 0, 0) || TO_CHAR (PEC_BACK3_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_BACK3,
+ '<li>PEC: Back (' || substr (PEC_BACK, 0, 0) || TO_CHAR (PEC_BACK4_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_BACK4,
+ '<li>PEC: Back (' || substr (PEC_BACK, 0, 0) || TO_CHAR (PEC_BACK5_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_BACK5,
+ '<li>PEC: Ribs (' || substr (PEC_RIBS, 0, 0) || COALESCE (TO_CHAR (PEC_RIBS1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</li>' as PEC_RIBS1,
+ '<li>PEC: Ribs (' || substr (PEC_RIBS, 0, 0) || TO_CHAR (PEC_RIBS2_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_RIBS2,
+ '<li>PEC: Ribs (' || substr (PEC_RIBS, 0, 0) || TO_CHAR (PEC_RIBS3_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_RIBS3,
+ '<li>PEC: Ribs (' || substr (PEC_RIBS, 0, 0) || TO_CHAR (PEC_RIBS4_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_RIBS4,
+ '<li>PEC: Ribs (' || substr (PEC_RIBS, 0, 0) || TO_CHAR (PEC_RIBS5_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_RIBS5,
+ '<li>PEC: Hips (' || substr (PEC_HIPS, 0, 0) || COALESCE (TO_CHAR (PEC_HIPS1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</li>' as PEC_HIPS1,
+ '<li>PEC: Hips (' || substr (PEC_HIPS, 0, 0) || TO_CHAR (PEC_HIPS2_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_HIPS2,
+ '<li>PEC: Hips (' || substr (PEC_HIPS, 0, 0) || TO_CHAR (PEC_HIPS3_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_HIPS3,
+ '<li>PEC: Hips (' || substr (PEC_HIPS, 0, 0) || TO_CHAR (PEC_HIPS4_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_HIPS4,
+ '<li>PEC: Hips (' || substr (PEC_HIPS, 0, 0) || TO_CHAR (PEC_HIPS5_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_HIPS5,
+ '<li>PEC: Lower Leg (' || substr (PEC_LOWER_LEG, 0, 0) || COALESCE (TO_CHAR (PEC_LOWER_LEG1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</li>' as PEC_LOWER_LEG1,
+ '<li>PEC: Lower Leg (' || substr (PEC_LOWER_LEG, 0, 0) || TO_CHAR (PEC_LOWER_LEG2_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_LOWER_LEG2,
+ '<li>PEC: Lower Leg (' || substr (PEC_LOWER_LEG, 0, 0) || TO_CHAR (PEC_LOWER_LEG3_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_LOWER_LEG3,
+ '<li>PEC: Lower Leg (' || substr (PEC_LOWER_LEG, 0, 0) || TO_CHAR (PEC_LOWER_LEG4_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_LOWER_LEG4,
+ '<li>PEC: Lower Leg (' || substr (PEC_LOWER_LEG, 0, 0) || TO_CHAR (PEC_LOWER_LEG5_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_LOWER_LEG5,
+ '<li>PEC: Thigh (' || substr (PEC_THIGH, 0, 0) || COALESCE (TO_CHAR (PEC_THIGH1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</li>' as PEC_THIGH1,
+ '<li>PEC: Thigh (' || substr (PEC_THIGH, 0, 0) || TO_CHAR (PEC_THIGH2_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_THIGH2,
+ '<li>PEC: Thigh (' || substr (PEC_THIGH, 0, 0) || TO_CHAR (PEC_THIGH3_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_THIGH3,
+ '<li>PEC: Thigh (' || substr (PEC_THIGH, 0, 0) || TO_CHAR (PEC_THIGH4_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_THIGH4,
+ '<li>PEC: Thigh (' || substr (PEC_THIGH, 0, 0) || TO_CHAR (PEC_THIGH5_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_THIGH5,
+ '<li>PEC: Knee (' || substr (PEC_KNEE, 0, 0) || COALESCE (TO_CHAR (PEC_KNEE1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</li>' as PEC_KNEE1,
+ '<li>PEC: Knee (' || substr (PEC_KNEE, 0, 0) || TO_CHAR (PEC_KNEE2_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_KNEE2,
+ '<li>PEC: Knee (' || substr (PEC_KNEE, 0, 0) || TO_CHAR (PEC_KNEE3_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_KNEE3,
+ '<li>PEC: Knee (' || substr (PEC_KNEE, 0, 0) || TO_CHAR (PEC_KNEE4_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_KNEE4,
+ '<li>PEC: Knee (' || substr (PEC_KNEE, 0, 0) || TO_CHAR (PEC_KNEE5_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_KNEE5,
+ '<li>PEC: Ankle (' || substr (PEC_ANKLE, 0, 0) || COALESCE (TO_CHAR (PEC_ANKLE1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</li>' as PEC_ANKLE1,
+ '<li>PEC: Ankle (' || substr (PEC_ANKLE, 0, 0) || TO_CHAR (PEC_ANKLE2_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_ANKLE2,
+ '<li>PEC: Ankle (' || substr (PEC_ANKLE, 0, 0) || TO_CHAR (PEC_ANKLE3_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_ANKLE3,
+ '<li>PEC: Ankle (' || substr (PEC_ANKLE, 0, 0) || TO_CHAR (PEC_ANKLE4_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_ANKLE4,
+ '<li>PEC: Ankle (' || substr (PEC_ANKLE, 0, 0) || TO_CHAR (PEC_ANKLE5_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_ANKLE5,
+ '<li>PEC: Elbow (' || substr (PEC_ELBOW, 0, 0) || COALESCE (TO_CHAR (PEC_ELBOW1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</li>' as PEC_ELBOW1,
+ '<li>PEC: Elbow (' || substr (PEC_ELBOW, 0, 0) || TO_CHAR (PEC_ELBOW2_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_ELBOW2,
+ '<li>PEC: Elbow (' || substr (PEC_ELBOW, 0, 0) || TO_CHAR (PEC_ELBOW3_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_ELBOW3,
+ '<li>PEC: Elbow (' || substr (PEC_ELBOW, 0, 0) || TO_CHAR (PEC_ELBOW4_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_ELBOW4,
+ '<li>PEC: Elbow (' || substr (PEC_ELBOW, 0, 0) || TO_CHAR (PEC_ELBOW5_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_ELBOW5,
+ '<li>PEC: Hand/Wrist (' || substr (PEC_HAND_WRIST, 0, 0) || COALESCE (TO_CHAR (PEC_HAND_WRIST1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')</li>' as PEC_HAND_WRIST1,
+ '<li>PEC: Hand/Wrist (' || substr (PEC_HAND_WRIST, 0, 0) || TO_CHAR (PEC_HAND_WRIST2_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_HAND_WRIST2,
+ '<li>PEC: Hand/Wrist (' || substr (PEC_HAND_WRIST, 0, 0) || TO_CHAR (PEC_HAND_WRIST3_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_HAND_WRIST3,
+ '<li>PEC: Hand/Wrist (' || substr (PEC_HAND_WRIST, 0, 0) || TO_CHAR (PEC_HAND_WRIST4_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_HAND_WRIST4,
+ '<li>PEC: Hand/Wrist (' || substr (PEC_HAND_WRIST, 0, 0) || TO_CHAR (PEC_HAND_WRIST5_DATE_OCCURRED, 'MM-DD-YYYY') || ')</li>' as PEC_HAND_WRIST5
+
+FROM health_history2_lv where ATHLETE_ID = $ORIG_VERSION_ID
+AND health_history2_id = (select MAX (health_history2_id) from health_history2_lv where athlete_id = $ORIG_VERSION_ID);
+
+
+SELECT
+ '<li>Allergies or Asthma' || substr (YOUR_ALLERGIES_ASTHMA, 0, 0) || '</li>' as PEC_ALLERGIES_ASTHMA,
+ '<li>Anemia or Sickle Cell' || substr (YOUR_ANEMIA_SICKLE_CELL, 0, 0) || '</li>' as PEC_ANEMIA_SICKLE_CELL,
+ '<li>Bleeding Tendencies' || substr (YOUR_BLEEDING_TENDENCIES, 0, 0) || '</li>' as PEC_BLEEDING_TENDENCIES,
+ '<li>Diabetes / Gout' || substr (YOUR_DIABETES_GOUT, 0, 0) || '</li>' as PEC_DIABETES_GOUT,
+ '<li>Cancer or Tumor' || substr (YOUR_CANCER_TUMOR, 0, 0) || '</li>' as PEC_CANCER_TUMOR,
+ '<li>Epilepsy' || substr (YOUR_EPILEPSY, 0, 0) || '</li>' as PEC_EPILEPSY,
+ '<li>Yellow Jaundice' || substr (YOUR_YELLOW_JAUNDICE, 0, 0) || '</li>' as PEC_YELLOW_JAUNDICE,
+ '<li>Missing any Paired Organs' || substr (YOUR_MISSING_ORGANS, 0, 0) || '</li>' as PEC_MISSING_ORGANS,
+ '<li>High Blood Pressure' || substr (YOUR_HIGH_BLOOD_PRESSURE, 0, 0) || '</li>' as PEC_HIGH_BLOOD_PRESSURE,
+ '<li>Kidney or Bladder Trouble' || substr (YOUR_KIDNEY_BLADDER_TROUBLE, 0, 0) || '</li>' as PEC_KIDNEY_BLADDER_TROUBLE,
+ '<li>Ulcer' || substr (YOUR_ULCER, 0, 0) || '</li>' as PEC_ULCER,
+ '<li>Rheumatic Fever' || substr (YOUR_RHEUMATIC_FEVER, 0, 0) || '</li>' as PEC_RHEUMATIC_FEVER,
+ '<li>Rheumatism or Arthritis' || substr (YOUR_RHEUMATISM_ARTHRITIS, 0, 0) || '</li>' as PEC_RHEUMATISM_ARTHRITIS,
+ '<li>Heart Trouble' || substr (YOUR_HEART_TROUBLE, 0, 0) || '</li>' as PEC_HEART_TROUBLE,
+ '<li>Anxiety' || substr (YOUR_ANXIETY, 0, 0) || '</li>' as PEC_ANXIETY,
+ '<li>Depression' || substr (YOUR_DEPRESSION, 0, 0) || '</li>' as PEC_DEPRESSION,
+ '<li>Bipolar Disorder' || substr (YOUR_BIPOLAR_DISORDER, 0, 0) || '</li>' as PEC_BIPOLAR_DISORDER,
+ '<li>Eating Disorder' || substr (YOUR_EATING_DISORDER, 0, 0) || '</li>' as PEC_EATING_DISORDER,
+ '<li>Other Mental Health Disorder' || substr (YOUR_OTHER_MENTAL_HEALTH_DISORDER, 0, 0) || '</li>' as PEC_OTHER_MENTAL_HEALTH_DISORDER
+
+FROM family_history_lv where ATHLETE_ID = $ORIG_VERSION_ID
+AND family_history_id = (select MAX (family_history_id) from family_history_lv where athlete_id = $ORIG_VERSION_ID);
+
+
+SELECT TOTAL_SCORE as FMS_SCORE_BASELINE, '(' || TO_CHAR (FORM_DATE, 'MM-DD-YYYY') || ')' AS FMS_SCORE_BASELINE_DATE
+FROM functional_movement_screen_lv where ATHLETE_ID = $ORIG_VERSION_ID
+AND functional_movement_screen_id = (select MIN (functional_movement_screen_id) from functional_movement_screen_lv where athlete_id = $ORIG_VERSION_ID);
+
+
+SELECT TOTAL_SCORE as FMS_SCORE_LATEST, '(' || TO_CHAR (FORM_DATE, 'MM-DD-YYYY') || ')' AS FMS_SCORE_LATEST_DATE
+FROM functional_movement_screen_lv where ATHLETE_ID = $ORIG_VERSION_ID
+AND functional_movement_screen_id = (select MAX (functional_movement_screen_id) from functional_movement_screen_lv where athlete_id = $ORIG_VERSION_ID);
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+INSERT into athlete
+     ( ATHLETE_ID, ORIG_VERSION_ID, LAST_NAME, FIRST_NAME,
+       MIDDLE_NAME, SPORT, BIRTHDATE, SEX, SSN, LOCAL_ADDRESS,
+       LOCAL_PHONE, PERM_ADDRESS, PERM_PHONE, EMAIL, NOTE,
+       ALLERGIES_TO_MEDS, OTHER_ALLERGIES, STATUS, FORM_SIGN_USER_ID,
+       FORM_SIGN_DATE, FORM_SIGNATURE )
+
+     VALUES
+
+     ( nextval('new_athlete_id'), $ORIG_VERSION_ID, $LAST_NAME,
+       $FIRST_NAME, $MIDDLE_NAME, $SPORT, TO_DATE($BIRTHDATE,
+       'MM-DD-YYYY'), $SEX, $SSN, $LOCAL_ADDRESS, $LOCAL_PHONE,
+       $PERM_ADDRESS, $PERM_PHONE, $EMAIL, $NOTE, $ALLERGIES_TO_MEDS,
+       $OTHER_ALLERGIES, $STATUS, $FORM_SIGN_USER_ID, now(),
+       $FORM_SIGNATURE );
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+       ORIG_VERSION_ID, LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT,
+       TO_CHAR(BIRTHDATE, 'MM-DD-YYYY') as BIRTHDATE, SEX, SSN,
+       LOCAL_ADDRESS, LOCAL_PHONE, PERM_ADDRESS, PERM_PHONE, EMAIL, NOTE,
+       ALLERGIES_TO_MEDS, OTHER_ALLERGIES, STATUS, FORM_SIGN_USER_ID,
+       FORM_SIGN_DATE, FORM_SIGNATURE
+
+     from athlete
+
+     WHERE ATHLETE_ID = $ATHLETE_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+<body bgcolor="#f7d4bd">
+
+
+<form name="athlete" method="POST" action="/bin/process_form">
+
+<input type=hidden name="FORM_NAME" value="ATHLETE">
+
+<table border="0">
+    <tr>
+      <td><b>Last:</b></td>
+      <td nowrap><input type="text" name="LAST_NAME" size="20"><b>,</b></td>
+    </tr>
+    <tr>
+      <td><b>First:</b></td>
+      <td><input type="text" name="FIRST_NAME" size="20"></td>
+    </tr>
+    <tr>
+      <td><b>Middle:</b></td>
+      <td><input type="text" name="MIDDLE_NAME" size="20"></td>
+    </tr>
+  </table>
+  <hr>
+  <table border="0">
+    <tr>
+      <td valign="top" align="left"><b>Sport:</b></td>
+      <td align="left"><select name="SPORT" size="1">
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+    </tr>
+    <tr align="center">
+      <td valign="top" align="left"><b>Sex:</b></td>
+      <td align="left"><select name="SEX" size="1">
+        <option selected value="Female">Female</option>
+        <option value="Male">Male</option>
+      </select></td>
+    </tr>
+    <tr align="center">
+      <td valign="top" align="left"><b>Born:</b></td>
+      <td align="left"><input type="text" name="BIRTHDATE" size="10"><br>
+          mm-dd-yyyy</td>
+    </tr>
+    <tr align="center">
+      <td valign="top" align="left"><b>SSN:</b></td>
+      <td align="left"><input type="text" name="SSN" size="11"><br>
+          xxx-xx-xxxx</td>
+    </tr>
+  </table>
+  <div align="left"><p><b>Note:<br>
+  <textarea rows="3" name="NOTE" wrap="virtual" cols="30"></textarea></b></p>
+  </div><hr align="center">
+  <div align="left"><p><b>Allergies to Medication:</b><br>
+  <b><textarea rows="3" name="ALLERGIES_TO_MEDS" wrap="virtual" cols="30"></textarea></b></p>
+  </div><div align="left"><p><b>Other Allergies:<br>
+  <textarea rows="3" name="OTHER_ALLERGIES" wrap="virtual" cols="30"></textarea></b></p>
+  </div>
+
+
+<p><table border="0">
+    <tr>
+      <td><b>Pre-existing conditions:</b></td>
+    <tr>
+      <td><ul>
+#PEC_HEAD1#
+#PEC_HEAD2#
+#PEC_HEAD3#
+#PEC_HEAD4#
+#PEC_HEAD5#
+#PEC_UNCONSCIOUS1#
+#PEC_UNCONSCIOUS2#
+#PEC_UNCONSCIOUS3#
+#PEC_UNCONSCIOUS4#
+#PEC_UNCONSCIOUS5#
+#PEC_SHOULDER1#
+#PEC_SHOULDER2#
+#PEC_SHOULDER3#
+#PEC_SHOULDER4#
+#PEC_SHOULDER5#
+#PEC_NECK1#
+#PEC_NECK2#
+#PEC_NECK3#
+#PEC_NECK4#
+#PEC_NECK5#
+#PEC_BACK1#
+#PEC_BACK2#
+#PEC_BACK3#
+#PEC_BACK4#
+#PEC_BACK5#
+#PEC_RIBS1#
+#PEC_RIBS2#
+#PEC_RIBS3#
+#PEC_RIBS4#
+#PEC_RIBS5#
+#PEC_HIPS1#
+#PEC_HIPS2#
+#PEC_HIPS3#
+#PEC_HIPS4#
+#PEC_HIPS5#
+#PEC_LOWER_LEG1#
+#PEC_LOWER_LEG2#
+#PEC_LOWER_LEG3#
+#PEC_LOWER_LEG4#
+#PEC_LOWER_LEG5#
+#PEC_THIGH1#
+#PEC_THIGH2#
+#PEC_THIGH3#
+#PEC_THIGH4#
+#PEC_THIGH5#
+#PEC_KNEE1#
+#PEC_KNEE2#
+#PEC_KNEE3#
+#PEC_KNEE4#
+#PEC_KNEE5#
+#PEC_ANKLE1#
+#PEC_ANKLE2#
+#PEC_ANKLE3#
+#PEC_ANKLE4#
+#PEC_ANKLE5#
+#PEC_ELBOW1#
+#PEC_ELBOW2#
+#PEC_ELBOW3#
+#PEC_ELBOW4#
+#PEC_ELBOW5#
+#PEC_HAND_WRIST1#
+#PEC_HAND_WRIST2#
+#PEC_HAND_WRIST3#
+#PEC_HAND_WRIST4#
+#PEC_HAND_WRIST5#
+#PEC_ALLERGIES_ASTHMA#
+#PEC_ANEMIA_SICKLE_CELL#
+#PEC_BLEEDING_TENDENCIES#
+#PEC_DIABETES_GOUT#
+#PEC_CANCER_TUMOR#
+#PEC_EPILEPSY#
+#PEC_YELLOW_JAUNDICE#
+#PEC_MISSING_ORGANS#
+#PEC_HIGH_BLOOD_PRESSURE#
+#PEC_KIDNEY_BLADDER_TROUBLE#
+#PEC_ULCER#
+#PEC_RHEUMATIC_FEVER#
+#PEC_RHEUMATISM_ARTHRITIS#
+#PEC_HEART_TROUBLE#
+#PEC_ANXIETY#
+#PEC_DEPRESSION#
+#PEC_BIPOLAR_DISORDER#
+#PEC_EATING_DISORDER#
+#PEC_OTHER_MENTAL_HEALTH_DISORDER#
+<ul></td>
+    </tr>
+</table>
+
+
+<hr align="center">
+
+<div align="left"><table border="0">
+    <tr>
+      <td valign="top"><div align="left"><p><b>FMS Baseline Score:</b></td>
+      <td>#FMS_SCORE_BASELINE# #FMS_SCORE_BASELINE_DATE#</td>
+    </tr>
+    <tr>
+      <td valign="top"><div align="left"><p><b>FMS Latest Score:</b></td>
+      <td>#FMS_SCORE_LATEST# #FMS_SCORE_LATEST_DATE#</td>
+    </tr>
+</table></div>
+
+
+<hr align="center">
+
+  <div align="left"><table border="0">
+    <tr>
+      <td valign="top"><div align="left"><p><b>Local Address:</b></td>
+      <td><textarea rows="3" name="LOCAL_ADDRESS" wrap="virtual" cols="25"></textarea></td>
+    </tr>
+    <tr>
+      <td valign="top"><div align="left"><p><b>Phone:</b></td>
+      <td><input type="text" name="LOCAL_PHONE" size="14"></td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Perm Address:</b></td>
+      <td><textarea rows="3" name="PERM_ADDRESS" wrap="virtual" cols="25"></textarea></td>
+    </tr>
+    <tr>
+      <td valign="top"><div align="left"><p><b>Phone:</b></td>
+      <td><input type="text" name="PERM_PHONE" size="14"></td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Email:</b></td>
+      <td><input type="text" name="EMAIL" size="25"></td>
+    </tr>
+</table></div>
+
+<hr align="center">
+
+  <div align="left"><p><b>Database Status:</b>&nbsp; <select name="STATUS" size="1">
+    <option selected value="Active">Active</option>
+    <option value="Archived">Archived</option>
+  </select></p>
+  </div>
+
+  </div><div align="left"><p><input type="submit" value="Submit" name=" Submit "></p>
+  </div>
+
+</form>
+</body>
+</html>

@@ -1,0 +1,587 @@
+#!/usr/bin/perl
+
+#
+# time_lost_view.pl
+#
+# Copyright 2007, Michael Duff-Xu
+# Author: Michael J. Duff-Xu
+# Last modified: June 5, 2007
+#
+# Description:
+#
+
+require "global.pl";
+require "auth_user.pl";
+require "parse.pl";
+require "html_utilities.pl";
+require "database_utilities.pl";
+
+use DBI;
+use POSIX qw(strftime);
+use Time::Local qw(timelocal);
+
+
+auth_user ($CLEARANCE_STUDENT);
+
+$cgi_data = parse_cgi_data();
+
+prepare_cgi_data ($cgi_data);
+
+print_html_header ("Query results", $BASE_HREF);
+
+my $sql = build_sql_statement();                # First build the SQL statement
+
+my $dbh = database_connect();                   # Establish connection to the database
+
+my $sth = execute_sql_statement ($dbh, $sql);   # Now execute the query
+
+display_results ($dbh, $sth);                   # Display the results
+
+database_disconnect ($dbh);                     # Disconnect from the database
+
+print_html_trailer();
+
+exit;
+
+
+
+
+sub build_sql_statement
+{
+    # Include pre-existing conditions from HEALTH_HISTORY2 form
+
+    # Calculate time lost due to the injury --> look at participation status on
+    # records associated with the injury
+
+    # Treated at Miami -- look at treatment records for any that
+    # specify one of the pre-existing conditions(?) as an associated injury
+
+    my $sql = "
+SELECT ALV.ORIG_VERSION_ID as ORIG_ATHLETE_ID, IRLV.ORIG_VERSION_ID as ORIG_INJURY_REPORT_ID,
+       ALV.LAST_NAME, ALV.FIRST_NAME, ALV.MIDDLE_NAME,
+       IRLV.SPORT, IRLV.POSITION, IRLV.BODY_PART, IRLV.INJURY_TYPE, IRLV.INJURY_STATUS,
+       TO_CHAR(IRLV.DATE_REPORTED, 'MM-DD-YYYY') as DATE_REPORTED_CHAR,
+       IRLV.ASSOCIATED_INJURIES
+
+FROM   ATHLETE_LV as ALV, INJURY_REPORT_LV as IRLV
+WHERE  ALV.ORIG_VERSION_ID = IRLV.ATHLETE_ID
+";
+
+
+    if ($cgi_data->{'LAST_NAME'}) {
+	$sql .= " and UPPER(ALV.LAST_NAME) like UPPER('$cgi_data->{'LAST_NAME'}%')";
+    }
+
+    if ($cgi_data->{'FIRST_NAME'}) {
+	$sql .= " and UPPER(ALV.FIRST_NAME) like UPPER('$cgi_data->{'FIRST_NAME'}%')";
+    }
+
+    if ($cgi_data->{'MIDDLE_NAME'}) {
+	$sql .= " and UPPER(ALV.MIDDLE_NAME) like UPPER('$cgi_data->{'MIDDLE_NAME'}%')";
+    }
+
+    if ($cgi_data->{'SEX'}) {
+	$sql .= " and ALV.SEX = '$cgi_data->{'SEX'}'";
+    }
+
+    if ($cgi_data->{'STATUS'}) {
+	$sql .= " and ALV.STATUS = '$cgi_data->{'STATUS'}'";
+    }
+
+    if ($cgi_data->{'SPORT'}) {
+	$sql .= " and IRLV.SPORT = '$cgi_data->{'SPORT'}'";
+    }
+
+    if ($cgi_data->{'INJURY_ENVIRONMENT'}) {
+	$sql .= " and IRLV.INJURY_ENVIRONMENT = '$cgi_data->{'INJURY_ENVIRONMENT'}'";
+    }
+
+    if ($cgi_data->{'POSITION'}) {
+	$sql .= " and IRLV.POSITION = '$cgi_data->{'POSITION'}'";
+    }
+
+    if ($cgi_data->{'BODY_PART'}) {
+	$sql .= " and IRLV.BODY_PART = '$cgi_data->{'BODY_PART'}'";
+    }
+
+    if ($cgi_data->{'INJURY_TYPE'}) {
+	$sql .= " and IRLV.INJURY_TYPE = '$cgi_data->{'INJURY_TYPE'}'";
+    }
+
+    if ($cgi_data->{'INJURY_STATUS'}) {
+	$sql .= " and IRLV.INJURY_STATUS = '$cgi_data->{'INJURY_STATUS'}'";
+    }
+
+    if ($cgi_data->{'DATE_REPORTED1'}) {
+	$sql .= " and IRLV.DATE_REPORTED >= TO_DATE('$cgi_data->{'DATE_REPORTED1'}', 'MM-DD-YYYY')";
+    }
+
+    if ($cgi_data->{'DATE_REPORTED2'}) {
+	$sql .= " and IRLV.DATE_REPORTED <= TO_DATE('$cgi_data->{'DATE_REPORTED2'}', 'MM-DD-YYYY')";
+    }
+
+    $sql .= " ORDER BY ALV.LAST_NAME, IRLV.DATE_REPORTED DESC";
+
+
+    $sql = format_sql_statement ($sql);
+
+    #print "$sql <br>\n";
+
+    return $sql;
+}
+
+
+
+
+sub display_results
+{
+    my ($dbh, $sth) = @_;
+
+    print <<EOF;
+<table border="0" width="100%">
+EOF
+    ;
+
+
+    my $num_rows = 0;
+    my $prev_orig_athlete_id = '';
+
+    my $db_data;
+    while ($db_data = $sth->fetchrow_hashref) {
+	$num_rows++;
+
+	$orig_athlete_id       = $db_data->{'orig_athlete_id'};
+	$orig_injury_report_id = $db_data->{'orig_injury_report_id'};
+
+
+	# Now get all treatment forms relating to this injury:
+	# (these are needed to determine the amount of time lost)
+	my ($status_counts, $num_forms) =
+	    get_time_lost ($dbh, $orig_athlete_id, "[IR:$orig_injury_report_id]",
+			   $orig_injury_report_id);
+	#print "time_lost = $time_lost, num_forms = $num_forms<br>\n";  # testing
+
+	my $time_lost =
+	    "Out: "       .
+	    (defined ($status_counts->{'Out'}) ? $status_counts->{'Out'} : 0) .
+	    ", Limited: " .
+	    (defined ($status_counts->{'Limited'}) ? $status_counts->{'Limited'} : 0) .
+	    ", GAPP: "    .
+	    (defined ($status_counts->{'GAPP'}) ? $status_counts->{'GAPP'} : 0);
+
+	# Print new header for each athlete:
+	if ($orig_athlete_id != $prev_orig_athlete_id) {
+	    # Display the pre-existing condition info for the athlete:
+	    if ($prev_orig_athlete_id && $prev_db_data) {
+		display_preexisting_conditions
+		    ($dbh, $prev_orig_athlete_id,
+		     $prev_db_data->{'last_name'} . ", " .
+		     $prev_db_data->{'first_name'} . " " . $prev_db_data->{'middle_name'},
+		     $prev_db_data->{'sport'});
+	    }
+
+	    print <<EOF;
+
+<tr><td colspan="10"><hr></td></tr>
+<tr>
+  <td><b><u>Athlete</u></b></td>
+  <td><b><u>Sport</u></b></td>
+  <td><b><u>Pos</u></b></td>
+  <td><b><u>Body Part</u></b></td>
+  <td><b><u>Injury Type</u></b></td>
+  <td><b><u>Date Reported</u></b></td>
+  <td><b><u>Associated Injuries</u></b></td>
+  <td><b><u>Time Lost (Days)</u></b></td>
+</tr>
+EOF
+    ;
+	}
+
+
+	print <<EOF;
+
+<tr>
+  <td><a href="/bin/athlete_homepage.pl?ORIG_ATHLETE_ID=$orig_athlete_id" target="main">$db_data->{'last_name'}, $db_data->{'first_name'} $db_data->{'middle_name'}</a></td>
+  <td>$db_data->{'sport'}</td>
+  <td>$db_data->{'position'}</td>
+  <td>$db_data->{'body_part'}</td>
+  <td>$db_data->{'injury_type'}</td>
+  <td><a href="/bin/process_form?OPERATION=VIEW_FORM&VIEW_LATEST=1&FORM_NAME=INJURY_REPORT&ORIG_VERSION_ID=$orig_injury_report_id&ORIG_ATHLETE_ID=$orig_athlete_id">$db_data->{'date_reported_char'}</a></td>
+  <td>$db_data->{'associated_injuries'}</td>
+  <td>$time_lost</td>
+</tr>
+EOF
+    ;
+
+
+	$prev_orig_athlete_id = $orig_athlete_id;
+	$prev_db_data = $db_data;
+    }
+
+    if ($prev_orig_athlete_id && $prev_db_data) {
+	display_preexisting_conditions
+	    ($dbh, $prev_orig_athlete_id,
+	     $prev_db_data->{'last_name'} . ", " .
+	     $prev_db_data->{'first_name'} . " " . $prev_db_data->{'middle_name'},
+	     $prev_db_data->{'sport'});
+    }
+
+
+    $sth->finish;
+
+
+    print <<EOF;
+
+</table>
+
+<hr>
+
+<b>$num_rows Report(s) Found</b>
+EOF
+    ;
+}
+
+
+
+sub display_preexisting_conditions
+{
+    my ($dbh, $athlete_id, $name, $sport) = @_;
+
+    print <<EOF;
+
+<tr>
+  <td colspan="2"> </td>
+  <td colspan="3"><b><u>Pre-Existing Conditions</u></b></td>
+  <td><b><u>Date Occurred</u></b></td>
+  <td><b><u>Treated at Miami</u></b></td>
+  <td><b><u>Time Lost (Days)</u></b></td>
+</tr>
+EOF
+;
+
+
+    # Query for the athlete's PEC's (from the Health History v2 form):
+    my $sql1 = "
+SELECT
+ ORIG_VERSION_ID,
+ 'PEC: Head (' || substr (PEC_HEAD, 0, 0) || COALESCE (TO_CHAR (PEC_HEAD1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_HEAD,
+ 'PEC: Head (' || substr (PEC_HEAD, 0, 0) || COALESCE (TO_CHAR (PEC_HEAD2_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_HEAD,
+ 'PEC: Head (' || substr (PEC_HEAD, 0, 0) || COALESCE (TO_CHAR (PEC_HEAD3_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_HEAD,
+ 'PEC: Head (' || substr (PEC_HEAD, 0, 0) || COALESCE (TO_CHAR (PEC_HEAD4_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_HEAD,
+ 'PEC: Head (' || substr (PEC_HEAD, 0, 0) || COALESCE (TO_CHAR (PEC_HEAD5_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_HEAD,
+ 'PEC: Unconscious (' || substr (PEC_UNCONSCIOUS, 0, 0) || COALESCE (TO_CHAR (PEC_UNCONSCIOUS1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_UNCONSCIOUS,
+ 'PEC: Unconscious (' || substr (PEC_UNCONSCIOUS, 0, 0) || COALESCE (TO_CHAR (PEC_UNCONSCIOUS2_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_UNCONSCIOUS,
+ 'PEC: Unconscious (' || substr (PEC_UNCONSCIOUS, 0, 0) || COALESCE (TO_CHAR (PEC_UNCONSCIOUS3_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_UNCONSCIOUS,
+ 'PEC: Unconscious (' || substr (PEC_UNCONSCIOUS, 0, 0) || COALESCE (TO_CHAR (PEC_UNCONSCIOUS4_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_UNCONSCIOUS,
+ 'PEC: Unconscious (' || substr (PEC_UNCONSCIOUS, 0, 0) || COALESCE (TO_CHAR (PEC_UNCONSCIOUS5_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_UNCONSCIOUS,
+ 'PEC: Shoulder (' || substr (PEC_SHOULDER, 0, 0) || COALESCE (TO_CHAR (PEC_SHOULDER1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_SHOULDER,
+ 'PEC: Shoulder (' || substr (PEC_SHOULDER, 0, 0) || COALESCE (TO_CHAR (PEC_SHOULDER2_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_SHOULDER,
+ 'PEC: Shoulder (' || substr (PEC_SHOULDER, 0, 0) || COALESCE (TO_CHAR (PEC_SHOULDER3_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_SHOULDER,
+ 'PEC: Shoulder (' || substr (PEC_SHOULDER, 0, 0) || COALESCE (TO_CHAR (PEC_SHOULDER4_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_SHOULDER,
+ 'PEC: Shoulder (' || substr (PEC_SHOULDER, 0, 0) || COALESCE (TO_CHAR (PEC_SHOULDER5_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_SHOULDER,
+ 'PEC: Neck (' || substr (PEC_NECK, 0, 0) || COALESCE (TO_CHAR (PEC_NECK1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_NECK,
+ 'PEC: Neck (' || substr (PEC_NECK, 0, 0) || COALESCE (TO_CHAR (PEC_NECK2_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_NECK,
+ 'PEC: Neck (' || substr (PEC_NECK, 0, 0) || COALESCE (TO_CHAR (PEC_NECK3_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_NECK,
+ 'PEC: Neck (' || substr (PEC_NECK, 0, 0) || COALESCE (TO_CHAR (PEC_NECK4_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_NECK,
+ 'PEC: Neck (' || substr (PEC_NECK, 0, 0) || COALESCE (TO_CHAR (PEC_NECK5_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_NECK,
+ 'PEC: Back (' || substr (PEC_BACK, 0, 0) || COALESCE (TO_CHAR (PEC_BACK1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_BACK,
+ 'PEC: Back (' || substr (PEC_BACK, 0, 0) || COALESCE (TO_CHAR (PEC_BACK2_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_BACK,
+ 'PEC: Back (' || substr (PEC_BACK, 0, 0) || COALESCE (TO_CHAR (PEC_BACK3_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_BACK,
+ 'PEC: Back (' || substr (PEC_BACK, 0, 0) || COALESCE (TO_CHAR (PEC_BACK4_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_BACK,
+ 'PEC: Back (' || substr (PEC_BACK, 0, 0) || COALESCE (TO_CHAR (PEC_BACK5_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_BACK,
+ 'PEC: Ribs (' || substr (PEC_RIBS, 0, 0) || COALESCE (TO_CHAR (PEC_RIBS1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_RIBS,
+ 'PEC: Ribs (' || substr (PEC_RIBS, 0, 0) || COALESCE (TO_CHAR (PEC_RIBS2_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_RIBS,
+ 'PEC: Ribs (' || substr (PEC_RIBS, 0, 0) || COALESCE (TO_CHAR (PEC_RIBS3_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_RIBS,
+ 'PEC: Ribs (' || substr (PEC_RIBS, 0, 0) || COALESCE (TO_CHAR (PEC_RIBS4_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_RIBS,
+ 'PEC: Hips (' || substr (PEC_HIPS, 0, 0) || COALESCE (TO_CHAR (PEC_HIPS5_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_HIPS,
+ 'PEC: Lower Leg (' || substr (PEC_LOWER_LEG, 0, 0) || COALESCE (TO_CHAR (PEC_LOWER_LEG1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_LOWER_LEG,
+ 'PEC: Lower Leg (' || substr (PEC_LOWER_LEG, 0, 0) || COALESCE (TO_CHAR (PEC_LOWER_LEG2_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_LOWER_LEG,
+ 'PEC: Lower Leg (' || substr (PEC_LOWER_LEG, 0, 0) || COALESCE (TO_CHAR (PEC_LOWER_LEG3_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_LOWER_LEG,
+ 'PEC: Lower Leg (' || substr (PEC_LOWER_LEG, 0, 0) || COALESCE (TO_CHAR (PEC_LOWER_LEG4_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_LOWER_LEG,
+ 'PEC: Lower Leg (' || substr (PEC_LOWER_LEG, 0, 0) || COALESCE (TO_CHAR (PEC_LOWER_LEG5_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_LOWER_LEG,
+ 'PEC: Thigh (' || substr (PEC_THIGH, 0, 0) || COALESCE (TO_CHAR (PEC_THIGH1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_THIGH,
+ 'PEC: Thigh (' || substr (PEC_THIGH, 0, 0) || COALESCE (TO_CHAR (PEC_THIGH2_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_THIGH,
+ 'PEC: Thigh (' || substr (PEC_THIGH, 0, 0) || COALESCE (TO_CHAR (PEC_THIGH3_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_THIGH,
+ 'PEC: Thigh (' || substr (PEC_THIGH, 0, 0) || COALESCE (TO_CHAR (PEC_THIGH4_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_THIGH,
+ 'PEC: Thigh (' || substr (PEC_THIGH, 0, 0) || COALESCE (TO_CHAR (PEC_THIGH5_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_THIGH,
+ 'PEC: Knee (' || substr (PEC_KNEE, 0, 0) || COALESCE (TO_CHAR (PEC_KNEE1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_KNEE,
+ 'PEC: Knee (' || substr (PEC_KNEE, 0, 0) || COALESCE (TO_CHAR (PEC_KNEE2_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_KNEE,
+ 'PEC: Knee (' || substr (PEC_KNEE, 0, 0) || COALESCE (TO_CHAR (PEC_KNEE3_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_KNEE,
+ 'PEC: Knee (' || substr (PEC_KNEE, 0, 0) || COALESCE (TO_CHAR (PEC_KNEE4_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_KNEE,
+ 'PEC: Knee (' || substr (PEC_KNEE, 0, 0) || COALESCE (TO_CHAR (PEC_KNEE5_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_KNEE,
+ 'PEC: Ankle (' || substr (PEC_ANKLE, 0, 0) || COALESCE (TO_CHAR (PEC_ANKLE1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_ANKLE,
+ 'PEC: Ankle (' || substr (PEC_ANKLE, 0, 0) || COALESCE (TO_CHAR (PEC_ANKLE2_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_ANKLE,
+ 'PEC: Ankle (' || substr (PEC_ANKLE, 0, 0) || COALESCE (TO_CHAR (PEC_ANKLE3_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_ANKLE,
+ 'PEC: Ankle (' || substr (PEC_ANKLE, 0, 0) || COALESCE (TO_CHAR (PEC_ANKLE4_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_ANKLE,
+ 'PEC: Ankle (' || substr (PEC_ANKLE, 0, 0) || COALESCE (TO_CHAR (PEC_ANKLE5_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_ANKLE,
+ 'PEC: Elbow (' || substr (PEC_ELBOW, 0, 0) || COALESCE (TO_CHAR (PEC_ELBOW1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_ELBOW,
+ 'PEC: Elbow (' || substr (PEC_ELBOW, 0, 0) || COALESCE (TO_CHAR (PEC_ELBOW2_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_ELBOW,
+ 'PEC: Elbow (' || substr (PEC_ELBOW, 0, 0) || COALESCE (TO_CHAR (PEC_ELBOW3_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_ELBOW,
+ 'PEC: Elbow (' || substr (PEC_ELBOW, 0, 0) || COALESCE (TO_CHAR (PEC_ELBOW4_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_ELBOW,
+ 'PEC: Elbow (' || substr (PEC_ELBOW, 0, 0) || COALESCE (TO_CHAR (PEC_ELBOW5_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_ELBOW,
+ 'PEC: Hand/Wrist (' || substr (PEC_HAND_WRIST, 0, 0) || COALESCE (TO_CHAR (PEC_HAND_WRIST1_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_HAND_WRIST,
+ 'PEC: Hand/Wrist (' || substr (PEC_HAND_WRIST, 0, 0) || COALESCE (TO_CHAR (PEC_HAND_WRIST2_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_HAND_WRIST,
+ 'PEC: Hand/Wrist (' || substr (PEC_HAND_WRIST, 0, 0) || COALESCE (TO_CHAR (PEC_HAND_WRIST3_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_HAND_WRIST,
+ 'PEC: Hand/Wrist (' || substr (PEC_HAND_WRIST, 0, 0) || COALESCE (TO_CHAR (PEC_HAND_WRIST4_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_HAND_WRIST,
+ 'PEC: Hand/Wrist (' || substr (PEC_HAND_WRIST, 0, 0) || COALESCE (TO_CHAR (PEC_HAND_WRIST5_DATE_OCCURRED, 'MM-DD-YYYY'), '??-??-????') || ')' as PEC_HAND_WRIST
+
+
+FROM health_history2_lv where ATHLETE_ID = $athlete_id
+AND health_history2_id = (select MAX (health_history2_id) from health_history2_lv where athlete_id = $athlete_id);
+";
+
+
+    #print "sql1: $sql1<br>\n";  # testing
+
+    my $sth1 = execute_sql_statement ($dbh, $sql1);   # Now execute the query
+
+    my $db_data1 = $sth1->fetchrow_hashref;  # max of one row will be returned
+
+
+    #print "processing health history form PEC info...<br>\n";  # testing
+
+    if ($db_data1) {
+	my $orig_version_id = $db_data1->{'orig_version_id'};
+
+	foreach my $col (keys (%$db_data1)) {
+	    my $data = $db_data1->{$col};
+	    if ($data !~ /^(PEC: (.*?)) \((.*)\)/) { next; }
+	    my $pec = $1;
+	    my $body_part = "$2 injury";
+	    my $date_occurred = $3;
+
+	    # Foreach PEC, find all associated treatment forms:
+	    my ($status_counts, $num_forms) = get_time_lost ($dbh, $athlete_id, $pec);
+	    #print "time_lost = $time_lost, num_forms = $num_forms<br>\n";  # testing
+
+	    my $time_lost =
+		"Out: "       .
+		(defined ($status_counts->{'Out'}) ? $status_counts->{'Out'} : 0) .
+		", Limited: " .
+		(defined ($status_counts->{'Limited'}) ? $status_counts->{'Limited'} : 0) .
+		", GAPP: "    .
+		(defined ($status_counts->{'GAPP'}) ? $status_counts->{'GAPP'} : 0);
+
+	    # If any found, this is an indication that it was treated at Miami:
+	    my $treated_at_miami = ($num_forms > 0 ? 'Yes' : 'No');
+
+	    print <<EOF;
+<tr>
+  <td><a href="/bin/athlete_homepage.pl?ORIG_ATHLETE_ID=$athlete_id" target="main">$name</a></td>
+  <td>$sport</td>
+  <td colspan="3">$body_part</td>
+  <td><a href="/bin/process_form?OPERATION=VIEW_FORM&VIEW_LATEST=1&FORM_NAME=HEALTH_HISTORY2&ORIG_VERSION_ID=$orig_version_id&ORIG_ATHLETE_ID=$athlete_id">$date_occurred</a></td>
+  <td>$treated_at_miami</td>
+  <td>$time_lost</td>
+</tr>
+
+EOF
+;
+	}
+    }
+
+
+
+    # Query for more of the athlete's PEC's (from the Family History form):
+    my $sql2 = "
+SELECT
+ ORIG_VERSION_ID,
+ 'PEC: Allergies or Asthma' || substr (YOUR_ALLERGIES_ASTHMA, 0, 0) as PEC_ALLERGIES_ASTHMA,
+ 'PEC: Anemia or Sickle Cell' || substr (YOUR_ANEMIA_SICKLE_CELL, 0, 0) as PEC_ANEMIA_SICKLE_CELL,
+ 'PEC: Bleeding Tendencies' || substr (YOUR_BLEEDING_TENDENCIES, 0, 0) as PEC_BLEEDING_TENDENCIES,
+ 'PEC: Diabetes / Gout' || substr (YOUR_DIABETES_GOUT, 0, 0) as PEC_DIABETES_GOUT,
+ 'PEC: Cancer or Tumor' || substr (YOUR_CANCER_TUMOR, 0, 0) as PEC_CANCER_TUMOR,
+ 'PEC: Epilepsy' || substr (YOUR_EPILEPSY, 0, 0) as PEC_EPILEPSY,
+ 'PEC: Yellow Jaundice' || substr (YOUR_YELLOW_JAUNDICE, 0, 0) as PEC_YELLOW_JAUNDICE,
+ 'PEC: Missing any Paired Organs' || substr (YOUR_MISSING_ORGANS, 0, 0) as PEC_MISSING_ORGANS,
+ 'PEC: High Blood Pressure' || substr (YOUR_HIGH_BLOOD_PRESSURE, 0, 0) as PEC_HIGH_BLOOD_PRESSURE,
+ 'PEC: Kidney or Bladder Trouble' || substr (YOUR_KIDNEY_BLADDER_TROUBLE, 0, 0) as PEC_KIDNEY_BLADDER_TROUBLE,
+ 'PEC: Ulcer' || substr (YOUR_ULCER, 0, 0) as PEC_ULCER,
+ 'PEC: Rheumatic Fever' || substr (YOUR_RHEUMATIC_FEVER, 0, 0) as PEC_RHEUMATIC_FEVER,
+ 'PEC: Rheumatism or Arthritis' || substr (YOUR_RHEUMATISM_ARTHRITIS, 0, 0) as PEC_RHEUMATISM_ARTHRITIS,
+ 'PEC: Heart Trouble' || substr (YOUR_HEART_TROUBLE, 0, 0) as PEC_HEART_TROUBLE
+
+FROM family_history_lv where ATHLETE_ID = $athlete_id
+AND family_history_id = (select MAX (family_history_id) from family_history_lv where athlete_id = $athlete_id);
+";
+
+
+    #print "sql2: $sql2<br>\n";  # testing
+
+    my $sth2 = execute_sql_statement ($dbh, $sql2);   # Now execute the query
+
+    my $db_data2 = $sth2->fetchrow_hashref;  # max of one row will be returned
+
+    #print "processing family history PEC info...<br>\n";  # testing
+
+    if ($db_data2) {
+	my $orig_version_id = $db_data2->{'orig_version_id'};
+
+	foreach my $col (keys (%$db_data2)) {
+	    my $data = $db_data2->{$col};
+	    if ($data !~ /^(PEC: ([^;]*))/) { next; }
+	    my $pec  = $1;
+	    my $type = $2;
+
+	    # Foreach PEC, find all associated treatment forms:
+	    my ($status_counts, $num_forms) = get_time_lost ($dbh, $athlete_id, $pec);
+	    #print "time_lost = $time_lost, num_forms = $num_forms<br>\n";  # testing
+
+	    my $time_lost =
+		"Out: "       .
+		(defined ($status_counts->{'Out'}) ? $status_counts->{'Out'} : 0) .
+		", Limited: " .
+		(defined ($status_counts->{'Limited'}) ? $status_counts->{'Limited'} : 0) .
+		", GAPP: "    .
+		(defined ($status_counts->{'GAPP'}) ? $status_counts->{'GAPP'} : 0);
+
+	    # If any found, this is an indication that it was treated at Miami:
+	    my $treated_at_miami = ($num_forms > 0 ? 'Yes' : 'No');
+
+	    print <<EOF;
+<tr>
+  <td><a href="/bin/athlete_homepage.pl?ORIG_ATHLETE_ID=$athlete_id" target="main">$name</a></td>
+  <td>$sport</td>
+  <td colspan="3">$type</td>
+  <td><a href="/bin/process_form?OPERATION=VIEW_FORM&VIEW_LATEST=1&FORM_NAME=FAMILY_HISTORY&ORIG_VERSION_ID=$orig_version_id&ORIG_ATHLETE_ID=$athlete_id">Family History</a></td>
+  <td>$treated_at_miami</td>
+  <td>$time_lost</td>
+</tr>
+
+EOF
+;
+	}
+    }
+
+
+
+    if (! $db_data1 && ! $db_data2) {  # no PEC's / health history form / family history form
+	print <<EOF;
+<tr>
+  <td colspan="2"> </td>
+  <td colspan="6">None</td>
+</tr>
+
+EOF
+    ;
+	return;
+    }
+
+
+}
+
+
+
+sub get_time_lost
+{
+    my ($dbh, $athlete_id, $associated_injuries, $injury_report_id) = @_;
+
+    # Get all treatment records that pertain to this injury (PEC or other):
+    # Look at participation status
+    # Sort in order of form date ascending
+
+    my $sql = "
+SELECT DISTINCT FORM_DATE, TO_CHAR (FORM_DATE, 'MM-DD-YYYY') as FORM_DATE_CHAR,
+       PARTICIPATION_STATUS
+  from TREATMENT_ADDTNL_INFO_LV
+WHERE
+  ATHLETE_ID = $athlete_id AND ASSOCIATED_INJURIES like '%$associated_injuries%'
+
+UNION ALL
+
+SELECT DISTINCT TREATMENT_DATE as FORM_DATE,
+       TO_CHAR (TREATMENT_DATE, 'MM-DD-YYYY') as FORM_DATE_CHAR,
+       PARTICIPATION_STATUS
+  from TREATMENT_RECORD_LV
+WHERE
+  ATHLETE_ID = $athlete_id AND ASSOCIATED_INJURIES like '%$associated_injuries%'
+
+UNION ALL
+
+SELECT DISTINCT FORM_DATE, TO_CHAR (FORM_DATE, 'MM-DD-YYYY') as FORM_DATE_CHAR,
+       PARTICIPATION_STATUS
+  from RECOMMENDED_TREATMENT_LV
+WHERE
+  ATHLETE_ID = $athlete_id AND ASSOCIATED_INJURIES like '%$associated_injuries%'
+
+UNION ALL
+
+SELECT DISTINCT FORM_DATE, TO_CHAR (FORM_DATE, 'MM-DD-YYYY') as FORM_DATE_CHAR,
+       STATUS as PARTICIPATION_STATUS
+  from COACHES_REPORT_LV
+WHERE
+  ATHLETE_ID = $athlete_id AND ASSOCIATED_INJURIES like '%$associated_injuries%'
+";
+
+
+    if ($injury_report_id) {
+	$sql .= "
+UNION ALL
+
+SELECT DISTINCT FORM_DATE, TO_CHAR (FORM_DATE, 'MM-DD-YYYY') as FORM_DATE_CHAR,
+       PARTICIPATION_STATUS
+  from INJURY_ADDTNL_INFO_LV
+WHERE
+  INJURY_REPORT_ID = $injury_report_id
+
+UNION ALL
+
+SELECT DISTINCT FORM_DATE, TO_CHAR (FORM_DATE, 'MM-DD-YYYY') as FORM_DATE_CHAR,
+       PARTICIPATION_STATUS
+  from PHYSICIAN_REMARK_LV
+WHERE
+  INJURY_REPORT_ID = $injury_report_id
+
+UNION ALL
+
+SELECT DISTINCT FORM_DATE, TO_CHAR (FORM_DATE, 'MM-DD-YYYY') as FORM_DATE_CHAR,
+       PARTICIPATION_STATUS
+  from TREATMENT_REMARK_LV
+WHERE
+  INJURY_REPORT_ID = $injury_report_id
+";
+    }
+
+    $sql .= " order by FORM_DATE";
+
+    #print "sql: $sql<br>\n";  # testing
+
+    my $sth = execute_sql_statement ($dbh, $sql);   # Now execute the query
+
+    my $num_rows       = 0;
+    my $db_data;
+    my $status_counts = {};  # hash ref
+    while ($db_data = $sth->fetchrow_hashref) {
+	# Note: We're focused in on a specific injury (or PEC) here,
+	# looking at all of the associated records
+
+	# Calculate duration of gap between Full status:
+	# Full --> Out --> Limited --> GAPP --> Full
+
+	$num_rows++;  # keep track of how many forms/records we find
+
+	$status_counts->{$db_data->{'participation_status'}}++;
+    }
+
+    return ($status_counts, $num_rows);
+}
+
+
+
+# Return the interval in # of days:
+sub get_interval
+{
+    my ($begin_date, $end_date) = @_;
+
+    #print "get_interval: $begin_date thru $end_date<br>\n";   # testing
+
+    # Convert dates to unix times (expressed in seconds):
+    $begin_date =~ /(\d+)\-(\d+)\-(\d+)/;
+    my $begin_date_timestamp = timelocal (0, 0, 0, $2, ($1 - 1), ($3 - 1990));
+
+    $end_date =~ /(\d+)\-(\d+)\-(\d+)/;
+    my $end_date_timestamp = timelocal (0, 0, 0, $2, ($1 - 1), ($3 - 1990));
+
+    # Convert duration from seconds to days:
+    return ($end_date_timestamp - $begin_date_timestamp) / 86400;
+}

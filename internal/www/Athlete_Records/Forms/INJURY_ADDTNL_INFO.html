@@ -1,0 +1,178 @@
+<html>
+
+<head>
+  <title>INJURY ADDITIONAL INFORMATION</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+FORM_DATE: not null
+FORM_DATE: date
+SUBJECT: maxsize=500
+PARTICIPATION_STATUS: maxsize=50
+--- END DATA VERIFICATION ---
+
+
+REVIEW_REQUIRED_CLEARANCE=STAFF
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT,
+TO_CHAR(now(), 'MM-DD-YYYY') as FORM_DATE
+
+FROM athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+
+
+SELECT
+     POSITION, BODY_PART, BODY_PART_DETAIL,
+     INJURY_TYPE, INJURY_TYPE_DETAIL
+     from injury_report_lv
+     WHERE ORIG_VERSION_ID = $ORIG_INJURY_REPORT_ID;
+
+
+SELECT PARTICIPATION_STATUS, FORM_DATE as FORM_DATE2
+  from injury_addtnl_info_lv
+WHERE
+  INJURY_REPORT_ID = $ORIG_INJURY_REPORT_ID
+
+UNION ALL
+
+SELECT PARTICIPATION_STATUS, FORM_DATE as FORM_DATE2
+  from physician_remark_lv
+WHERE
+  INJURY_REPORT_ID = $ORIG_INJURY_REPORT_ID
+
+UNION ALL
+
+SELECT PARTICIPATION_STATUS, FORM_DATE as FORM_DATE2
+  from treatment_remark_lv
+WHERE
+  INJURY_REPORT_ID = $ORIG_INJURY_REPORT_ID
+
+order by FORM_DATE2 desc;
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+INSERT into injury_addtnl_info
+(
+
+INJURY_ADDTNL_INFO_ID, ORIG_VERSION_ID, INJURY_REPORT_ID, FORM_DATE,
+PARTICIPATION_STATUS, SUBJECT, ADDTNL_INFO, REVIEW_REQUIRED,
+CONFIDENTIAL, FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+)
+values
+(
+
+nextval('new_injury_addtnl_info_id'), $ORIG_VERSION_ID,
+$ORIG_INJURY_REPORT_ID, TO_DATE($FORM_DATE, 'MM-DD-YYYY'),
+$PARTICIPATION_STATUS, $SUBJECT, $ADDTNL_INFO, $REVIEW_REQUIRED,
+$CONFIDENTIAL, $FORM_SIGN_USER_ID, now(), $FORM_SIGNATURE
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+INJURY_ADDTNL_INFO_ID, ORIG_VERSION_ID, INJURY_REPORT_ID as
+ORIG_INJURY_REPORT_ID, TO_CHAR(FORM_DATE, 'MM-DD-YYYY') as FORM_DATE,
+PARTICIPATION_STATUS, SUBJECT, ADDTNL_INFO, REVIEW_REQUIRED,
+CONFIDENTIAL, FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+FROM injury_addtnl_info
+
+WHERE INJURY_ADDTNL_INFO_ID = $INJURY_ADDTNL_INFO_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+
+
+<body background="/www/background.gif">
+
+<p align="center"><strong>MIAMI UNIVERSITY SPORTS MEDICINE<br>
+INJURY ADDITIONAL INFORMATION</strong></p>
+
+<form name="injury_addtnl_info" method="POST" action="/bin/process_form">
+
+<input type="hidden" name="FORM_NAME" value="INJURY_ADDTNL_INFO">
+
+<table border="0" width="100%">
+    <tr>
+      <td><strong>Athlete: </strong>#LAST_NAME#, #FIRST_NAME# #MIDDLE_NAME#</td>
+      <td><div align="right"><p><strong>Sport: </strong>#SPORT#</td>
+    </tr>
+  </table>
+  <table border="0">
+    <tr>
+      <td><strong>Position:</strong>&nbsp; #POSITION#</td>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td><strong>Body Part:</strong></td>
+      <td>#BODY_PART#</td>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td><strong>Detail:&nbsp; </strong></td>
+      <td>#BODY_PART_DETAIL#</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td><strong>Injury Type: </strong></td>
+      <td>#INJURY_TYPE#</td>
+      <td></td>
+      <td><strong>Detail:</strong></td>
+      <td>#INJURY_TYPE_DETAIL#</td>
+    </tr>
+  </table>
+  <table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td valign="top"><strong>Date:</strong></td>
+      <td valign="top"><table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td><div align="center"><center><p><input type="text" name="FORM_DATE" size="10"><br>
+          mm-dd-yyyy</td>
+        </tr>
+      </table>
+      </td>
+    </tr>
+    <tr align="center">
+      <td valign="top" align="center"><strong>Participation Status:</strong>&nbsp; </td>
+      <td valign="top" align="center"><select name="PARTICIPATION_STATUS" size="1">
+        <option value="Out">Out</option>
+	<option value="Limited">Limited</option>
+	<option value="GAPP">GAPP</option>
+	<option value="Full">Full</option>
+      </select></td>
+    </tr>
+    <tr align="center">
+      <td><strong>Subject: </strong></td>
+      <td><input type="text" name="SUBJECT" size="50"></td>
+    </tr>
+  </table>
+  <div align="left"><p><strong>Additional Information:</strong><br>
+  <textarea rows="10" name="ADDTNL_INFO" cols="60" wrap="virtual"></textarea></p>
+  </div><div align="left"><table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td valign="top"><font color="#FF0000"><strong>CONFIDENTIAL<br>
+      </strong>(staff members only)&nbsp;&nbsp;&nbsp; </font></td>
+      <td valign="top"><input type="radio" value="No" name="CONFIDENTIAL" checked>No - allow all
+      authorized users to view this information.<br>
+      <input type="radio" name="CONFIDENTIAL" value="Yes">Yes - allow only staff members to view
+      this information.</td>
+    </tr>
+  </table>
+  </div><div align="left"><p><input type="submit" value="Submit"></p>
+  </div>
+</form>
+</body>
+</html>
+

@@ -1,0 +1,183 @@
+<html>
+
+<head>
+  <title>Insurance Worksheet Transactionss View Criteria</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+<body background="/www/background.gif" onLoad="document.insurance_worksheets_view.LAST_NAME.focus();">
+
+<form name="insurance_worksheet_transactions_view" method="GET" action="/bin/insurance_worksheet_transactions_view.pl" target="insurance_worksheet_transactions_view_results">
+
+  <table border="0">
+    <tr>
+      <td valign="middle"><b>Name:</b></td>
+      <td nowrap valign="middle"><input type="text" name="LAST_NAME" size="20"><b> ,</b></td>
+      <td valign="middle"><input type="text" name="FIRST_NAME" size="20"></td>
+      <td valign="middle"><input type="text" name="MIDDLE_NAME" size="20"></td>
+    </tr>
+    <tr>
+      <td valign="top"></td>
+      <td valign="top"><b>Last</b></td>
+      <td valign="top"><b>First</b></td>
+      <td valign="top"><b>Middle</b></td>
+    </tr>
+    <tr>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+    </tr>
+  </table>
+  <table border="0">
+    <tr>
+      <td align="right" valign="middle"><b>Sex:</b></td>
+      <td valign="middle"><select name="SEX" size="1">
+        <option selected value="">All</option>
+        <option value="Female">Female</option>
+        <option value="Male">Male</option>
+      </select></td>
+      <td valign="middle">&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td align="right" valign="middle"><b>Sport:</b></td>
+      <td valign="middle"><select name="SPORT" size="1">
+        <option selected value="">All</option>
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+      <td valign="middle">&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td align="right" valign="middle"><b>Status:</b></td>
+      <td valign="middle"><select name="STATUS" size="1">
+        <option value="">All</option>
+        <option selected value="Active">Active</option>
+        <option value="Archived">Archived</option>
+      </select></td>
+    </tr>
+
+    <tr>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+    </tr>
+
+    <tr>
+    <td colspan="5">
+  <table border="0">
+    <tr>
+      <td valign="middle"><b>Date Received Between:</b></td>
+      <td><input type="text" name="DATE_RECEIVED1" size="10"><br>
+<small>mm-dd-yyyy</small></td>
+      <td align="center"><b>&nbsp; and</b> </td>
+      <td align="center"><input type="text" name="DATE_RECEIVED2" size="10"><br>
+<small>mm-dd-yyyy</small></td>
+    </tr>
+  </table>
+  </td>
+
+   <td valign="middle"></td>
+
+      <td align="right" valign="middle"><b>Medical Provider:</b></td>
+      <td valign="middle"><select name="MEDICAL_PROVIDER" size="1">
+        <option selected value="">All</option>
+        <option value="Other">Other</option>
+        <option value="Anesthesia Associates of Cincinnati">Anesthesia Associates of Cincinnati</option>
+        <option value="DJO">DJO</option>
+        <option value="Family Vision Care">Family Vision Care</option>
+        <option value="Hamco X-Ray">Hamco X-Ray</option>
+        <option value="McCullough Hyde Memorial Hospital">McCullough Hyde Memorial Hospital</option>
+        <option value="Mercy Hospital">Mercy Hospital</option>
+        <option value="Miami University Treasurer">Miami University Treasurer</option>
+        <option value="Midwest Pain Management">Midwest Pain Management</option>
+        <option value="Oxford Radiology">Oxford Radiology</option>
+        <option value="ProScan">ProScan</option>
+        <option value="Talawanda Emergency Physicians">Talawanda Emergency Physicians</option>
+        <option value="Wellington Orthopedics">Wellington Orthopedics</option>
+      </select></td>
+      <td valign="middle">&nbsp;</td>
+    </tr>
+
+    <tr>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+    </tr>
+
+    <tr>
+  <td colspan="5">
+  <table border="0">
+    <tr>
+      <td valign="middle"><b>Service Date Between:</b></td>
+      <td><input type="text" name="SERVICE_DATE1" size="10"><br>
+<small>mm-dd-yyyy</small></td>
+      <td align="center"><b>&nbsp; and</b> </td>
+      <td align="center"><input type="text" name="SERVICE_DATE2" size="10"><br>
+<small>mm-dd-yyyy</small></td>
+    </tr>
+  </table>
+  </td>
+
+   <td valign="middle"></td>
+
+ <td align="right"><b>Sort By: </b></td>
+  <td><select name="SORT_BY" size="1">
+         <option value="ALV.LAST_NAME, ALV.FIRST_NAME" selected="selected">Athlete Name</option>
+         <option value="IRLV.SPORT">Sport</option>
+         <option value="IRLV.DATE_OCCURRED">Injury Date</option>
+         <option value="IWE.DATE_RECEIVED">Date Received</option>
+         <option value="IWE.MEDICAL_PROVIDER">Medical Provider</option>
+         <option value="IWE.SERVICE_DATE">Service Date</option>
+         <option value="IWE.SERVICE_COST">Amount Charged</option>
+         <option value="IWE.PAID_BY_ATHLETE_PRIMARY">Athlete Primary</option>
+         <option value="IWE.PAID_BY_ATHLETE_SECONDARY">Athlete Secondary</option>
+         <option value="IWE.INSURANCE_WRITEOFF">Insurance Writeoff</option>
+         <option value="IWE.PAID_BY_MIAMI_PRIMARY">Maksim</option>
+         <option value="IWE.PAID_BY_MIAMI_SECONDARY">Miami Athlete Insurance</option>
+      </select>
+  </td>
+
+   <td valign="middle"></td>
+ <td align="right"><b>Entries: </b></td>
+  <td><select name="SHOW_HIDE_ENTRIES" size="1">
+         <option value="Show" selected="selected">Show</option>
+         <option value="Hide">Hide</option>
+      </select>
+  </td>
+ </tr>
+</table>
+
+
+<p>
+<input type="submit" value=" List Insurance Worksheet Transactions ">
+<input type="reset" value=" Reset Fields ">
+</p>
+
+
+</form>
+</body>
+</html>
+

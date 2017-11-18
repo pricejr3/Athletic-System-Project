@@ -1,0 +1,18 @@
+create table insurance_worksheet_entries
+(
+entry_id                        int             not null  primary key,
+worksheet_id                    int             not null  references insurance_worksheets (worksheet_id) on delete cascade,
+date_received                   date            not null,
+medical_provider                varchar (500)   not null,
+service_date                    date            not null,
+reference_number                varchar (500),
+service_cost                    float           not null,
+paid_by_athlete_primary         float,
+paid_by_athlete_secondary       float,
+insurance_writeoff              float,
+sub_balance                     float           not null,
+paid_by_miami_primary           float,
+paid_by_miami_secondary         float,
+balance                         float           not null,
+notes                           text
+)

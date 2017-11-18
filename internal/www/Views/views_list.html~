@@ -1,0 +1,65 @@
+<html>
+
+<head>
+<title></title>
+</head>
+
+<body background="/www/background.gif"">
+
+<br>
+<center><img src="views.gif"></center>
+<br><br>
+
+
+<ul>
+<li>
+<a href="Coaches_Reports/coaches_reports_frames.html">Coaches Reports</a><br>
+Creates a coaches report list for the specified sport and date.
+</li>
+</ul>
+
+<ul>
+<li>
+<a href="Injury_Reports/criteria_and_results_frame.html">Injury Reports</a><br>
+Displays a list of all injury reports based on a user-specified search criteria.
+</li>
+</ul>
+
+<ul>
+<li>
+<a href="Injury_Report_Graphs/criteria_and_results_frame.html">Injury Report Graphs</a><br>
+Generates graphs dynamically based on the given query criteria.
+</li>
+</ul>
+
+<ul>
+<li>
+<a href="Insurance_Worksheets/criteria_and_results_frame.html">Insurance Worksheets</a><br>
+Displays a list of all insurance worksheets for athletes matching the search criteria.
+</li>
+</ul>
+
+<ul>
+<li>
+<a href="Multiple_Athlete_Forms/criteria_and_results_frame.html">Multiple Athlete Forms</a><br>
+View/print a specified form for multiple athletes.
+</li>
+</ul>
+
+<ul>
+<li>
+<a href="Recommended_Treatments/criteria_and_results_frame.html">Recommended Treatments</a><br>
+Displays all recommended treatments for a specified facility, date, and time.
+</li>
+</ul>
+
+<ul>
+<li>
+<a href="Unsigned_Forms/criteria_and_results_frame.html">Unsigned Forms</a><br>
+Displays a list of all forms that are missing a second signature.
+</li>
+</ul>
+
+</body>
+</html>
+

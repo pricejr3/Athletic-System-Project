@@ -1,0 +1,259 @@
+#!/usr/bin/perl
+
+# login
+#
+# Copyright 1999, Melampus Enterprises, Inc.
+# Author: Michael J. Duff
+# Last modified: March 28, 1999
+#
+# Description: Logs user into Miami Intranet
+#
+
+require "global.pl";
+require "auth_user.pl";
+require "file_locking.pl";
+require "parse.pl";
+require "html_utilities.pl";
+require "logging.pl";
+require "commands.pl";
+require "encryption.pl";
+require "password.pl";
+
+
+$cgi_data = parse_cgi_data();
+
+
+# Extract information from form:
+# For athlete logins, LOGIN_ID will be "athlete" -- this is a reserved ID
+$login_id = $cgi_data->{'LOGIN_ID'};
+$password = $cgi_data->{'PASSWORD'};
+
+$STUDENT_ACCESS = "$AUTH_DIR/student_access";
+
+$login_id =~ tr/A-Z/a-z/;  # make sure login_id is all lowercase
+$login_id =~ s/^\s+//;     # remove leading whitespace
+$login_id =~ s/\s+$//;     # remove trailing whitespace
+
+# Attempt to log user in:
+# Note that $login_id2 will be different from $login_id for athlete logins
+($login_id2, $session_key) = login_user ($login_id, $password);
+
+if ($session_key) {
+    print_frame_cookie_header ("$login_id Homepage",
+			       $BASE_HREF, $login_id2, $session_key);
+    
+    # Different for athlete logins:
+    if ($login_id eq $ATHLETE_LOGIN_ID) {
+	print <<EOF;
+<frameset framespacing="0" border="false" frameborder="0" rows="33,*">
+  <frame name="header" scrolling="no" noresize src="Navigation/athlete_login_header.html"
+   marginwidth="0" marginheight="0">
+  <frameset framespacing="0" rows="30%,70%" frameborder="1">
+    <frame name="athlete_login_list" src="/bin/athlete_login_list.pl" scrolling="auto">
+    <frame name="athlete_login_body" src="Athlete_Records/athlete_login_instructions.html" scrolling="auto">
+  </frameset>
+
+  <noframes>
+  <body>
+  <p>This page uses frames, but your browser does not support them.</p>
+  </body>
+  </noframes>
+</frameset>
+</html>
+
+EOF
+;
+	exit;
+
+
+    } else {  # For all other (non-athlete) logins:
+	print <<EOF;
+<frameset framespacing="0" border="false" frameborder="0" rows="33,*">
+  <frame name="header" scrolling="no" noresize src="Navigation/header.html"
+   marginwidth="0" marginheight="0">
+  <frame name="main" src="/bin/homepage" scrolling="auto">
+      
+  <noframes>
+  <body>
+  <p>This page uses frames, but your browser does not support them.</p>
+  </body>
+  </noframes>
+</frameset>
+</html>
+
+EOF
+;
+	exit;
+    }
+
+
+} else {
+    print_html_header ("Failed Login", $BASE_HREF);
+
+    print <<EOF;
+<br><br><br><br><br>
+
+<h1 align=center><font color="#ff0000">
+Sorry, your login ID or password was incorrect, or the login date restrictions were not satisfied.
+</font></h1>
+
+<p>
+<center>
+Please try logging in again or contact the MUSM management.
+</center>
+
+<br><br><br>
+<center>
+<a href="/bin/welcome" target="_top"><img src="/www/return_to_login_page.gif" border=1></a>
+</center>
+
+EOF
+    ;
+
+    print_html_trailer();
+}
+
+
+exit;
+
+
+
+
+sub login_user
+{
+    my ($login_id, $password) = @_;
+
+    my $remote_hostname   = $ENV{'REMOTE_HOST'};
+    my $remote_ip_address = $ENV{'REMOTE_ADDR'};
+    
+
+    # Lock the user's password file while waiting.  This ensures that
+    # there can only be one concurrent login attempt at a time:
+    open  (PASSWD, "$AUTH_DIR/$login_id.passwd");
+    flock (PASSWD, $LOCK_EX);
+
+    sleep (2);   # wait for a brief time before doing anything
+
+    flock (PASSWD, $LOCK_UN);
+    close (PASSWD);
+    
+    
+
+    # First check to make sure password file exists:
+    if (! -e "$AUTH_DIR/$login_id.passwd") {
+	print_log ("user $login_id does not exist");
+	return 0;
+    }
+
+    # Athlete logins are handled separately:
+    # Need to get the athlete ID:
+    my $athlete_id = '';
+
+    if ($login_id eq $ATHLETE_LOGIN_ID) {
+	$athlete_id = verify_athlete_login_password ($password);
+	
+	if (! $athlete_id) {
+	    print_log ("failed login attempt by $login_id from $remote_hostname ($remote_ip_address) - incorrect password");
+	    return 0;
+	}
+
+	# TODO: Otherwise update the lastlog info for the athlete:
+	update_athlete_lastlog ($athlete_id);
+
+
+    } elsif (! verify_password ($login_id, $password)) {
+	print_log ("failed login attempt by $login_id from $remote_hostname ($remote_ip_address) - incorrect password");
+	return 0;
+    }
+
+    # For athlete logins, use info from "athlete.passwd" file:
+    my ($login_id2, $password_hash, $clearance, $full_name) =
+	get_passwd_fields ($login_id);
+
+    if ($clearance =~ /STUDENT/) {
+	verify_student_access ($remote_ip_address);
+    }
+
+    # Special case for athlete logins: From here on, the login ID includes
+    # the athlete's ID #:
+    if ($login_id eq $ATHLETE_LOGIN_ID) { $login_id = $ATHLETE_LOGIN_ID . "_" . $athlete_id; }
+
+    # Now generate the session key:
+    my $sys_time = time ();
+
+    # Generate a random number to append:
+    srand ( $$ );     # seed with the process ID
+    my $random_number = int (rand (1000000));
+
+    # Add in a couple more sources of random info:
+    my $ps = `$PS $PS_ARGS`;
+
+    my $session_key =
+	compute_hash ("$login_id:$password:$remote_ip_address:$sys_time:$random_number:$ps");
+    
+    my $key_expiration_time = $sys_time + ( 120 * 60 );    # 120 minutes
+
+    # Check if user forgot to logout last time:
+    if (-e "$AUTH_DIR/$login_id.auth") {
+	open (FORGOT_TO_LOGOUT, ">$USER_ACCOUNTS_DIR/$login_id/forgot_to_logout");
+	close (FORGOT_TO_LOGOUT);
+    }
+    
+    # set umask for creating files and directories:
+    # Want mode: 770 ==> 777-770 = 007
+    umask (007);
+    
+    open (AUTH, ">$AUTH_DIR/$login_id.auth");
+    print AUTH "LOGIN_ID=$login_id\n";
+    print AUTH "CLEARANCE=$clearance\n";
+    print AUTH "REMOTE_HOSTNAME=$remote_hostname\n";
+    print AUTH "REMOTE_IP_ADDRESS=$remote_ip_address\n";
+    print AUTH "SESSION_KEY=$session_key\n";
+    print AUTH "KEY_EXPIRATION_TIME=$key_expiration_time\n";
+    close (AUTH);
+
+    print_log ("user $login_id logged in from $remote_hostname ($remote_ip_address)");
+
+    return ($login_id, $session_key);
+}
+
+
+#
+# Check to make sure ip address is listed in the student_access file:
+#
+sub verify_student_access
+{
+    my $remote_ip_address = shift;
+
+    open (FH, $STUDENT_ACCESS);
+    while (<FH>) {
+	chop;
+	if ($_ eq $remote_ip_address) { close (FH); return 1; }
+    }
+    close (FH);
+
+
+    print_log ("user $login_id not permitted to login from $remote_ip_address");
+
+    print_html_header ("Failed Login", $BASE_HREF);
+
+    print <<EOF;
+<br><br><br><br><br>
+
+<h1 align=center><font color="#ff0000">
+Sorry, your clearance level (STUDENT) does not permit you to login to the
+MUSM Intranet from this computer.  Please contact the intranet administrator.
+</font></h1>
+
+<br><br><br>
+<center>
+<a href="/bin/welcome" target="_top"><img src="/www/return_to_login_page.gif" border=1></a>
+</center>
+
+EOF
+    ;
+
+    print_html_trailer();
+
+    exit;
+}

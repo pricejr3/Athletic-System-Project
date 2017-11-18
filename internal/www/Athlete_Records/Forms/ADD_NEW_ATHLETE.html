@@ -1,0 +1,176 @@
+<html>
+
+<head>
+  <title>ADD NEW ATHLETE</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+LAST_NAME: not null
+LAST_NAME: maxsize=50
+FIRST_NAME: not null
+FIRST_NAME: maxsize=50
+BIRTHDATE: date
+SSN: not null
+SSN: format=^\d\d\d-\d\d-\d\d\d\d$
+LOCAL_ADDRESS: maxsize=500
+LOCAL_PHONE: maxsize=50
+PERM_ADDRESS: maxsize=500
+PERM_PHONE: maxsize=50
+EMAIL: maxsize=500
+--- END DATA VERIFICATION ---
+
+
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+--- BEGIN INSERTION STATEMENTS ---
+--- END INSERTION STATEMENTS ---
+-->
+
+
+<body background="/www/background.gif">
+
+<form name="athlete" method="post" action="/bin/add_new_athlete.pl">
+  <input type="hidden" name="FORM_NAME" value="ADD_NEW_ATHLETE">
+  <input type="hidden" name="STATUS" value="Active">
+
+<p>Enter the following information to add a new athlete to the
+database.</p>
+
+  <table border="0">
+    <tr>
+      <td></td>
+      <td colspan="2"><strong>Last</strong></td>
+      <td><strong>First</strong></td>
+      <td><strong>Middle</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Name:</strong></td>
+      <td nowrap colspan="2"><input type="text" name="LAST_NAME" size="20"> ,</td>
+      <td><input type="text" name="FIRST_NAME" size="20"></td>
+      <td><input type="text" name="MIDDLE_NAME" size="20"></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap></td>
+      <td nowrap></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><strong><div align="right"><p>Sport:</strong></td>
+      <td nowrap><strong><div align="left"><p></strong>
+      <select name="SPORT" size="1">
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select>
+      </td>
+      <td nowrap><div align="right"><p><strong>Sex:</strong></td>
+      <td><div align="left"><p>
+      <select name="SEX" size="1">
+        <option value="Female">Female</option>
+        <option value="Male" selected>Male</option>
+      </select>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap></td>
+      <td nowrap></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td valign="top"><strong><div align="right"><p>Born:</strong></td>
+      <td nowrap valign="top"><table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td><div align="center"><center><p>
+	  <input type="text" name="BIRTHDATE" size="10">
+	  <br>
+          mm-dd-yyyy</td>
+        </tr>
+      </table>
+      </td>
+      <td nowrap valign="top" align="center"><strong><div align="right"><p>SSN:</strong></td>
+      <td valign="top" align="center"><table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td><div align="center"><center><p><input type="text" name="SSN" size="11"><br>
+          xxx-xx-xxxx</td>
+        </tr>
+      </table>
+      </td>
+      <td valign="top" align="center"></td>
+    </tr>
+  </table>
+  <div align="left"><p><strong>Note:</strong><br>
+  <textarea rows="3" name="NOTE" cols="70"></textarea></p>
+  </div><div align="center"><center><p>&nbsp;</p>
+  </center></div><div align="left"><p><strong>Allergies to Medication:</strong><br>
+  <input type="text" name="ALLERGIES_TO_MEDS" size="70"></p>
+  </div><div align="left"><p><strong>Other Allergies:<br>
+  </strong><input type="text" name="OTHER_ALLERGIES" size="70"></p>
+  </div><div align="center"><center><p>&nbsp;</p>
+  </center></div><div align="left"><table border="0">
+    <tr>
+      <td valign="top"><div align="left"><p><strong>Local Address:</strong></td>
+      <td><textarea rows="3" name="LOCAL_ADDRESS" wrap="virtual" cols="40"></textarea></td>
+    </tr>
+    <tr>
+      <td valign="top"><div align="left"><p><strong>Phone:</strong></td>
+      <td><input type="text" name="LOCAL_PHONE" size="14"></td>
+    </tr>
+    <tr>
+      <td valign="top"></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td valign="top"><strong>Perm Address:</strong></td>
+      <td><textarea rows="3" name="PERM_ADDRESS" wrap="virtual" cols="40"></textarea></td>
+    </tr>
+    <tr>
+      <td valign="top"><div align="left"><p><strong>Phone:</strong></td>
+      <td><input type="text" name="PERM_PHONE" size="14"></td>
+    </tr>
+    <tr>
+      <td valign="top"></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td valign="top"><strong>Email:</strong></td>
+      <td><input type="text" name="EMAIL" size="40"></td>
+    </tr>
+  </table>
+  </div><div align="center"><center><p>&nbsp;</p>
+  </center></div><div align="left"><table border="0">
+    <tr>
+      <td align="center"><input type="submit" value=" Add New Athlete "></td>
+    </tr>
+    <tr>
+  </table>
+  </div>
+</form>
+</body>
+</html>
+

@@ -1,0 +1,42 @@
+
+
+***********************************************************************
+Fatal OSN connect error 12545, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=beq)(PROGRAM=oracle)(ARGV0=oracle)(ARGS='(DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))')(DETACH=NO))(CONNECT_DATA=(CID=(PROGRAM=)(HOST=musm)(USER=root))))
+
+  VERSION INFORMATION:
+	TNS for AT&T System V/386: Version 2.3.2.1.0 - Production
+	Oracle Bequeath NT Protocol Adapter for AT&T System V/386: Version 2.3.2.1.0 - Production
+  Time: 05-JUN-00 11:41:46
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 12206
+    TNS-12206: Message 12206 not found; No message file for product=NETWORK, facility=TNS
+    ns main err code: 12545
+    TNS-12545: Message 12545 not found; No message file for product=NETWORK, facility=TNS
+    ns secondary err code: 12560
+    nt main err code: 515
+    TNS-00515: Message 515 not found; No message file for product=NETWORK, facility=TNS
+    nt secondary err code: 2
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal OSN connect error 12545, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=beq)(PROGRAM=oracle)(ARGV0=oracle)(ARGS='(DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))')(DETACH=NO))(CONNECT_DATA=(CID=(PROGRAM=)(HOST=musm)(USER=root))))
+
+  VERSION INFORMATION:
+	TNS for AT&T System V/386: Version 2.3.2.1.0 - Production
+	Oracle Bequeath NT Protocol Adapter for AT&T System V/386: Version 2.3.2.1.0 - Production
+  Time: 05-JUN-00 11:41:46
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 12206
+    TNS-12206: Message 12206 not found; No message file for product=NETWORK, facility=TNS
+    ns main err code: 12545
+    TNS-12545: Message 12545 not found; No message file for product=NETWORK, facility=TNS
+    ns secondary err code: 12560
+    nt main err code: 515
+    TNS-00515: Message 515 not found; No message file for product=NETWORK, facility=TNS
+    nt secondary err code: 2
+    nt OS err code: 0

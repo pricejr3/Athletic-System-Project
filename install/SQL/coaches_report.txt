@@ -1,0 +1,16 @@
+create table coaches_report
+(
+coaches_report_id		int		not null  primary key,
+orig_version_id			int             not null,
+athlete_id			int  	        not null  references athlete (athlete_id) on delete cascade,
+sport				varchar (50),
+form_date			date		not null,
+status				varchar (20),
+injury				varchar (500),
+comments			text,
+form_sign_user_id		varchar (50)	not null,
+form_sign_date			timestamp	not null,
+form_signature			text,
+no_shows			int,
+associated_injuries             varchar (500)
+);

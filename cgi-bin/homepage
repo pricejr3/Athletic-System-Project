@@ -1,0 +1,144 @@
+#!/usr/bin/perl
+
+# homepage.pl
+#
+# Copyright 2007, Michael Duff-Xu
+# Author: Michael J. Duff-Xu
+# Last modified: May 11, 2007
+#
+# Description: Serves customized home page.
+
+
+require "global.pl";
+require "auth_user.pl";
+require "parse.pl";
+require "html_utilities.pl";
+require "password.pl";
+
+
+# Authenticate and authorize user:
+($login_id, $clearance) = auth_user ($CLEARANCE_STUDENT);
+
+# Retrieve first_name from password file:
+$first_name = get_first_name ($login_id);
+$lastlog    = get_lastlog();
+$forgot_to_logout_warning = check_logout();
+
+print_html_header ("$login_id Homepage", $BASE_HREF);
+
+
+
+print <<EOF;
+
+<br><br>
+
+<h1 align="center"><font color="#a50000"><strong>Welcome, $first_name!</strong></font></h1>
+
+$forgot_to_logout_warning
+
+<br>
+<center>Your last login was: $lastlog</center>
+
+<br><br><br>
+EOF
+    ;
+
+
+# For admins only:
+if ($clearance =~ /ADMIN/) {
+    print <<EOF;
+
+<p align="center">
+<a href="/bin/account_administration.pl">Account Administration</a>
+</p>
+
+<p align="center">
+<a href="Administration/archived_athlete_records_frames.html">Archived Athlete Records</a>
+</p>
+
+<p align="center">
+<a href="/bin/student_access.pl">Student Access</a>
+</p>
+
+<p align="center">
+<a href="Views/Athlete_Access/criteria_and_results_frames.html">Athlete Access</a>
+</p>
+
+<p align="center">
+<a href="/bin/system_diagnostics.pl">System Diagnostics</a>
+</p>
+EOF
+    ;
+}
+
+
+# For all but athletes:
+if ($clearance !~ /ATHLETE/) {
+    print <<EOF;
+
+<p align="center"><a href="/bin/bulletin_board.pl" target="main">Bulletin Board</a>
+</p>
+
+<p align="center">
+<a href="Change_Password/change_password.html">Change Password</a>
+</p>
+
+EOF
+;
+}
+
+
+# For staff only:
+if ($clearance =~ /STAFF/) {
+    print <<EOF;
+
+<p align="center">
+<a href="Views/Freeform_Query/free_sql_frames.html">Freeform Database Query</a>
+</p>
+EOF
+    ;
+}
+
+print_html_trailer();
+
+
+exit;
+
+
+
+sub get_lastlog
+{
+    my $lastlog;
+
+    if ( open ( LASTLOG, "$USER_ACCOUNTS_DIR/$login_id/lastlog" ) ) {
+	chop ( $lastlog = <LASTLOG> );
+	close ( LASTLOG );
+
+    } else { $lastlog = "Never logged in" }
+
+    return $lastlog;
+}
+
+
+
+sub check_logout
+{
+    my $forgot_to_logout_warning;
+
+    if (-e "$USER_ACCOUNTS_DIR/$login_id/forgot_to_logout") {
+	unlink ("$USER_ACCOUNTS_DIR/$login_id/forgot_to_logout");
+
+	$forgot_to_logout_warning = "
+<center>
+<table border=2 cellpadding=5>
+<tr><td align=\"center\"><font size=+2 color=\"#ff0000\"><b><blink>
+You seemed to have forgotten to log out last time.<br>
+<br>
+Don't forget to logout!
+</blink></b></font>
+</table>
+</center>";
+    }
+
+    return $forgot_to_logout_warning;
+}

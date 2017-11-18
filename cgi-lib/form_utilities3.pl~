@@ -1,0 +1,1481 @@
+#
+# form_utilities
+#
+# Copyright 1999, Melampus Enterprises, Inc.
+# Author: Michael J. Duff
+# Last modified: October 12, 2010
+#
+# Description: Processes forms for display, editing, and viewing
+#
+
+require "password.pl";
+require "database_utilities.pl";
+
+
+sub prepare_blank_form
+{
+    print_http_header();
+    
+    my $form_name = $cgi_data->{'FORM_NAME'};
+    my $form_file = "$FORMS_DIR/$form_name.html";
+
+    prepopulate_fields_from_database ($form_file);
+
+    $cgi_data->{'OPERATION'} = "SUBMIT_UNSIGNED_FORM";  # Reset operation for submission
+
+    my %carry_over_vars = (
+			   'OPERATION'             => 1,
+			   'ORIG_ATHLETE_ID'       => 1,
+			   'ORIG_INJURY_REPORT_ID' => 1
+			   );
+
+    my ($value, $rs);
+    local (*FORM);
+    open (FORM, $form_file);
+    
+    while (<FORM>) {
+	# Look for #var_name# and substitute in its value:
+	while (/\#(\w+(\[\])?)\#/) {
+	    my $key = $1;
+	    if ($key =~ /\[\]$/) { # multiple values
+		#print "Found multirow prepopulation field - key is '$key'<br>\n";  # testing
+		$value = join ("\n", @{$cgi_data->{$key}});
+	    } else {
+		$value = $cgi_data->{$key};
+	    }
+	    s/\#(\w+(\[\])?)\#/$value/;
+	}
+
+	if ( /<\s*input/i ) {
+	    $rs = replacement_string ("EDIT", "INPUT", $_);
+	    print $rs;
+	    next;
+	}
+
+	if ( /<\s*select/i ) {
+	    $rs = replacement_string ("EDIT", "SELECT", $_);
+	    print $rs;
+	    next;
+	}
+	
+	if ( /<\s*textarea/i ) {
+	    $rs = replacement_string ("EDIT", "TEXTAREA", $_);
+	    print $rs;
+	    next;
+	}
+
+	
+	if ( /<form/i ) {
+	    print;
+
+	    # Insert cgi data as hidden fields in the form:
+	    foreach my $key (keys (%$cgi_data)) {
+		if (! defined ($carry_over_vars{$key})) { next; }  # skip if we don't need to carry over this var 
+
+		if ($key =~ /\[\]$/) {  # multi-value
+		    foreach (@{$cgi_data->{$key}}) {
+			print qq|<input type="hidden" name="$key" value="$_">\n|;
+		    }
+		} else {
+		    print qq|<input type="hidden" name="$key" value="$cgi_data->{$key}">\n|;
+		}
+	    }
+	    next;
+	}
+	
+	print;
+    }
+
+    close (FORM);
+    
+    exit;
+}
+
+
+
+
+sub view_form
+{
+    print_http_header();
+    
+    my $form_name = $cgi_data->{'FORM_NAME'};
+    my $form_file = "$FORMS_DIR/$form_name.html";
+
+    my $table_name = $form_name;
+    my $version_id_name = $table_name . "_ID";
+
+
+    my %orig_athlete_ids = ();
+
+    if (defined ($cgi_data->{'BULK_VIEW'})) {   # viewing a form across multiple athletes
+	# First find all of the athlete ID's that were selected:
+	foreach my $key (keys (%$cgi_data)) {
+	    # Looking for format: ORIG_ATHLETE_ID_{athlete ID}
+	    if ($key =~ /^ORIG_ATHLETE_ID_(\d+)$/) { $orig_athlete_ids{$1} = 1; }
+	}
+
+    } else {  # viewing a form for a single athlete
+	$orig_athlete_ids{$cgi_data->{'ORIG_ATHLETE_ID'}} = 1;
+    }
+
+
+    my %orig_cgi_data = %{$cgi_data};  # copy CGI data before it is modified
+
+    my $n = 0;
+
+    # Iterate over the specified athletes (ORIG_ATHLETE_ID):
+    foreach my $orig_athlete_id (keys (%orig_athlete_ids)) {
+	$n++;
+
+	# Copy back the original CGI data to give us a clean slate for this iteration
+	$cgi_data = {};
+	foreach my $key (keys (%orig_cgi_data)) { $cgi_data->{$key} = $orig_cgi_data{$key}; }
+	#print "Values: " . join (', ', values (%$cgi_data)) . "<br/>\n";
+
+	$cgi_data->{'ORIG_ATHLETE_ID'} = $orig_athlete_id;
+
+
+	my (@version_id_list, $orig_version_id, $latest_version_id);
+
+	
+	if (defined ($cgi_data->{'BULK_VIEW'})) {   # need to find the latest instance of the form (ORIG_VERSION_ID) for the current athlete
+	    #print "Working on athlete ID $orig_athlete_id...<br/>\n";  # testing
+	    $cgi_data->{'ORIG_VERSION_ID'} = get_latest_athlete_orig_version_id ($table_name, $orig_athlete_id);
+	    #print "Retrieved latest form ORIG_VERSION_ID: $cgi_data->{'ORIG_VERSION_ID'}<br/>\n";
+	    if (! $cgi_data->{'ORIG_VERSION_ID'}) { $n--;  next; }  # couldn't find any such forms for this athlete, so skip it
+	}
+
+	
+	if (defined ($cgi_data->{'VIEW_LATEST'})) {
+	    # Given the original version id - need to get the latest version id:
+	    $orig_version_id = $cgi_data->{'ORIG_VERSION_ID'};
+	    @version_id_list = get_version_id_list ($table_name, $orig_version_id);
+	    $latest_version_id = $version_id_list[$#version_id_list];
+	    
+	    # Set version_id for database extraction:
+	    $cgi_data->{$version_id_name} = $latest_version_id;
+	}
+	
+	
+	# In order to view a form, first extract the
+	# necessary data from the database:
+	prepopulate_fields_from_database ($form_file);  # Very important to prepopulate first!
+	extract_data_from_database ($form_file); # (may override values set during prepopulation)
+	
+	
+	if (! defined ($cgi_data->{'VIEW_LATEST'})) {
+	    # Now have the orig_version_id from the database extraction
+	    $orig_version_id = $cgi_data->{'ORIG_VERSION_ID'};
+	    @version_id_list = get_version_id_list ($table_name, $orig_version_id);
+	    $latest_version_id = $version_id_list[$#version_id_list];
+	}
+	
+	
+	my $current_version_id = $cgi_data->{$version_id_name};
+	
+	my $viewing_latest_version;
+	
+	if ($current_version_id != $latest_version_id) {
+	    $viewing_latest_version = 0;
+	} else {
+	    $viewing_latest_version = 1;
+	}
+	
+	
+	local (*FORM);
+	
+	open (FORM, $form_file);
+	
+	# Find the beginning of the body of the HTML file:
+	# Do not print the page header for each form if viewing multiple athletes:
+	while (<FORM>) { if (/<body/i) { print if ($n <= 1); last; } else { print if ($n <= 1); } }
+	
+        
+	# Here is the access control for confidential forms (STAFF access only):
+	if (defined ($cgi_data->{'CONFIDENTIAL'}) &&
+	    $cgi_data->{'CONFIDENTIAL'} eq 'Yes' && $clearance !~ /STAFF/i ) {
+	    print <<EOF;
+
+<br><br><br>
+<font color="#ff0000">
+<h1 align=center><b>Access not permitted!<br><br>
+You need STAFF clearance to view this form.<br>
+You currently have $clearance clearance.</b></h1>
+</font>
+EOF
+;
+	    close (FORM);
+	    #print_html_trailer();
+	    #exit;
+	    next;
+	}
+	
+	
+	# If the form is marked as confidential, then indicate this at the top of the form:
+	if (defined ($cgi_data->{'CONFIDENTIAL'}) && $cgi_data->{'CONFIDENTIAL'} eq 'Yes') {
+	    print qq|<font size=+2 color="#ff0000"><center><b>CONFIDENTIAL</b></center></font><br>|;
+	}
+	
+	
+	if (! $viewing_latest_version) {
+	    print <<EOF;
+
+<font size=+2 color="#ff0000">
+<center>
+<b>NOTICE:
+<br>
+You are currently viewing an old version of this form.
+</b>
+</center>
+</font>
+
+<hr>
+EOF
+;
+	}
+
+
+	# Once the data has been obtained, then process
+	# the form template to display the form with the
+	# values from the database filled in:
+	pretty_print_form_body (FORM);
+	
+	close (FORM);
+	
+	
+	if ($cgi_data->{'BULK_VIEW'}) {
+	    # Display information about the form: who submitted the form and
+	    # the date/time which is was submitted.
+	    print <<EOF;
+<hr>
+<table border=0 width="100%"><tr>
+  <td align="left" width="50%"><b>Submitted by:</b> $cgi_data->{'FORM_SIGN_USER_ID'}</td>
+  <td align="right" width="50%"><b>Date:</b> $cgi_data->{'FORM_SIGN_DATE'}</td>
+</tr></table>
+
+EOF
+;
+	    
+	    # TODO: Include page break for printing purposes
+	    print '<hr noshade="noshade" />' . "\n";
+	    print '<hr noshade="noshade" />' . "\n";
+	    print '<p style="page-break-after: always"></p>' . "\n";
+	    
+	    # No need to include any of the version info for the bulk form view:
+	    next;
+	}
+	
+
+	######################################################################################
+	# No more bulk view activity past this point
+	######################################################################################
+	
+	# Display information about the form: who submitted the form and
+	# the date/time which is was submitted.
+	print <<EOF;
+<hr>
+<table border=0 width="100%"><tr>
+  <td align="left" width="33%"><b>Submitted by:</b> $cgi_data->{'FORM_SIGN_USER_ID'}</td>
+  <td align="center" width="34%"><span onclick="window.print()">
+<img src="/bin/auth/Images/print.gif" border="0"> <b>Print</b></span></td>
+  <td align="right" width="33%"><b>Date:</b> $cgi_data->{'FORM_SIGN_DATE'}</td>
+</tr></table>
+
+EOF
+;
+	
+	#
+	# If there are previous versions, then display a list of them
+	# (plus links to previous and next version)
+	#
+	if ($#version_id_list > 0) {   # more than one element in the list
+	    print <<EOF;
+<hr>
+<table border=0 width="100%">
+<tr>
+<td><br>
+<td align=center><b><u>Previous Versions</u></b>
+<td><br>
+
+<tr>
+EOF
+;
+
+
+	    # Find the current version id index in the version id list:
+	    my ($index, $current_version_id_index);
+	    for ($index = 0; $index <= $#version_id_list; $index++) {
+		if ($version_id_list[$index] == $current_version_id) {
+		    $current_version_id_index = $index;
+		    last;
+		}
+	    }
+	    
+	    
+	    my $extra_args = "";
+	    if ($cgi_data->{'ORIG_ATHLETE_ID'}) {
+		$extra_args .= "&ORIG_ATHLETE_ID=$cgi_data->{'ORIG_ATHLETE_ID'}";
+	    }
+	    if ($cgi_data->{'ORIG_INJURY_REPORT_ID'}) {
+		$extra_args .= "&ORIG_INJURY_REPORT_ID=$cgi_data->{'ORIG_INJURY_REPORT_ID'}";
+	    }
+	    
+	    
+	    # If there is a previous version, then add a link to it:
+	    if ($current_version_id > $version_id_list[0]) {
+		my $prev_version_id = $version_id_list[$current_version_id_index - 1];
+		print qq|<td valign=top align=left><a href="/bin/process_form?OPERATION=VIEW_FORM&FORM_NAME=$form_name&$version_id_name=$prev_version_id| . $extra_args . qq|">Prev</a>\n|;
+	    } else {
+		print "<td valign=top align=left>Prev\n";
+	    }
+	    
+	    # Add links to all versions (by number):
+	    print "<td align=center> |\n";
+	    my $version_num = 1;
+	    my $version_id;
+	    foreach $version_id (@version_id_list) {
+		if ($version_id == $current_version_id) {
+		    print "$version_num |\n";      # No link necessary
+		} else {
+		    print "<a href=\"/bin/process_form?OPERATION=VIEW_FORM&FORM_NAME=$form_name&$version_id_name=$version_id" . $extra_args . "\">$version_num</a> |\n";
+		}
+		
+		$version_num++;          # Increment version number
+	    }
+	    
+	    # If there is a next version, then add a link to it:
+	    if ($current_version_id < $version_id_list[$#version_id_list]) {
+		my $next_version_id = $version_id_list[$current_version_id_index + 1];
+		print qq|<td valign=top align=right><a href="/bin/process_form?OPERATION=VIEW_FORM&FORM_NAME=$form_name&$version_id_name=$next_version_id| . $extra_args . qq|">Next</a>\n|;
+	    } else {
+		print "<td valign=top align=right>Next\n";
+	    }
+	    
+	    print "</table>\n";
+	}
+	
+	
+	
+	# If this is the latest version, then allow the user to modify it:
+	if ($viewing_latest_version) {
+	    # change operation mode to EDIT_FORM:
+	    $cgi_data->{'OPERATION'} = "EDIT_FORM";
+	    
+	    print <<EOF;
+<hr>
+<form method="post" action="/bin/process_form" target="_self">
+EOF
+;
+	    
+	    # insert all relevant values to pass to form edit:
+	    foreach my $key (keys (%$cgi_data)) {
+		if ($key =~ /\[\]$/) {  # multi-value
+		    foreach (@{$cgi_data->{$key}}) {
+			print qq|<input type="hidden" name="$key" value="$_">\n|;
+		    }
+		} else {
+		    print qq|<input type="hidden" name="$key" value="$cgi_data->{$key}">\n|;
+		}
+	    }
+	    
+	    print <<EOF;
+	    
+<center>
+<input type="submit" value=" Modify ">
+</center>
+
+</form>
+EOF
+;
+	}
+    }
+    
+
+    print_html_trailer();
+    
+    exit;
+}
+
+
+
+
+sub edit_form
+{
+    my $form_name = $cgi_data->{'FORM_NAME'};
+    my $form_file = "$FORMS_DIR/$form_name.html";
+
+    # local ( %error_messages ) = @_;
+    local ( *FORM, @errors );
+
+    # Will have a hash table of all the submitted data
+    # fields from the form.
+    #
+    # Now, go through form and fill in values for each data field:
+
+    # Set the operation variable for the next step:
+    $cgi_data->{'OPERATION'} = "SUBMIT_UNSIGNED_FORM";
+
+    print_http_header();
+
+    
+    open ( FORM, $form_file );
+
+    # Find the beginning of the body of the HTML file:
+    while ( <FORM> ) { if ( /<body/i ) { print; last; } else { print; } }
+
+    @errors = keys ( %error_messages );
+
+    if ( $#errors >= 0 ) {
+	print "<h2 align=center>Form could not be submitted ";
+	print "due to the following reasons:</h2>\n";
+
+	foreach ( @errors ) {
+	    print "<font color=\"#ff0000\"><b>$_: $error_messages{$_}</b></font><br>\n";
+	}
+
+	print "<hr noshade>\n";
+    }
+    
+    my ($value, $rs);
+
+    while ( <FORM> ) {
+	while ( /\#(\w+(\[\])?)\#/ ) {
+	    my $key = $1;
+	    if ($key =~ /\[\]$/) { # multiple values
+		$value = join ("\n", @{$cgi_data->{$key}});
+	    } else {
+		$value = $cgi_data->{$key};
+	    }
+	    s/\#(\w+(\[\])?)\#/$value/;
+	}
+
+	if ( /<\s*input/i ) {
+	    $rs = replacement_string ( "EDIT", "INPUT", $_ );
+	    print $rs;
+	    next;
+	}
+
+	if ( /<\s*select/i ) {
+	    $rs = replacement_string ( "EDIT", "SELECT", $_ );
+	    print $rs;
+	    next;
+	}
+	
+	if ( /<\s*textarea/i ) {
+	    $rs = replacement_string ( "EDIT", "TEXTAREA", $_ );
+	    print $rs;
+	    next;
+	}
+
+
+	if ( /<\/form/i ) {
+	    # Before the end of the form, insert any remaining variables that
+	    # have not been covered yet:
+	    foreach my $key (keys (%$cgi_data)) {
+		if (defined ($inserted_fields{$key})) { next; }
+
+		if ($key =~ /\[\]$/) {  # multi-value
+		    my %h = ();
+		    foreach (@{$cgi_data->{$key}}) { $h{$_} = 1; }
+		    foreach (keys (%h)) {
+			print qq|<input type="hidden" name="$key" value="$_">\n|;
+		    }
+		} else {
+		    print qq|<input type="hidden" name="$key" value="$cgi_data->{$key}">\n|;
+		}
+	    }
+	}
+
+	print;
+    }
+
+    close (FORM);
+
+    exit;
+}
+
+
+
+
+sub replacement_string
+{
+    my ($mode, $form_tag, $line) = @_;
+
+    my ($name, $left, $left2, $body, $right, $type, $value);
+
+    if ( $form_tag eq "INPUT" ) {
+	$line =~ /^(.*)<input(.*?)>(.*)$/i;
+	$left = $1;
+	$body = "<input $2>";
+	$right = "$3\n";
+
+	$body =~ /name="?(\w+)"?/i;
+	$name = $1;
+
+	$line =~ /type="(\w+)"/i;
+	$type = $1;
+
+
+	if ( ! $type || $type =~ /text/i ) {
+	    if ( $mode eq "EDIT" ) {
+		# remove any existing value field:
+		$body =~ s/value="?([\w\s]+)"?//i;
+
+		# now insert the correct value field:
+		$body =~ s/(.*)>/$1 value="$cgi_data->{$name}">/i;
+
+	    } else {
+		$body =~ s/<\s*input .*?>/$cgi_data->{$name}/i;
+	    }
+	}
+
+
+	if ( $type =~ /radio/i ) {
+	    $body =~ /value="?([\w\s]+)"?/i;
+	    $value = $1;
+	    
+	    if ( defined ( $cgi_data->{$name} ) ) {
+		# filter out any existing "checked" label:
+		$body =~ s/\s*checked(=checked)?\s*//i;
+	    }
+
+	    if ( $mode eq "EDIT" ) {
+		# now insert "checked" label if appropriate:
+		if ( $value eq $cgi_data->{$name} ) {
+		    $body =~ s/(.*)>/$1 checked="checked">/i;
+		}
+		# else not checked
+		
+	    } else {     # pretty-print mode
+		# munch radio button label:
+		$right =~ s/(\s*)(\w+)/$1/;
+
+		if ( $radio_name eq $name ) {
+		    $body = "";   # filter out additional instances
+		    
+		} else {
+		    $body = $cgi_data->{$name};
+		}
+	    }
+
+	    $radio_name = $name;
+	}
+	
+
+
+	if ( $type =~ /checkbox/i ) {
+	    if ( $mode eq "EDIT" ) {
+		$body =~ /value="?([\w\s]+)"?/i;
+		$value = $1;
+		
+		# filter out any existing "checked" label:
+		$body =~ s/\s*checked(=checked)?\s*//i;
+		
+		if ( $value eq $cgi_data->{$name} ) {
+		    $body =~ s/(.*)>/$1 checked="checked">/i;
+		}
+		# else not checked
+
+	    } else {   # pretty print
+		$body = $cgi_data->{$name};
+	    }
+	}
+
+	$inserted_fields{$name} = 1;
+    }
+
+
+
+    if ( $form_tag eq "TEXTAREA" ) {
+	$line =~ /^(.*)<textarea(.*?)><\/textarea>(.*)$/i;
+	$left = $1;
+	$body = "<textarea $2><\/textarea>";
+	$right = "$3\n";
+
+	$body =~ /name="?(\w+)"?/i;
+	$name = $1;
+
+	if ( $mode eq "EDIT" ) {
+	    $body =~ s/^(.*)>(.*?)<(.*)$/$1>$cgi_data->{$name}<$3/i;
+
+	} else {   # pretty print
+	    $cgi_data->{$name} =~ s/\n/<br>\n/;
+	    $body =~ s/<\s*textarea(.*)>/$cgi_data->{$name}/i;
+	    $cgi_data->{$name} =~ s/<br>\n/\n/;
+	}
+
+	$inserted_fields{$name} = 1;
+    }
+
+
+
+    if ( $form_tag eq "SELECT" ) {
+	$line =~ /^(.*)<select(.*?)>(.*)$/i;
+	$left = $1;
+	$body = "<select$2>";
+	$right = "$3\n";
+
+	$body =~ /name="?(\w+(\[\])?)"?/i;
+	$name = $1;
+
+	if ( $mode eq "EDIT" ) { $body .= $right; }
+	else {
+	    if ($name =~ /\[\]$/) {
+		$body = join ("; ", @{$cgi_data->{$name}});
+	    } else {
+		$body = $cgi_data->{$name};
+	    }
+	}
+
+	while ( <FORM> ) {
+	    # MJD (19-May-2007): Replace prepopulated values (if any):
+	    my $processed_options = 0;
+	    while (/\#(\w+(\[\])?)\#/) {
+		my $key = $1;
+		if ($key =~ /\[\]$/) { # multiple values
+		    if ($mode eq "EDIT") {
+			$value = join ("\n", select_options ($cgi_data->{$name},
+							     $cgi_data->{$key}));
+		    } else {
+			$value = join ("\n", @{$cgi_data->{$key}});
+		    }
+		} else {
+		    if ($mode eq "EDIT") {
+			$value = join ("\n", select_options ($cgi_data->{$name},
+							     $cgi_data->{$key}));
+		    } else {
+			$value = $cgi_data->{$key};
+		    }
+		}
+		s/\#(\w+(\[\])?)\#/$value/;
+		$processed_options = 1;
+	    }
+
+
+	    if ( $mode eq "EDIT" ) {
+		if (! $processed_options) {  # total hack -- argh
+		    s/selected(="selected")?//i; # remove default selected item (if present)
+		}
+	    
+		if (/<option value="(.*?)"/i) {
+		    $value = $1;
+		    if ($value eq $cgi_data->{$name}) {
+			s/<option (.*?)>/<option $1 selected="selected">/i;
+		    }
+		}
+		
+		# In case no value is explicitly set:
+		if (/<option>(.*?)<\/option>/i) {
+		    $value = $1;
+		    if ($value eq $cgi_data->{$name}) {
+			s/<option>/<option selected="selected">/i;
+		    }
+		}
+
+		$body .= $_;
+	    }   # else do not add anything to body
+
+
+	    if ( /<\/select/i ) {   # end of select statement
+		/^(.*)<\/select>(.*)$/i;
+		$left2 = $1;
+		$right = "$2\n";
+		    
+		if ( $mode eq "EDIT" ) {
+		    $body .= $left2 . "</select>";
+		}
+
+		last;
+	    }
+
+	    $inserted_fields{$name} = 1;
+	}
+    }
+
+    return ( $left . $body . $right );
+}
+
+
+
+sub select_options
+{
+    my ($values, $options) = @_;
+
+    my @new_options = ();
+    my ($value);
+
+    # Handle non-array ref cases:
+    # Convert scalar value to an array ref:
+    if (! ref ($options)) { $options = [$options]; }
+    if (! ref ($values))  { $values  = [$values];  }
+
+    my %values = ();
+    foreach $value (@{$values}) { $values{$value} = 1; }
+
+    foreach my $option (@{$options}) {
+	my $option2 = $option;  # copy so we don't overwrite
+
+	# remove default selected item (if present)
+	$option2 =~ s/selected(="selected")?//i;
+    
+	if ($option2 =~ /<option value="(.*?)"/i) {
+	    $value = $1;
+	    if (defined ($values{$value})) {
+		$option2 =~ s/<option (.*?)>/<option $1 selected="selected">/i;
+	    }
+	}
+
+	# In case no value is explicitly set:
+	if ($option2 =~ /<option>(.*?)<\/option>/i) {
+	    $value = $1;
+	    #print "Found option match -- value: $value -- in: " . join ("; ", @{$values}) . "<br>\n";  # testing
+	    if (defined ($values{$value})) {
+		$option2 =~ s/<option>/<option selected="selected">/i;
+	    }
+	}
+
+	#print "New option: $option<br>\n";  # testing
+	
+	push (@new_options, $option2);
+    }
+
+    return (@new_options);
+}
+
+
+
+sub submit_unsigned_form
+{
+    # First verify the form data:
+    if ( ! verify_form() ) {
+	edit_form();    # If there is a problem, then open EDIT view
+	exit;
+    }
+
+    # Once form has been verified, then open review form view:
+    review_form();
+
+    exit;
+}
+
+
+
+
+sub submit_signed_form
+{
+    my $form_name = $cgi_data->{'FORM_NAME'};
+
+    # First, re-verify the data on the form:
+    if (! verify_form()) {
+	edit_form();    # If there is a problem, then open EDIT view
+    }
+
+    # Now check the signature on the form:
+    #validate_signature();
+
+    
+    print_html_header ("Form Insertion", $BASE_HREF);
+
+    # Finally, insert the data into the database:
+    insert_into_database ($form_name);
+
+
+    print <<EOF;
+<br><br><br><br>
+<h1 align=center>
+<font color="#aa0000">Database insertion was successful!</font><br>
+</h1>
+EOF
+;
+
+    if (defined ($cgi_data->{'ORIG_INJURY_REPORT_ID'})) {
+	# Inserted a new form, so we need to find the new ORIG_VERSION_ID:
+	if ($cgi_data->{'ORIG_VERSION_ID'} =~ /^currval/i) {
+	    $cgi_data->{'ORIG_VERSION_ID'} = get_latest_injury_report_orig_version_id ($cgi_data->{'FORM_NAME'}, $cgi_data->{'ORIG_INJURY_REPORT_ID'});
+	}
+
+	print <<EOF;
+<form action="/bin/process_form" method="get">
+<input type="hidden" name="OPERATION" value="VIEW_FORM" />
+<input type="hidden" name="VIEW_LATEST" value="1" />
+<input type="hidden" name="FORM_NAME" value="$cgi_data->{'FORM_NAME'}" />
+<input type="hidden" name="ORIG_INJURY_REPORT_ID" value="$cgi_data->{'ORIG_INJURY_REPORT_ID'}" />
+<input type="hidden" name="ORIG_VERSION_ID" value="$cgi_data->{'ORIG_VERSION_ID'}" />
+<p align="center">
+<input type="submit" value=" View Inserted Form " />
+</p>
+</form>
+EOF
+;
+
+    } else {
+	# Inserted a new form, so we need to find the new ORIG_VERSION_ID:
+	if ($cgi_data->{'ORIG_VERSION_ID'} =~ /^currval/i) {
+	    $cgi_data->{'ORIG_VERSION_ID'} = get_latest_athlete_orig_version_id ($cgi_data->{'FORM_NAME'}, $cgi_data->{'ORIG_ATHLETE_ID'});
+	}
+
+	print <<EOF;
+<form action="/bin/process_form" method="get">
+<input type="hidden" name="OPERATION" value="VIEW_FORM" />
+<input type="hidden" name="VIEW_LATEST" value="1" />
+<input type="hidden" name="FORM_NAME" value="$cgi_data->{'FORM_NAME'}" />
+<input type="hidden" name="ORIG_ATHLETE_ID" value="$cgi_data->{'ORIG_ATHLETE_ID'}" />
+<input type="hidden" name="ORIG_VERSION_ID" value="$cgi_data->{'ORIG_VERSION_ID'}" />
+<p align="center">
+<input type="submit" value=" View Inserted Form " />
+</p>
+</form>
+EOF
+;
+    }
+
+    print_html_trailer();
+
+    exit;
+}
+
+
+
+
+# Verify submitted form fields:
+sub verify_form
+{
+    my $form_name = $cgi_data->{'FORM_NAME'};
+    my $form_file = "$FORMS_DIR/$form_name.html";
+
+
+    local ( *FORM );
+    my $problem = 0;
+    # local ( %error_messages ) = @_;
+
+    # Remove leading and trailing whitespace from all fields:
+    foreach (keys (%$cgi_data)) {
+	if ($_ =~ /\[\]$/) { next; }  # skip multi-value fields
+	$cgi_data->{$_} =~ s/^(\s*)//;
+	$cgi_data->{$_} =~ s/(\s*)$//;
+    }
+   
+    open (FORM, $form_file);
+
+    # Find beginning of data verification section:
+    while ( <FORM> ) { if ( /begin data verification/i ) { last; } }
+
+    my ($field_name, $constraint, $tag, $format);
+
+    while (<FORM>) {
+	if (/end data verification/i) { last; }
+
+	chop;
+	($field_name, $constraint) = split (/:/);
+
+	if ($constraint =~ /not null/i &&
+	    length ($cgi_data->{$field_name}) == 0) {
+	    $problem = 1;
+	    $error_messages{$field_name} .= "Cannot leave this field empty; ";
+	    next;
+	}
+
+	if ($constraint =~ /maxsize=(\d*)/i &&
+	    length ($cgi_data->{$field_name}) > $1 ) {
+	    $problem = 1;
+	    $error_messages{$field_name} .= "Exceeded max chars limit of $1; ";
+	    next;
+	}
+
+	if ($constraint =~ /integer/i &&
+	    length ($cgi_data->{$field_name}) > 0 &&
+	    $cgi_data->{$field_name} !~ /^\d+$/) {
+	    $problem = 1;
+	    $error_messages{$field_name} .= "Must be an integer; ";
+	    next;
+	}
+
+	if ($constraint =~ /number/i &&
+	    length ($cgi_data->{$field_name}) > 0 &&
+	    $cgi_data->{$field_name} !~ /^(\d*\.?\d*)?$/) {
+	    $problem = 1;
+	    $error_messages{$field_name} .= "Must be a number; ";
+	    next;
+	}
+
+	if ($constraint =~ /date/i &&
+	    length ($cgi_data->{$field_name}) > 0 &&
+	    $cgi_data->{$field_name} !~ /^(\d\d-\d\d-\d\d\d\d)?$/ &&
+	    $cgi_data->{$field_name} !~ /^(\d\d\/\d\d\/\d\d\d\d)?$/) {
+	    $problem = 1;
+	    $error_messages{$field_name} .= "Is not in the correct date format (mm-dd-yyyy or mm/dd/yyyy); ";
+	    next;
+	}
+
+	if ($constraint =~ /format/i &&
+	    length ($cgi_data->{$field_name}) > 0) {
+	    ($tag, $format) = split (/=/, $constraint);
+	    if ($cgi_data->{$field_name} !~ /$format/) {
+		$problem = 1;
+		$error_messages{$field_name} .= "Does not follow specified format ($format); ";
+		next;
+	    }
+	}
+    }
+
+    close ( FORM );
+
+
+    if ( $problem ) { return 0; }
+    else { return 1; }
+}
+
+
+
+
+sub review_form
+{
+    my $form_name = $cgi_data->{'FORM_NAME'};
+    my $form_file = "$FORMS_DIR/$form_name.html";
+
+    # MJD (13-May-2007): No longer requiring password for each form:
+    #my $password_incorrect = shift;
+    my $password_incorrect = 0;
+
+    local ( *FORM );
+
+    print_http_header();
+    
+    open (FORM, $form_file);
+
+    prepopulate_fields_from_database ($form_file);
+
+    # Find the beginning of the body of the HTML file:
+    while (<FORM>) { if (/<body/i) { print; last; } else { print; } }
+
+    if ($password_incorrect) {
+	print <<EOF;
+<br>
+<h2 align=center><b><font color="#ff0000"><blink>Password Incorrect</blink></font></b></h2>
+
+<hr noshade>
+EOF
+    ;
+
+    } else {
+	print <<EOF;
+
+<h2 align=center><b><font color="#aa0000">Review the form below to
+double check all data:</font></b></h2>
+
+<p align=center>
+When finished, sign the form by clicking on the "Insert Form Data Into Database" button.
+</p>
+
+<hr noshade>
+EOF
+    ;
+    }
+
+    pretty_print_form_body ( FORM );
+
+    close ( FORM );
+
+
+    print <<EOF;
+<hr noshade>
+
+<form method="post" action="/bin/process_form">
+EOF
+    ;
+
+    $cgi_data->{'OPERATION'} = "EDIT_FORM";      # Change operation to EDIT
+
+
+    foreach my $key (keys (%{$cgi_data})) {
+	if ($key =~ /\[\]$/) {  # multi-value
+	    my %h = ();
+	    foreach (@{$cgi_data->{$key}}) { $h{$_} = 1; }
+	    foreach (keys (%h)) {
+		print qq|<input type="hidden" name="$key" value="$_">\n|;
+	    }
+	} else {
+	    print qq|<input type="hidden" name="$key" value="$cgi_data->{$key}">\n|;
+	}
+    }
+
+    print <<EOF;
+<center><input type="submit" value=" Edit Form "></center>
+</form>
+
+<form method="post" action="/bin/process_form">
+EOF
+    ;
+
+    $cgi_data->{'OPERATION'} = "SUBMIT_SIGNED_FORM"; # Change operation to SUBMIT
+    $cgi_data->{'FORM_SIGN_USER_ID'} = $login_id;
+
+    foreach my $key (keys (%$cgi_data)) {
+	if ($key =~ /\[\]$/) {  # multi-value
+	    my %h = ();
+	    foreach (@{$cgi_data->{$key}}) { $h{$_} = 1; }
+	    foreach (keys (%h)) {
+		print qq|<input type="hidden" name="$key" value="$_">\n|;
+	    }
+	} else {
+	    print qq|<input type="hidden" name="$key" value="$cgi_data->{$key}">\n|;
+	}
+    }
+    
+    print <<EOF;
+<center>
+<!-- <b>Password:</b> <input type="password" name="PASSWORD" size="12"> -->
+<input type="submit" value=" Insert Form Data into Database ">
+</center>
+</form>
+EOF
+    ;
+
+
+    print_html_trailer();
+
+    exit;
+}
+
+
+
+
+sub pretty_print_form_body
+{
+    my $form_name = $cgi_data->{'FORM_NAME'};
+    my $form_file = "$FORMS_DIR/$form_name.html";
+
+    local ( *FORM ) = @_;
+
+    # Should accept a couple of different modes:
+    #   - prepare for inserting into database (--> signature field)
+    #   - display previous versions of the form, and provide edit link
+
+    # Need to go through entire form and remove form elements
+    # and replace them with the chosen values:
+
+    my ($value, $rs);
+
+    while ( <FORM> ) {
+	# Look for #var_name# and substitute in its value:
+	while (/\#(\w+(\[\])?)\#/) {
+	    my $key = $1;
+	    if ($key =~ /\[\]$/) { # multiple values
+		$value = join ("; ", @{$cgi_data->{$key}});
+	    } else {
+		$value = $cgi_data->{$key};
+	    }
+	    s/\#(\w+(\[\])?)\#/$value/;
+	}
+
+	# Remove beginning and end of form body:
+	s/<form .*>//i;
+	s/<\/form .*>//i;
+
+	if (/<\s*input.* type="?submit"?/) { next; }  # remove submit button
+
+	if ( /<\s*input/i ) {
+	    $rs = replacement_string ( "PRETTY_PRINT", "INPUT", $_ );
+	    print $rs;
+	    next;
+	}
+
+	if ( /<\s*select/i ) {
+	    $rs = replacement_string ( "PRETTY_PRINT", "SELECT", $_ );
+	    print $rs;
+	    next;
+	}
+	
+	if ( /<\s*textarea/i ) {
+	    $rs = replacement_string ( "PRETTY_PRINT", "TEXTAREA", $_ );
+	    print $rs;
+	    next;
+	}
+
+
+	if ( /<\/body/i ) { last; }    # Stop reading file when reach end of body
+
+	print;    # Otherwise, just print the line as it is
+    }
+}
+
+
+
+
+
+sub validate_signature
+{
+    my $password = $cgi_data->{'PASSWORD'};
+
+    # Make sure that the user's password doesn't somehow end
+    # up being inserted into the database:
+    delete ( $cgi_data->{'PASSWORD'} );
+
+    # check password
+    if ( ! verify_password ( $login_id, $password ) ) {
+	my $password_incorrect = 1;
+	review_form ( $password_incorrect );
+	exit;
+    }
+}
+
+
+
+sub insert_into_database
+{
+    my $form_name = shift;
+
+    # Special case for adding new athlete:
+    if ($form_name eq "ADD_NEW_ATHLETE") { $form_name = "ATHLETE"; }
+
+    my $form_file = "$FORMS_DIR/$form_name.html";
+
+    local ( *FORM );
+    my ($statement, $tag, $review_required_clearance);
+
+    open (FORM, $form_file);
+
+    # Locate beginning of the insertion code:
+    while (<FORM>) {
+	chop;
+
+	if (/review_required_clearance/i) {
+	    ($tag, $review_required_clearance) = split (/=/);
+	}
+
+	if (/begin insertion statements/i) { last; }
+    }
+
+
+    # Initialize to "No":
+    $cgi_data->{'REVIEW_REQUIRED'} = "No";
+
+    if ($clearance eq "STUDENT" &&
+	($review_required_clearance eq "STAFF" ||
+	 $review_required_clearance eq "PHYSICIAN")) {
+	$cgi_data->{'REVIEW_REQUIRED'} = "Yes";
+
+    } elsif ($clearance eq "STAFF" &&
+	     $review_required_clearance eq "PHYSICIAN") {
+	$cgi_data->{'REVIEW_REQUIRED'} = "Yes";
+    }
+
+    
+    # Set ORIG_VERSION_ID if a new form:
+    #   If the form is new, then the ORIG_VERSION_ID will not have been set,
+    #   so test to determine if it has been defined or not.
+    #
+    # Note: sequence numbers must be named as:  new_{table_name}_id
+    #   where {table_name} should be replaced with the name of the table.
+    #
+    my $table_name = $form_name;
+    if (! defined ($cgi_data->{'ORIG_VERSION_ID'})) {
+	my $table_name_lc = $table_name;
+	$table_name_lc =~ tr/A-Z/a-z/;
+	$cgi_data->{'ORIG_VERSION_ID'} = "currval('new_" . $table_name_lc . "_id')";
+    }
+    
+    $statement = "";   # Initialize to empty statement
+
+    while (<FORM>) {
+	if ( /;/ ) {   # Found the end of a statement --> time to execute
+	    $statement .= $_;
+	    $statement = prepare_statement ( $statement );
+	    #print "SQL: $statement\n";  # testing
+	    execute_statement ( $statement );
+	    $statement = "";    # reset statement
+	}
+
+	if ( /end insertion statements/i ) { last; }
+	else { $statement .= $_; }    # build statement up across multiple lines
+    }
+
+    close ( FORM );
+}
+
+
+
+
+sub prepopulate_fields_from_database
+{
+    my $form_file = shift;
+
+    local ( *FORM );
+
+    # Already have the form template in $form.
+    # Now we can open it and fill in the data from the database:
+
+    # Do this in two steps:
+    #   - First extract the data from the database using the extraction statements.
+    #     This data will go into the %$cgi_data hash table
+    #   - Then call pretty_print on the form to substitute in the database values.
+    open ( FORM, $form_file );
+    while ( <FORM> ) { if ( /begin prepopulated field statements/i ) { last; } }
+
+    my $statement = "";
+
+    while ( <FORM> ) {
+	if ( /;/ ) {   # Found the end of a statement --> time to execute
+	    $statement .= $_;
+	    $statement = prepare_statement ( $statement );
+	    execute_statement ( $statement, 1, 1 );  # no overwrite
+	    $statement = "";    # reset statement
+	    next;
+	}
+
+	if ( /end prepopulated field statements/i ) { last; }
+	else { $statement .= $_; }    # build statement up across multiple lines
+    }
+
+    close ( FORM );
+}
+
+
+
+
+sub extract_data_from_database
+{
+    my $form_file = shift;
+
+    local ( *FORM );
+    my $sql;
+
+    # Already have the form template in $form.
+    # Now we can open it and fill in the data from the database:
+
+    # Do this in two steps:
+    #   - First extract the data from the database using the extraction statements.
+    #     This data will go into the %$cgi_data hash table
+    #   - Then call pretty_print on the form to substitute in the database values.
+    open ( FORM, $form_file );
+    while ( <FORM> ) { if ( /begin extraction statements/i ) { last; } }
+
+    while ( <FORM> ) {
+	if ( /;/ ) {   # Found the end of a statement --> time to execute
+	    $sql .= $_;
+	    $sql = prepare_statement ( $sql );
+	    execute_statement ( $sql, 1 );
+	    $sql = "";    # reset sql
+	    next;
+	}
+
+	if ( /end extraction statements/i ) { last; }
+	else { $sql .= $_; }    # build statement up across multiple lines
+    }
+
+    close ( FORM );
+}
+
+
+
+
+sub prepare_statement
+{
+    my $sql = shift;
+
+    $sql = format_sql_statement ($sql);
+
+    my $value = '';
+
+    while ( $sql =~ /\$(\w+(\[\])?)/ ) {
+	my $key = $1;
+	if ($key =~ /\[\]$/) {
+	    # Eliminate duplicate values:
+	    my %h = ();
+	    foreach (@{$cgi_data->{$key}}) { $h{$_} = 1; }
+	    $value = join ("; ", keys (%h));
+	} else {
+	    $value = $cgi_data->{$key};
+	}
+
+	if ($key eq "ORIG_VERSION_ID" && $value =~ /^currval/i) {
+	    $sql =~ s/\$(\w+)/$value/;
+	} else {
+	    $value =~ s/\'/\'\'/g;                 # Permits single quotes
+	    $value =~ s/\\/\\\\/g;                 # Permits backslashes
+	    if ($value eq '') {
+                $sql =~ s/\$(\w+(\[\])?)/NULL/;
+            } else {
+                $sql =~ s/\$(\w+(\[\])?)/'$value'/;
+            }
+	}
+    }
+    
+    return $sql;
+}
+
+
+
+
+sub execute_statement
+{
+    my ($sql, $return_results, $no_overwrite) = @_;
+
+    # Open database and make query, then bind values to
+    # the proper field names.
+    #
+    # NOTE: only expecting one row to be returned from this query.
+    
+    my $dbh = database_connect();
+
+    my $sth = execute_sql_statement ($dbh, $sql);
+
+    #print "sql: $sql<br>\n";  # testing
+    
+    my $db_data;
+    my $key;
+    my %h = ();  # keep track of which fields have been seen already in the context of this query
+
+    if ($return_results) {
+	# MJD (04-Jun-2007): Enable returning multiple rows while prepopulating fields
+	while ($db_data = $sth->fetchrow_hashref) {
+	    # Copy hash values into db_data hash table:
+	    foreach (keys (%$db_data)) {
+		if (/\(\s*(\w+)\s*.*\)/i) { $key = $1; }
+		else                      { $key = $_; }
+		
+		$key =~ tr/a-z/A-Z/;
+		
+		if ($key =~ /\[\]$/) {  # if name ends in "[]", then let's create an array
+		    push (@{$cgi_data->{$key}}, split (/; /, $db_data->{$_}));
+		    #print "found multirow result\n";  # testing
+		} elsif (! defined ($h{$key})) {  # only take the first value returned
+		    if (! $no_overwrite || ! defined ($cgi_data->{$key})) {
+			$cgi_data->{$key} = $db_data->{$_};
+		    }
+		}
+
+		$h{$key} = 1;  # indicate that we've seen this value already
+	    }
+	}
+    }
+
+    $sth->finish;
+
+    database_disconnect ($dbh);
+}
+
+
+
+sub get_version_id_list
+{
+    my ($table_name, $orig_version_id) = @_;
+
+    my $version_id_name = $table_name . "_ID";
+
+    my $sql = "
+SELECT $version_id_name as VERSION_ID
+  from $table_name
+WHERE
+  ORIG_VERSION_ID = '$orig_version_id'
+order by VERSION_ID";
+
+    
+    $sql = format_sql_statement ($sql);
+
+    my $dbh = database_connect();
+
+    my $sth = execute_sql_statement ($dbh, $sql);
+    
+    my $db_data;
+    my @version_id_list;
+    while ($db_data = $sth->fetchrow_hashref) {
+	push (@version_id_list, $db_data->{'version_id'});
+    }
+ 
+    $sth->finish;
+
+    database_disconnect ($dbh);
+   
+    return @version_id_list;
+}
+
+
+
+sub get_latest_version
+{
+    my ($table_name, $version_id_name) = @_;
+
+    my @version_id_list = get_version_id_list ($table_name, $version_id_name);
+
+    return $version_id_list[$#version_id_list];
+}
+
+
+
+sub get_latest_athlete_orig_version_id
+{
+    my ($table_name, $orig_athlete_id) = @_;
+
+    my $version_id_name = $table_name . "_ID";
+
+    my $sql = "
+SELECT ORIG_VERSION_ID
+  from $table_name
+WHERE
+  ATHLETE_ID = '$orig_athlete_id'
+order by ORIG_VERSION_ID desc";
+
+    
+    $sql = format_sql_statement ($sql);
+
+    my $dbh = database_connect();
+
+    my $sth = execute_sql_statement ($dbh, $sql);
+    
+    my $db_data;
+    my $orig_version_id = 0;
+
+    # Pick off the first ORIG_VERSION_ID:
+    while ($db_data = $sth->fetchrow_hashref) {
+	$orig_version_id = $db_data->{'orig_version_id'};
+	last;
+    }
+ 
+    $sth->finish;
+
+    database_disconnect ($dbh);
+   
+    return $orig_version_id;
+}
+
+
+
+sub get_latest_injury_report_orig_version_id
+{
+    my ($table_name, $orig_injury_report_id) = @_;
+
+    my $version_id_name = $table_name . "_ID";
+
+    my $sql = "
+SELECT ORIG_VERSION_ID
+  from $table_name
+WHERE
+  INJURY_REPORT_ID = '$orig_injury_report_id'
+order by ORIG_VERSION_ID desc";
+
+    
+    $sql = format_sql_statement ($sql);
+
+    my $dbh = database_connect();
+
+    my $sth = execute_sql_statement ($dbh, $sql);
+    
+    my $db_data;
+    my $orig_version_id = 0;
+
+    # Pick off the first ORIG_VERSION_ID:
+    while ($db_data = $sth->fetchrow_hashref) {
+	$orig_version_id = $db_data->{'orig_version_id'};
+	last;
+    }
+ 
+    $sth->finish;
+
+    database_disconnect ($dbh);
+   
+    return $orig_version_id;
+}
+
+
+1;

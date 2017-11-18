@@ -1,0 +1,172 @@
+<html>
+
+<head>
+  <title>FERPA RELEASE FORM</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+FORM_DATE: not null
+FORM_DATE: date
+FORM_DATE_PARENT: date
+TERMS_SIGNED_BY_ATHLETE: not null
+TERMS_SIGNED_BY_ATHLETE: format=^(Yes|No)$
+TERMS_SIGNED_BY_PARENT: not null
+TERMS_SIGNED_BY_PARENT: format=^(Yes|No)$
+--- END DATA VERIFICATION ---
+
+
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT, TO_CHAR(BIRTHDATE,
+'MM-DD-YYYY') as BIRTHDATE, TO_CHAR(now(), 'MM-DD-YYYY') as FORM_DATE
+
+FROM athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+insert into ferpa_release
+(
+
+FERPA_RELEASE_ID, ORIG_VERSION_ID, ATHLETE_ID, FORM_DATE,
+TERMS_SIGNED_BY_ATHLETE, TERMS_SIGNED_BY_PARENT, FORM_DATE_PARENT,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+)
+VALUES
+(
+
+nextval('new_ferpa_release_id'), $ORIG_VERSION_ID, $ORIG_ATHLETE_ID,
+TO_DATE($FORM_DATE, 'MM-DD-YYYY'), $TERMS_SIGNED_BY_ATHLETE,
+$TERMS_SIGNED_BY_PARENT, $FORM_DATE_PARENT, $FORM_SIGN_USER_ID, now(),
+$FORM_SIGNATURE
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+FERPA_RELEASE_ID, ORIG_VERSION_ID, ATHLETE_ID as ORIG_ATHLETE_ID,
+TO_CHAR(FORM_DATE, 'MM-DD-YYYY') as FORM_DATE,
+TERMS_SIGNED_BY_ATHLETE, TERMS_SIGNED_BY_PARENT,
+TO_CHAR(FORM_DATE_PARENT, 'MM-DD-YYYY') as FORM_DATE_PARENT,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+FROM ferpa_release
+
+WHERE FERPA_RELEASE_ID = $FERPA_RELEASE_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+
+<body background="/www/background.gif">
+
+<form name="ferpa_release" method="POST" action="/bin/process_form">
+<input type="hidden" name="FORM_NAME" value="FERPA_RELEASE">
+
+<div align="center"><center><p><b>MIAMI UNIVERSITY<br>
+DEPARTMENT OF INTERCOLLEGIATE ATHLETES<br>
+FERPA AUTHORIZATION FOR RELEASE OF HEALTH INFORMATION</b></p>
+</center></div>
+
+<table border="0" width="100%">
+  <tr>
+    <td align="left"><b>Athlete:</b> #LAST_NAME#, #FIRST_NAME# #MIDDLE_NAME#</td>
+    <td align="center"><b>Birthdate:</b> #BIRTHDATE#</td>
+    <td align="right"><b>Sport:</b> #SPORT#</td>
+  </tr>
+</table>
+
+
+<p><b>TO: MIAMI UNIVERSITY ATHLETIC TRAINERS, PHYSICIANS, AND OTHER
+RELATED PERSONNEL.</b></p>
+
+<p>You are hereby authorized and requested to disclose information and
+records pertaining to my physical health or condition, whether past,
+present or future, including all physicals, physicians' records,
+athletic trainers' records, diagnoses, treatment information,
+histories and prognoses, and including information and records
+pertaining to any and all injuries or illnesses to (i) Miami
+University Department of Intercollegiate Athletics and its personnel
+(including coaches of my sport) who the University, in good faith,
+determines have a legitimate "educational need to know;" (ii)
+Miami University's team physicians; and (iii) all media organizations
+including print, television, radio and internet, and professional team
+scouts but only disclosing such information to the media or scout as
+it relates to my ability to participate in my sport.</p>
+
+<p>The purpose of this authorization is (i) to assist coaches and
+other personnel within the Department of Intercollegiate Athletics in
+evaluating my fitness as it pertains to my ability to participate in
+my sport; (ii) to allow personnel within the Department of
+Intercollegiate Athletics to assist me with respect to my athletic
+grant-in-aid or with respect to my academic progress; (iii) to assist
+Miami University's team physicians in providing medical care to me;
+(iv) to meet the requirements of insurers or health plans when such
+insurers require such information before paying for your health care
+services; (v) to allow athletic training students to participate in my
+care or to contribute to their education training; and (vi) to provide
+to the media, for redisclosure to their respective audiences,
+information regarding my fitness as it pertains to my ability to
+participate in my sport.</p>
+
+<p>I hereby agree that the information that is used or disclosed
+pursuant to this Authorization may be redisclosed by the receiving
+entity.  For example: Information given to the media about my physical
+ability to play my sport will, in all likelihood, be redisclosed to
+their audience.  By signing below, I specifically authorize and
+consent to all such redisclosures.</p>
+
+<p>I understand that the information to be disclosed is protected
+either as "education records" by The Family Education Rights and
+Privacy Act of 1974 or as "medical records" under Ohio law and, with
+certain exceptions, may not be disclosed without my consent.  By
+signing this form, I certify that I agree to the disclosure of the
+records referenced above.</p>
+
+<p>A copy of this authorization shall be considered as effective and
+valid as the original.</p>
+
+<div align="center">
+<table border="0" width="100%"><tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Student Athlete</b></td>
+   <td align="right"><b>Signed by Athlete?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="TERMS_SIGNED_BY_ATHLETE" checked="checked" value="Yes">Yes&nbsp; 
+<input type="radio" name="TERMS_SIGNED_BY_ATHLETE" value="No">No</td>
+   <td width="50"></td>
+   <td><b>Signature date:</b></td>
+   <td><div align="center"><center><p><input type="text" name="FORM_DATE" size="10"><br>
+      mm-dd-yyyy</td>
+</tr>
+<tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Parent or Guardian (If Student Athlete is under 18 years of age)</b></td>
+   <td align="right"><b>Signed by Parent or Guardian?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="TERMS_SIGNED_BY_PARENT" value="Yes">Yes&nbsp; 
+<input type="radio" name="TERMS_SIGNED_BY_PARENT" value="No" checked="checked">No</td>
+   <td width="50"></td>
+   <td><b>Signature date:</b></td>
+   <td><div align="center"><center><p><input type="text" name="FORM_DATE_PARENT" size="10"><br>
+      mm-dd-yyyy</td>
+</tr></table>
+</div>
+
+<div align="center"><p><input type="submit" value="Submit"></p></div>
+
+</form>
+</body>
+</html>
+

@@ -1,0 +1,113 @@
+<html>
+
+<head>
+  <title>Athlete Access View Criteria</title>
+</head>
+
+<body background="/www/background.gif" onLoad="document.athlete_access_view.LAST_NAME.focus();">
+
+<form name="athlete_access_view" method="post" action="/bin/athlete_access.pl" target="athlete_access_results">
+
+<input type="hidden" name="OPERATION" value="SEARCH">
+
+<table border="0">
+  <tr>
+    <td valign="middle"><b>Name:</b></td>
+    <td nowrap valign="middle"><input type="text" name="LAST_NAME" size="20"><b>, </b></td>
+    <td valign="middle"><input type="text" name="FIRST_NAME" size="20"></td>
+  </tr>
+  <tr>
+    <td valign="top"></td>
+    <td valign="top"><b>Last</b></td>
+    <td valign="top"><b>First</b></td>
+  </tr>
+</table>
+
+<table border="0">
+  <tr>
+    <td align="right" valign="middle"><b>Sex:</b></td>
+    <td valign="middle"><select name="SEX" size="1">
+        <option selected value="">All</option>
+        <option value="Female">Female</option>
+        <option value="Male">Male</option>
+      </select></td>
+    <td valign="middle">&nbsp;&nbsp;&nbsp;&nbsp; </td>
+    <td align="right" valign="middle"><b>Sport:</b></td>
+    <td valign="middle"><select name="SPORT" size="1">
+        <option selected value="">All</option>
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+      <td valign="middle">&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td align="right" valign="middle"><b>Status:</b></td>
+      <td valign="middle"><select name="STATUS" size="1">
+        <option value="">All</option>
+        <option selected="selected" value="Active">Active</option>
+        <option value="Archived">Archived</option>
+      </select></td>
+    </tr>
+</table>
+
+<table border="0">
+  <tr>
+    <td valign="middle"><b>Birthdate Between:</b></td>
+    <td><input type="text" name="BIRTHDATE1" size="10"></td>
+    <td align="center"><b>&nbsp; and</b> </td>
+    <td align="center"><input type="text" name="BIRTHDATE2" size="10"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td align="center" valign="top"><small>mm-dd-yyyy</small></td>
+    <td></td>
+    <td align="center" valign="top"><small>mm-dd-yyyy</small></td>
+  </tr>
+  <tr>
+    <td valign="middle"><b>Record Created Between:</b></td>
+    <td><input type="text" name="FORM_SIGN_DATE1" size="10"></td>
+    <td align="center"><b>&nbsp; and</b> </td>
+    <td align="center"><input type="text" name="FORM_SIGN_DATE2" size="10"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td align="center" valign="top"><small>mm-dd-yyyy</small></td>
+    <td></td>
+    <td align="center" valign="top"><small>mm-dd-yyyy</small></td>
+    </tr>
+</table>
+
+<table>
+  <tr>
+    <td align="right">Display only athletes who have access:</td>
+    <td><input type="checkbox" name="HAVE_ACCESS"></td>
+  </tr>
+  <tr>
+    <td align="right">Print view:</td>
+    <td><input type="checkbox" name="PRINT_VIEW"></td>
+  </tr>
+</table>
+
+<p>
+<input type="submit" value=" Search Athletes ">
+<input type="reset" value=" Reset Fields ">
+</p>
+
+
+</form>
+</body>
+</html>
+

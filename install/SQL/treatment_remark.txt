@@ -1,0 +1,14 @@
+create table treatment_remark
+(
+treatment_remark_id		int		not null  primary key,
+orig_version_id			int		not null,
+injury_report_id		int		not null  references injury_report (injury_report_id) on delete cascade, 
+form_date			date,
+participation_status		varchar (50),
+treatment_remark		text,
+review_required			varchar (3),
+confidential			varchar (3),
+form_sign_user_id		varchar (50)	not null,
+form_sign_date			timestamp	not null,
+form_signature			text
+);

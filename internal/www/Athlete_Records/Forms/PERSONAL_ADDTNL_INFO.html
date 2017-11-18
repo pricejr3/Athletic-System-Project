@@ -1,0 +1,137 @@
+<html>
+
+<head>
+  <title>PERSONAL ADDITIONAL INFORMATION</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+SPORT: maxsize=50
+FORM_DATE: not null
+FORM_DATE: date
+SUBJECT: maxsize=500
+--- END DATA VERIFICATION ---
+
+
+REVIEW_REQUIRED_CLEARANCE=STAFF
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT,
+TO_CHAR(now(), 'MM-DD-YYYY') as FORM_DATE
+
+FROM athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+insert into personal_addtnl_info
+(
+
+PERSONAL_ADDTNL_INFO_ID, ORIG_VERSION_ID, ATHLETE_ID, SPORT,
+FORM_DATE, SUBJECT, ADDTNL_INFO, REVIEW_REQUIRED, CONFIDENTIAL,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+)
+VALUES
+(
+
+nextval('new_personal_addtnl_info_id'), $ORIG_VERSION_ID,
+$ORIG_ATHLETE_ID, $SPORT, TO_DATE($FORM_DATE, 'MM-DD-YYYY'), $SUBJECT,
+$ADDTNL_INFO, $REVIEW_REQUIRED, $CONFIDENTIAL, $FORM_SIGN_USER_ID,
+now(), $FORM_SIGNATURE
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+PERSONAL_ADDTNL_INFO_ID, ORIG_VERSION_ID, ATHLETE_ID as
+ORIG_ATHLETE_ID, SPORT, TO_CHAR(FORM_DATE, 'MM-DD-YYYY') as FORM_DATE,
+SUBJECT, ADDTNL_INFO, REVIEW_REQUIRED, CONFIDENTIAL,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+FROM personal_addtnl_info
+
+WHERE PERSONAL_ADDTNL_INFO_ID = $PERSONAL_ADDTNL_INFO_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+
+
+<body background="/www/background.gif">
+
+<p align="center"><strong>MIAMI UNIVERSITY SPORTS MEDICINE<br>
+PERSONAL ADDITIONAL INFORMATION</strong></p>
+
+<form name="personal_addtnl_info" method="POST" action="/bin/process_form">
+
+<input type="hidden" name="FORM_NAME" value="PERSONAL_ADDTNL_INFO">
+
+<table border="0" width="100%">
+    <tr>
+      <td><strong>Athlete: </strong>#LAST_NAME#, #FIRST_NAME# #MIDDLE_NAME#</td>
+      <td><div align="right"><p><strong>Sport: </strong><select name="SPORT" size="1">
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+    </tr>
+  </table>
+  <table border="0">
+    <tr>
+      <td valign="top"><strong>Form Date:</strong></td>
+      <td valign="top"><table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td><div align="center"><center><p><input type="text" name="FORM_DATE" size="10"><br>
+          mm-dd-yyyy</td>
+        </tr>
+      </table>
+      </td>
+    </tr>
+    <tr align="center">
+      <td><strong>Subject:</strong></td>
+      <td><input type="text" name="SUBJECT" size="40"></td>
+    </tr>
+  </table>
+  <div align="left"><p><strong>Additional Information:</strong><br>
+  <textarea rows="10" name="ADDTNL_INFO" cols="60" wrap="virtual"></textarea></p>
+  </div><div align="left"><table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td valign="top"><font color="#FF0000"><strong>CONFIDENTIAL<br>
+      </strong>(staff members only)&nbsp;&nbsp;&nbsp; </font></td>
+      <td valign="top"><input type="radio" value="No" name="CONFIDENTIAL" checked>No - allow all
+      authorized users to view this information.<br>
+      <input type="radio" name="CONFIDENTIAL" value="Yes">Yes - allow only staff members to view
+      this information.</td>
+    </tr>
+  </table>
+  </div><div align="left"><p><input type="submit" value="Submit"></p>
+  </div>
+</form>
+</body>
+</html>
+

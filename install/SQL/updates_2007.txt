@@ -1,0 +1,152 @@
+Login:
+
+ssh -l mjduff icalnx01.mcs.muohio.edu
+sudo tcsh
+
+Do full backup:
+
+cd /usr/local
+tar cvzf ~/musm_16-May-2007.tar.gz musm
+chmod 600 ~/musm_16-May-2007.tar.gz
+
+---------------------------
+
+Temporarily modify database to connect as musmdb_admin:
+
+cd /var/lib/pgsql/data/
+cp pg_hba.conf pg_hba.conf.16-May-2007
+cp pg_hba.conf.musmdb_admin pg_hba.conf
+/etc/init.d/rhdb reload
+
+cd /usr/local/musm/install/SQL/
+chown musmdb_admin *.txt
+
+Connecting to database:
+
+su musmdb_admin
+psql -U musmdb_admin musmdb
+
+cd /var/lib/pgsql/data/
+cp pg_hba.conf.16-May-2007 pg_hba.conf
+/etc/init.d/rhdb reload
+
+----------------------------
+
+Create athlete access table:
+
+\i athlete_access.txt
+
+(see create_indexes.txt)
+
+---------------------------
+
+Create tables for release forms:
+
+\i athlete_release.txt
+\i ferpa_release.txt
+\i health_info_release.txt
+
+(see create_indexes.txt, create_triggers.txt, create_and_populate_lv_tables.txt, create_sequences.txt)
+
+Upload new form files: ATHLETE_RELEASE.html, FERPA_RELEASE.txt, HEALTH_INFO_RELEASE.txt
+
+----------------------------
+
+Create health_history2 table:
+
+\i health_history2.txt
+
+(see create_indexes.txt, create_triggers.txt, create_and_populate_lv_tables.txt, create_sequences.txt)
+
+---------------------------
+
+Create password file for user "athlete" with "ATHLETE" clearance: /usr/local/musm/internal/auth/athlete.passwd
+
+cd /usr/local/musm/internal/auth/
+
+cat > athlete.passwd 
+athlete:00000000000000000000000000000000:ATHLETE:Login,,Athlete
+
+chown root:musm_intranet athlete.passwd 
+chmod 660 athlete.passwd 
+
+----------------------------
+
+Add participation status column to: treatment_record, treatment_addtnl_info, recommended_treatment,
+injury_addtnl_info, 
+
+alter table treatment_record add participation_status varchar (50);
+alter table treatment_addtnl_info add participation_status varchar (50);
+alter table recommended_treatment add participation_status varchar (50);
+alter table injury_addtnl_info add participation_status varchar (50);
+
+alter table treatment_record_lv add participation_status varchar (50);
+alter table treatment_addtnl_info_lv add participation_status varchar (50);
+alter table recommended_treatment_lv add participation_status varchar (50);
+alter table injury_addtnl_info_lv add participation_status varchar (50);
+
+Updated: TREATMENT_RECORD.html, TREATMENT_ADDTNL_INFO.html, INJURY_ADDTNL_INFO, RECOMMENDED_TREATMENT
+
+----------------------------
+
+====================================
+
+Testing:
+
+-- query athletes in athlete access view
+-- include single quotes in coaches view text
+
+----------------------------
+
+Apply stylesheet to all pages (scripts and forms)
+
+----------------------------
+
+Prevent page break in middle of table cells for athlete login ticket printouts
+
+----------------------------
+
+Add signature lines on all personal forms
+Add parent form date to all personal forms
+
+----------------------------
+
+Remove sport selection from personal forms --> prepopulate only
+
+----------------------------
+
+Update list of injury types and body parts on injury report + graphing views
+
+----------------------------
+
+alter table health_appraisal add form_date_parent date;
+alter table health_appraisal_lv add form_date_parent date;
+
+alter table health_appraisal add complete_signature_date_parent date;
+alter table health_appraisal_lv add complete_signature_date_parent date;
+
+alter table health_appraisal add release_signed_by_parent varchar(3);
+alter table health_appraisal_lv add release_signed_by_parent varchar(3);
+
+alter table health_appraisal add complete_signed_by_parent varchar(3);
+alter table health_appraisal_lv add complete_signed_by_parent varchar(3);
+
+----------------------------
+
+alter table treatment_record add associated_injuries varchar (500);
+alter table treatment_addtnl_info add associated_injuries varchar (500);
+alter table recommended_treatment add associated_injuries varchar (500);
+alter table coaches_report add associated_injuries varchar (500);
+alter table injury_report add associated_injuries varchar (500);
+
+alter table treatment_record_lv add associated_injuries varchar (500);
+alter table treatment_addtnl_info_lv add associated_injuries varchar (500);
+alter table recommended_treatment_lv add associated_injuries varchar (500);
+alter table coaches_report_lv add associated_injuries varchar (500);
+alter table injury_report_lv add associated_injuries varchar (500);
+
+create index treatment_record_ai                 on treatment_record_lv (associated_injuries);
+create index treatment_addtnl_info_ai            on treatment_addtnl_info_lv (associated_injuries);
+create index recommended_treatment_ai            on recommended_treatment_lv (associated_injuries);
+create index coaches_report_ai                   on coaches_report_lv (associated_injuries);
+create index injury_report_ai                    on injury_report_lv (associated_injuries);

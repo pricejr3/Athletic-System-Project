@@ -1,0 +1,239 @@
+<html>
+
+<head>
+  <title>PRE-PARTICIPATION PHYSICAL</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+SPORT: maxsize=50
+FORM_DATE: not null
+FORM_DATE: date
+HEIGHT: maxsize=50
+WEIGHT: maxsize=50
+BLOOD_PRESSURE: maxsize=50
+PULSE: maxsize=50
+GLU: maxsize=50
+PRO: maxsize=50
+BLD: maxsize=50
+KET: maxsize=50
+WBC: maxsize=50
+HCT: maxsize=50
+HBG: maxsize=50
+PLT: maxsize=50
+CLEARED_TO_PARTICIPATE: maxsize=50
+--- END DATA VERIFICATION ---
+
+
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT,
+TO_CHAR(now(), 'MM-DD-YYYY') as FORM_DATE
+
+FROM athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+insert into physical
+(
+
+PHYSICAL_ID, ORIG_VERSION_ID, ATHLETE_ID, SPORT, FORM_DATE, HEIGHT,
+WEIGHT, BLOOD_PRESSURE, PULSE, HEENT, EYES, LUNGS, CARDIOVASCULAR,
+ABDOMEN, NEUROLOGICAL, ORTHOPEDIC, GLU, PRO, BLD, KET, WBC, HCT, HGB,
+PLT, ADDTNL_REMARKS, CONFIDENTIAL, FORM_SIGN_USER_ID, FORM_SIGN_DATE,
+FORM_SIGNATURE, CLEARED_TO_PARTICIPATE
+
+)
+VALUES
+(
+
+nextval('new_physical_id'), $ORIG_VERSION_ID, $ORIG_ATHLETE_ID,
+$SPORT, TO_DATE($FORM_DATE, 'MM-DD-YYYY'), $HEIGHT, $WEIGHT,
+$BLOOD_PRESSURE, $PULSE, $HEENT, $EYES, $LUNGS, $CARDIOVASCULAR,
+$ABDOMEN, $NEUROLOGICAL, $ORTHOPEDIC, $GLU, $PRO, $BLD, $KET, $WBC,
+$HCT, $HGB, $PLT, $ADDTNL_REMARKS, $CONFIDENTIAL, $FORM_SIGN_USER_ID,
+now(), $FORM_SIGNATURE, $CLEARED_TO_PARTICIPATE
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+PHYSICAL_ID, ORIG_VERSION_ID, ATHLETE_ID as ORIG_ATHLETE_ID, SPORT,
+TO_CHAR(FORM_DATE, 'MM-DD-YYYY') as FORM_DATE, HEIGHT, WEIGHT,
+BLOOD_PRESSURE, PULSE, HEENT, EYES, LUNGS, CARDIOVASCULAR, ABDOMEN,
+NEUROLOGICAL, ORTHOPEDIC, GLU, PRO, BLD, KET, WBC, HCT, HGB, PLT,
+ADDTNL_REMARKS, CONFIDENTIAL, FORM_SIGN_USER_ID, FORM_SIGN_DATE,
+FORM_SIGNATURE, CLEARED_TO_PARTICIPATE
+
+FROM physical
+
+WHERE PHYSICAL_ID = $PHYSICAL_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+
+
+<body background="/www/background.gif">
+
+<form name="physical" method="POST" action="/bin/process_form">
+
+
+<input type="hidden" name="FORM_NAME" value="PHYSICAL">
+
+  <div align="center"><center><p><b>MIAMI UNIVERSITY SPORTS MEDICINE<br>
+  PRE-PARTICIPATION PHYSICAL</b></p>
+  </center></div><table border="0" width="100%">
+    <tr>
+      <td><b>Athlete: </b>#LAST_NAME#, #FIRST_NAME# #MIDDLE_NAME#</td>
+      <td><div align="right"><p><b>Sport: </b><select name="SPORT" size="1">
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+    </tr>
+  </table>
+  <table border="0">
+    <tr>
+      <td valign="top"><b>Date of Form:</b></td>
+      <td valign="top"><input type="text" name="FORM_DATE" size="10"><br>
+      mm-dd-yyyy</td>
+    </tr>
+  </table>
+  <hr align="center">
+  <div align="left"><table border="0">
+    <tr>
+      <td><b>Height</b>:</td>
+      <td><input type="text" name="HEIGHT" size="5"># inches</td>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td align="right"><b>Blood Pressure:</b></td>
+      <td><input type="text" name="BLOOD_PRESSURE" size="10"></td>
+    </tr>
+    <tr>
+      <td><b>Weight</b>:</td>
+      <td><input type="text" name="WEIGHT" size="5"># pounds</td>
+      <td></td>
+      <td align="right"><b>Pulse:</b></td>
+      <td><input type="text" name="PULSE" size="5"># bpm</td>
+    </tr>
+  </table>
+  </div><div align="left"><p><b>HEENT</b>:<br>
+  <textarea rows="3" name="HEENT" cols="60" wrap="virtual"></textarea></p>
+  </div><div align="left"><p><b>EYES:<br>
+  </b><textarea rows="3" name="EYES" cols="60" wrap="virtual"></textarea></p>
+  </div><div align="left"><p><b>LUNGS:<br>
+  </b><textarea rows="3" name="LUNGS" cols="60" wrap="virtual"></textarea></p>
+  </div><div align="left"><p><b>CARDIOVASCULAR:<br>
+  </b><textarea rows="3" name="CARDIOVASCULAR" cols="60" wrap="virtual"></textarea></p>
+  </div><div align="left"><p><b>ABDOMEN:<br>
+  </b><textarea rows="3" name="ABDOMEN" cols="60" wrap="virtual"></textarea></p>
+  </div><div align="left"><p><b>NEUROLOGICAL:<br>
+  </b><textarea rows="3" name="NEUROLOGICAL" cols="60" wrap="virtual"></textarea></p>
+  </div><div align="left"><p><b>ORTHOPEDIC:<br>
+  </b><textarea rows="3" name="ORTHOPEDIC" cols="60" wrap="virtual"></textarea></p>
+  </div><div align="left"><table border="0">
+    <tr>
+      <td valign="top"><b>LAB Urine Analysis:</b></td>
+      <td valign="top"><b>&nbsp;&nbsp; </b></td>
+      <td valign="top"><b>GLU: </b></td>
+      <td valign="top"><input type="text" name="GLU" size="5"></td>
+      <td valign="top"></td>
+      <td valign="top"><b>PRO:</b></td>
+      <td valign="top"><input type="text" name="PRO" size="5"></td>
+      <td valign="top"></td>
+      <td valign="top"><b>BLD:</b></td>
+      <td valign="top"><input type="text" name="BLD" size="5"></td>
+      <td valign="top"></td>
+      <td valign="top"><b>KET:</b></td>
+      <td valign="top"><input type="text" name="KET" size="5"></td>
+    </tr>
+    <tr>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+      <td valign="top"></td>
+    </tr>
+    <tr>
+      <td valign="top"><b>LAB Complete Blood Count:</b></td>
+      <td valign="top"></td>
+      <td valign="top"><b>WBC:</b></td>
+      <td valign="top"><input type="text" name="WBC" size="5"></td>
+      <td valign="top"></td>
+      <td valign="top"><b>HCT:</b></td>
+      <td valign="top"><input type="text" name="HCT" size="5"></td>
+      <td valign="top"></td>
+      <td valign="top"><b>Hgb:</b></td>
+      <td valign="top"><input type="text" name="HGB" size="5"></td>
+      <td valign="top"></td>
+      <td valign="top"><b>PLT:</b></td>
+      <td valign="top"><input type="text" name="PLT" size="5"></td>
+    </tr>
+  </table>
+  </div><div align="left"><p><b>Additional Remarks:<br>
+  </b><textarea rows="3" name="ADDTNL_REMARKS" cols="60" wrap="virtual"></textarea></p>
+  </div>
+
+<br><br>
+
+<p><b>Participation clearance:</b>
+
+<select name="CLEARED_TO_PARTICIPATE" size="1">
+  <option value="Not Cleared">Not Cleared</option>
+  <option value="Provisionally Cleared">Provisionally Cleared</option>
+  <option value="Cleared">Cleared</option>
+</select>
+
+<br><br>
+
+<div align="left"><table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td valign="top"><font color="#FF0000"><b>CONFIDENTIAL<br>
+      </b>(staff members only)&nbsp;&nbsp;&nbsp; </font></td>
+      <td valign="top"><input type="radio" value="No" name="CONFIDENTIAL" checked>No - allow all
+      authorized users to view this information.<br>
+      <input type="radio" name="CONFIDENTIAL" value="Yes">Yes - allow only staff members to view
+      this information.</td>
+    </tr>
+  </table>
+  </div><div align="left"><p><input type="submit" value="Submit"></p>
+  </div>
+</form>
+</body>
+</html>
+

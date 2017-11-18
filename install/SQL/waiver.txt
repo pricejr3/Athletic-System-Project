@@ -1,0 +1,16 @@
+create table waiver
+(
+waiver_id			int		not null  primary key,
+orig_version_id			int		not null,
+athlete_id			int		not null  references athlete (athlete_id) on delete cascade,
+sport				varchar (50),
+form_date			date,
+terms_signed_by_athlete		varchar (3),
+violent_signed_by_athlete	varchar (3),
+form_sign_user_id		varchar (50)	not null,
+form_sign_date			timestamp	not null,
+form_signature			text,
+terms_signed_by_parent		varchar (3),
+violent_signed_by_parent	varchar (3),
+form_date_parent		date
+);

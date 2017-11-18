@@ -1,0 +1,64 @@
+#!/usr/bin/perl
+
+# welcome
+#
+# Copyright 1999, Melampus Enterprises, Inc.
+# Author: Michael J. Duff
+# Last modified: March 14, 1999
+#
+# Description: Displays login page (with pre-expired form)
+#
+
+require "global.pl";
+
+
+print "Content-type: text/html", "\n";
+print "Pragma: no-cache", "\n\n";
+
+
+print <<EOF;
+<!-- Copyright 1999, Melampus Enterprises, Inc. -->
+
+<html>
+
+<head>
+  <title>Miami Sports Medicine Intranet</title>
+  <base href="$BASE_HREF">
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+<body background="/www/background.gif" onLoad="document.LOGIN.LOGIN_ID.focus();">
+
+<br>
+<h3 align="center">Welcome to the MUSM Intranet</h3>
+
+<center><img src="/www/login.gif" WIDTH="504" HEIGHT="245"></center>
+
+<form method="POST" action="/bin/login" name="LOGIN">
+<input type=hidden name="operation" value="login">
+
+<center>
+<table border="0">
+    <tr>
+      <td align="left"><strong>User Name:</strong></td>
+      <td align="left"><input type="text" name="LOGIN_ID" size="12"></td>
+    </tr>
+    <tr>
+      <td align="left"><strong>Password:</strong></td>
+      <td align="left"><input type="password" name="PASSWORD" size="12"></td>
+    </tr>
+</table>
+</center>
+
+<center><p><input type="submit" value=" Login " name="Login"><br></center>
+
+</form>
+
+</body>
+</html>
+
+EOF
+    ;
+
+
+exit;

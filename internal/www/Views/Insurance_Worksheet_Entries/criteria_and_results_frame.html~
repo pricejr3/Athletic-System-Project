@@ -1,0 +1,17 @@
+<html>
+
+<head>
+<title>Insurance Worksheet Transactions View Frames</title>
+</head>
+
+<frameset rows="30%,*">
+  <frame name="top" src="criteria.html" scrolling="auto">
+  <frame name="insurance_worksheet_transactions_view_results" src="blank_results.html" scrolling="auto">
+  <noframes>
+  <body>
+  <p>This page uses frames, but your browser doesn't support them.</p>
+  </body>
+  </noframes>
+</frameset>
+</html>
+

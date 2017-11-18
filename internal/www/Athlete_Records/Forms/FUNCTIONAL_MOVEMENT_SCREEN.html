@@ -1,0 +1,667 @@
+<html>
+
+<head>
+  <title>Functional Movement Screen Form</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+FORM_DATE: not null
+FORM_DATE: date
+DS_SCORE: not null
+DS_SCORE: format=^(0|1|2|3)$
+IHS_SCORE_RIGHT: not null
+IHS_SCORE_RIGHT: format=^(0|1|2|3)$
+IHS_SCORE_LEFT: not null
+IHS_SCORE_LEFT: format=^(0|1|2|3)$
+SM_SCORE_RIGHT: not null
+SM_SCORE_RIGHT: format=^(0|1|2|3)$
+SM_SCORE_LEFT: not null
+SM_SCORE_LEFT: format=^(0|1|2|3)$
+TSPU_SCORE: not null
+TSPU_SCORE: format=^(0|1|2|3)$
+RI_SCORE_RIGHT: not null
+RI_SCORE_RIGHT: format=^(0|1|2|3)$
+RI_SCORE_LEFT: not null
+RI_SCORE_LEFT: format=^(0|1|2|3)$
+ASLR_SCORE_RIGHT: not null
+ASLR_SCORE_RIGHT: format=^(0|1|2|3)$
+ASLR_SCORE_LEFT: not null
+ASLR_SCORE_LEFT: format=^(0|1|2|3)$
+IL_SCORE_RIGHT: not null
+IL_SCORE_RIGHT: format=^(0|1|2|3)$
+IL_SCORE_LEFT: not null
+IL_SCORE_LEFT: format=^(0|1|2|3)$
+TOTAL_SCORE: not null
+TOTAL_SCORE: format=^\d+$
+--- END DATA VERIFICATION ---
+
+
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT,
+TO_CHAR(now(), 'MM-DD-YYYY') as FORM_DATE
+
+FROM athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+insert into functional_movement_screen
+(
+
+FUNCTIONAL_MOVEMENT_SCREEN_ID, ORIG_VERSION_ID, ATHLETE_ID, FORM_DATE,
+DS_SCORE, IHS_SCORE_RIGHT, IHS_SCORE_LEFT, SM_SCORE_RIGHT, SM_SCORE_LEFT, TSPU_SCORE,
+RI_SCORE_RIGHT, RI_SCORE_LEFT, ASLR_SCORE_RIGHT, ASLR_SCORE_LEFT, IL_SCORE_RIGHT, IL_SCORE_LEFT,
+TOTAL_SCORE,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+)
+VALUES
+(
+
+nextval('new_functional_movement_screen_id'), $ORIG_VERSION_ID, $ORIG_ATHLETE_ID,
+TO_DATE($FORM_DATE, 'MM-DD-YYYY'),
+$DS_SCORE, $IHS_SCORE_RIGHT, $IHS_SCORE_LEFT, $SM_SCORE_RIGHT, $SM_SCORE_LEFT, $TSPU_SCORE,
+$RI_SCORE_RIGHT, $RI_SCORE_LEFT, $ASLR_SCORE_RIGHT, $ASLR_SCORE_LEFT, $IL_SCORE_RIGHT, $IL_SCORE_LEFT,
+$TOTAL_SCORE,
+$FORM_SIGN_USER_ID, now(), $FORM_SIGNATURE
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+FUNCTIONAL_MOVEMENT_SCREEN_ID, ORIG_VERSION_ID, ATHLETE_ID as ORIG_ATHLETE_ID,
+TO_CHAR(FORM_DATE, 'MM-DD-YYYY') as FORM_DATE,
+DS_SCORE, IHS_SCORE_RIGHT, IHS_SCORE_LEFT, SM_SCORE_RIGHT, SM_SCORE_LEFT, TSPU_SCORE,
+RI_SCORE_RIGHT, RI_SCORE_LEFT, ASLR_SCORE_RIGHT, ASLR_SCORE_LEFT, IL_SCORE_RIGHT, IL_SCORE_LEFT,
+TOTAL_SCORE,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+FROM functional_movement_screen
+
+WHERE FUNCTIONAL_MOVEMENT_SCREEN_ID = $FUNCTIONAL_MOVEMENT_SCREEN_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+<body background="/www/background.gif" onLoad="recalculateTotalScore()">
+
+
+<script language="JavaScript">
+
+function recalculateTotalScore() {
+   if (document.getElementById ("DS_SCORE") == null)  return;
+
+   var ds_score         = getIntegerValue (document.getElementById ("DS_SCORE").value);
+   var ihs_score_right  = getIntegerValue (document.getElementById ("IHS_SCORE_RIGHT").value);
+   var ihs_score_left   = getIntegerValue (document.getElementById ("IHS_SCORE_LEFT").value);
+   var sm_score_right   = getIntegerValue (document.getElementById ("SM_SCORE_RIGHT").value);
+   var sm_score_left    = getIntegerValue (document.getElementById ("SM_SCORE_LEFT").value);
+   var tspu_score       = getIntegerValue (document.getElementById ("TSPU_SCORE").value);
+   var ri_score_right   = getIntegerValue (document.getElementById ("RI_SCORE_RIGHT").value);
+   var ri_score_left    = getIntegerValue (document.getElementById ("RI_SCORE_LEFT").value);
+   var aslr_score_right = getIntegerValue (document.getElementById ("ASLR_SCORE_RIGHT").value);
+   var aslr_score_left  = getIntegerValue (document.getElementById ("ASLR_SCORE_LEFT").value);
+   var il_score_right   = getIntegerValue (document.getElementById ("IL_SCORE_RIGHT").value);
+   var il_score_left    = getIntegerValue (document.getElementById ("IL_SCORE_LEFT").value);
+
+   var total_score =
+      ds_score +
+      (ihs_score_right  < ihs_score_left  ? ihs_score_right  : ihs_score_left) +
+      (sm_score_right   < sm_score_left   ? sm_score_right   : sm_score_left) +
+      tspu_score +
+      (ri_score_right   < ri_score_left   ? ri_score_right   : ri_score_left) +
+      (aslr_score_right < aslr_score_left ? aslr_score_right : aslr_score_left) +
+      (il_score_right   < il_score_left   ? il_score_right   : il_score_left);
+
+   document.getElementById ("TOTAL_SCORE").value = total_score;
+   document.getElementById ("TOTAL_SCORE_DISPLAY").innerHTML = total_score;
+}
+
+
+
+function getIntegerValue (value) {
+  value = trim (value);
+  if (value == "")  return 0;
+
+  var intValue;
+
+  try {
+      intValue = parseInt (value);
+  } catch (e) { alarm ("Improperly formatted integer"); }
+
+  return intValue;
+}
+
+
+
+function trim (str) {
+  return str.replace (/^\s+|\s+$/g, "");
+}
+
+</script>
+
+<form name="functional_movement_screen" method="POST" action="/bin/process_form">
+<input type="hidden" name="FORM_NAME" value="FUNCTIONAL_MOVEMENT_SCREEN">
+
+<div align="center"><h3>Miami University Sports Medicine Functional Movement Screen</h3></div>
+
+<div align="center"><p>Scored on a 0-3 scale: 0 = pain, 1 = does not
+maintain appropriate position, 2 = can perform test with but with some
+dysfunction, 3 = perfect position</p></div>
+
+
+<table border="0" width="100%">
+   <tr>
+      <td align="left" valign="top"><b>Student Athlete:</b> #LAST_NAME#, #FIRST_NAME# #MIDDLE_NAME#</td>
+      <td align="center" valign="top"><b>Sport:</b> #SPORT#</td>
+      <td align="right" valign="top" width="5%"><b>Date:</b></td>
+      <td align="left" valign="top"><input type="text" name="FORM_DATE" size="10"><br>mm-dd-yyyy</td>
+   </tr>
+</table>
+
+
+<table border="1" cellspacing="0" cellpadding="5" width="100%">
+
+<tr>
+<td valign="top" align="center" rowspan="10"><b>1</b></td>
+
+<td colspan="3"><p><b>Deep Squat:</b> The purpose of this test is to
+measure total body mechanics, assessing bilateral symmetrical and
+functional mobility of hip, knees and ankles.</p>
+
+<p><b>Instructions:</b> Feet shoulder width apart, Dowel @ 90 degs elbow
+flexion and press dowel overhead before each repetition (3 reps
+completed).  Descend into a full squat position (in small child like
+squat position).</p>
+
+<p>*** If after first rep does not score a 3 then place 2x6 board
+under heels and repeat but then must score a highest of 2</p>
+
+<p><b>*** Pain with test must score a 0 and this over rides any previous
+score</b></p>
+</td>
+</tr>
+
+<tr>
+<td>- Fully descended position while maintaining dowel in fully extended position overhead</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Upper torso parallel with tibia</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Femur below horizontal</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Knees aligned over feet/heels in contact with floor</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Dowel aligned over feet and Maintain upright position</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+
+<tr>
+<td>- No <b>PRONATION</b> of feet and knee collapsing in <b>VALGUS</b> position</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+
+<tr>
+<td>- No excessive lumbar flexion</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Dowel does not move over toes</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+
+<tr><td align="right"><b>SCORE (0 = pain, 3 = perfect score)</b></td>
+<td align="center" colspan="2"><select name="DS_SCORE" id="DS_SCORE" size="1" onChange="recalculateTotalScore()">
+<option value=""></option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+</select></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+<td valign="top" align="center" rowspan="13"><b>2</b></td>
+
+<td colspan="3"><p><b>Inline Hurdle Step:</b> The purpose of this test
+is to measure bilateral functional mobility and stability of hips,
+knees and ankles.</p>
+
+<p><b>Instructions:</b> Take dowel and measure height of tibial
+tuberosity place rubberband at height of the tuberosity, ask patient
+to place feet together and align them directly beneath hurdle while
+toes are touching 2x6 board (hurdle), place dowel on shoulders,
+stabilizing on one leg, slowly step over hurdle, touching heel to
+floor while maintaining extension of stance leg, return to start
+position and repeat 3 times.
+
+<p><b>*** Pain with test must score a 0 and this over rides any previous
+score</b></p>
+</td>
+</tr>
+
+<tr>
+<td>- Keeps toes in contact with hurdle each time</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Weight remains on stance leg and maintains good balance</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Hips, Knees and ankles remain in align sagittal position</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Stable torso</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Does not touch hurdle</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Maintains extended position of stance leg</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Touches heel to floor</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Minimal to no movement of lumbar spine especially NO lateral movement</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Dowel and hurdle remain parallel</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- No forward flexion at hips</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- No internal or external rotation of hips to bring leg/foot over hurdle</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr><td align="right"><b>SCORE (0 = pain, 3 = perfect score)</b></td>
+<td align="center"><b>R:</b> <select name="IHS_SCORE_RIGHT" id="IHS_SCORE_RIGHT" size="1" onChange="recalculateTotalScore()">
+<option value=""></option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+</select></td>
+<td align="center"><b>L:</b> <select name="IHS_SCORE_LEFT" id="IHS_SCORE_LEFT" size="1" onChange="recalculateTotalScore()">
+<option value=""></option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+</select></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+<td valign="top" align="center" rowspan="5"><b>3</b></td>
+
+<td colspan="3"><p><b>Shoulder Mobility:</b> The purpose of this test
+is to measure bilateral shoulder mobility and ROM.</p>
+
+<p><b>Instructions:</b> Measure distance from Distal Wrist Crease to
+Tip of middle fingers 3rd Digit, Athlete makes a fist with each hand
+placing thumb in fist, then athlete places 1 shoulder with maximum
+adduction/internal rotation and 2 shoulder maximum abduction and
+external rotation position while maintaining hands on their back,
+hands remain clinched, measure distance between two fists.</p>
+
+<p><b>*** Score of 3 must fall within 1 hand length between each fist
+and if the measurement is more then that must do a "Clearing Test" -
+hand on opposite shoulder, elbow flexed at 90 degs, ask patient to
+Forward Flexion arm to parallel with floor and if presents with pain
+must score a 0.</b></p>
+</td>
+</tr>
+
+<tr>
+<td>- Maintain clenched fists</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Maintain maximum ROM</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Maintain hands on back</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr><td align="right"><b>SCORE (0 = pain, 3 = perfect score)</b></td>
+<td align="center"><b>R:</b> <select name="SM_SCORE_RIGHT" id="SM_SCORE_RIGHT" size="1" onChange="recalculateTotalScore()">
+<option value=""></option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+</select></td>
+<td align="center"><b>L:</b> <select name="SM_SCORE_LEFT" id="SM_SCORE_LEFT" size="1" onChange="recalculateTotalScore()">
+<option value=""></option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+</select></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+<td valign="top" align="center" rowspan="7"><b>4</b></td>
+
+<td colspan="3"><p><b>Trunk Stability Push Up:</b> The purpose of this
+test is maintain trunk/scapular stability in the sagittal plane while
+symmetrical upper extremity movement is performed.</p>
+
+<p><b>Instructions:</b> Instruct athlete to be in a prone position,
+hands placed shoulder width apart and elbows flexed (males must have
+thumbs aligned with top of head and females must have thumbs aligned
+with top of chin), keeping knees fully extended and feet dorsiflexed,
+lift body as unit and performing a push up.</p>
+
+<p><b>*** To reach a score of 3, males must peform 1 repetition with
+thumbs at top of head and females must maintain thumbs at chin.</b></p>
+
+<p>*** If athlete is unable to finish test, perform a "Clearing Test"
+- athlete is prone, push up onto hands into a trunk extension position
+maintaining both hips in contact with floor and MUST be pain free if
+it does cause pain then they receive a score of 0 which overrides all
+scores ***</p>
+</td>
+</tr>
+
+<tr>
+<td>- Male thumbs aligned at top of head/elbows flexed and maintains that position</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Female thumbs aligned with chin/elbows flexed and maintains that position</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Feet Dorsiflexed</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Body is lifted as unit maintaining knees in a fully extended position without any lumbar lag</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Chest and Stomach come off of the floor at the same time</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr><td align="right"><b>SCORE (0 = pain, 3 = perfect score)</b></td>
+<td align="center" colspan="2"><select name="TSPU_SCORE" id="TSPU_SCORE" size="1" onChange="recalculateTotalScore()">
+<option value=""></option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+</select></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+<td valign="top" align="center" rowspan="6"><b>5</b></td>
+
+<td colspan="3"><p><b>Rotary Instability:</b> The purpose of this test
+is to measure multi-planar trunk stability with combined upper and
+lower extremity motion.</p>
+
+<p><b>Instructions:</b> Instruct athlete to be in a Quadraped
+position, shoulders at 90 degs relative to upper torso, hips/knees at
+90 degs relative to lower torso, ankles dorsiflexed, the 2x6 board is
+placed between hands/knees and they must maintain contact with board,
+flexing same shoulder/elbow/hip and knee towards each other.</p>
+
+<p><b>*** Possible 3 score must complete 1 rep correctly while torso
+is parallel to board while maintaining elbow and knee in line with
+board.  If you must go to a diagonal motion then that is scored as a 2
+and inability to do either equals score of 1. If pain then must
+perform a "Clearing Test" - quadraped position, athlete rocks back
+putting buttocks to heels, chest to thighs while reaching out as far
+as possible, maintaining feet/toes in plantarflexed position then
+score as 0.</b></p>
+</td>
+</tr>
+
+<tr>
+<td>- Maintain contact with board in good quadraped position</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Torso is inline and maintains erect stable spine</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Arm and leg are at least 6 inches above the ground and maintain balanced position when moving</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+
+<tr>
+<td>- If unable to perform test on same side after 1 rep then ask them to try diagonal (opposite elbow to knee)</td>
+<td colspan="2">&nbsp;</td>
+</tr>
+
+<tr><td align="right"><b>SCORE (0=pain, 3=perfect score)</b></td>
+<td align="center"><b>R:</b> <select name="RI_SCORE_RIGHT" id="RI_SCORE_RIGHT" size="1" onChange="recalculateTotalScore()">
+<option value=""></option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+</select></td>
+<td align="center"><b>L:</b> <select name="RI_SCORE_LEFT" id="RI_SCORE_LEFT" size="1" onChange="recalculateTotalScore()">
+<option value=""></option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+</select></td>
+</tr>
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+<td valign="top" align="center" rowspan="5"><b>6</b></td>
+
+<td colspan="3"><p><b>Active Straight Leg Raise:</b> The purpose of
+this test is to assess active hamstring, gastroc, and soleus
+flexibility while maintaining a stable pelvis and active extension of
+opposite leg.</p>
+
+<p><b>Instructions:</b> Instruct athlete to be supine/arms at sides
+and palms up with head flat on the floor and 2x6 under knees, dowel
+bisects thigh between ASIS and joint line of knee, athlete then is
+instructed to perform a SLR (hamstring stretch position), line dowel
+up from medial malleolus at bisect spot on midthigh, then score.</p>
+
+<p><b>*** Possible 3 score is if athlete is able to SLR to dowel
+without any other dysfunction, 2 score is if SLR leg is raised below
+the dowel but above knee, 1 score is below dowel and knee, 0 score is
+pain.</b></p>
+</td>
+</tr>
+
+<tr>
+<td>- Maintains contact with board of leg not performing ASLR</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- No internal or external rotation at the hip</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Maintains ankle dorsiflexion on ASLR leg</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr><td align="right"><b>SCORE (0 = pain, 3 = perfect score)</b></td>
+<td align="center"><b>R:</b> <select name="ASLR_SCORE_RIGHT" id="ASLR_SCORE_RIGHT" size="1" onChange="recalculateTotalScore()">
+<option value=""></option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+</select></td>
+<td align="center"><b>L:</b> <select name="ASLR_SCORE_LEFT" id="ASLR_SCORE_LEFT" size="1" onChange="recalculateTotalScore()">
+<option value=""></option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+</select></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+<tr>
+<td valign="top" align="center" rowspan="7"><b>7</b></td>
+
+<td colspan="3"><p><b>Inline Lunge:</b> The purpose of this test is to
+assess quadriceps flexibility, hip mobility/stability and ankle/knee
+stability for an athlete's ability with lateral movement and rotary
+deceleration.</p>
+
+<p><b>Instructions:</b> Measure from tibial tuberosity to floor,
+athlete places one foot behind measurement on board, then places other
+foot (heel) at the distance measured along tibia, dowel is placed
+behind back making sure to touch head, thoracic spine and
+sacrum. Athlete then is instructed to lunge placing back leg on board
+just touching front foot.  Dowel - top hand should be opposite of leg
+that is front foot.</p>
+
+<p><b>*** Possible 3 score is minimal 2 No Torso Movement/feet remain in
+sagittal plane/knee touches 2x6 grazing front foot. Possible 2 score
+would be mild lateral movement/forward flexion but has the ability to
+go through motion. Possible 1 score is combination multiple
+dysfunctions and loss of balance. 0 score is pain which overrides all
+scores.</b></p>
+</td>
+</tr>
+
+<tr>
+<td>- Maintains upright torso</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Knee touches 2x6 and is just behind front foot</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- Maintains balance</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- No forward flexion or lateral movement of torso</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr>
+<td>- No internal or external rotation of back foot</td>
+<td>&nbsp;</td>  <td>&nbsp;</td>
+</tr>
+
+<tr><td align="right"><b>SCORE (0 = pain, 3 = perfect score)</b></td>
+<td align="center"><b>R:</b> <select name="IL_SCORE_RIGHT" id="IL_SCORE_RIGHT" size="1" onChange="recalculateTotalScore()">
+<option value=""></option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+</select></td>
+<td align="center"><b>L:</b> <select name="IL_SCORE_LEFT" id="IL_SCORE_LEFT" size="1" onChange="recalculateTotalScore()">
+<option value=""></option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+</select></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+<tr><td align="right" colspan="2"><b>TOTAL SCORE for Functional Movement Screen (out of possible 21 points)</b></td>
+<td align="center" colspan="2"><b><input type="hidden" name="TOTAL_SCORE" id="TOTAL_SCORE"/><div id="TOTAL_SCORE_DISPLAY"> #TOTAL_SCORE# </div></td>
+</tr>
+
+</table>
+
+<div align="center"><p><input type="submit" value="Submit"></p></div>
+
+</form>
+</body>
+</html>

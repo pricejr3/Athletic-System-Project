@@ -1,0 +1,109 @@
+<html>
+<head>
+  <title>Athlete Login Instructions</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+<body background="/www/background.gif">
+
+<h2 align="center">Instructions</h2>
+
+<p>Welcome to the Miami University Sports Medicine Intranet. Please
+fill out the forms you were instructed to in your welcome letter. The
+steps for each form are:</p>
+
+<ol>
+
+<li>Select the form in the drop-down list and click the "Fill Out New
+Form" button.</li>
+
+<li>Fill out the form completely and click the "Submit" button at the
+bottom of the page.</li>
+
+<li>If you are a <font color="#a00000"><b>Veteran Student-Athlete</b></font>
+or a <font color="#a00000"><b>Freshmen/Transfer Student - Athlete</b></font>
+then please fill out the appropriate forms listed/assigned below:
+
+<table align="center" border="0"><tr>
+<td valign="top"><font color="#a00000"><b>Veteran Student-Athlete:
+<ol>
+<li>Athlete Release Form</li>
+<li>FERPA Release Form</li>
+<li>Health Appraisal Form</li>
+<li>Health Information Release Form</li>
+<li>Insurance Form</li>
+<li>Waiver Form</li>
+</ol>
+</b></font>
+</td>
+
+<td>&nbsp;&nbsp;</td>
+
+<td valign="top"><font color="#a00000"><b>Freshmen/Transfer Student-Athlete:
+<ol>
+<li>Athlete Release Form</li>
+<li>FERPA Release</li>
+<li>Health Appraisal Form</li>
+<li>Health Information Release Form</li>
+<li>Insurance Form</li>
+<li>Waiver Form</li>
+<li>Family History Form</li>
+<li>Health History Form</li>
+</ol>
+</b></font>
+</td>
+
+</tr></table>
+</li>
+
+<li>If you see a message stating "Form could not be submitted due to
+the following reasons:", then please read the warnings/errors listed
+in red and make the appropriate corrections on the form. Then click
+the "Submit" button at the bottom of the page.</li>
+
+<li>Once the form has passed verification, you will be asked to review
+it. Please double check all of your responses then click the "Insert
+Form Data into Database" button at the bottom of the page. If you
+would like to change any of the information, then click on the "Edit
+Form" button instead.</li>
+
+<li>If successful, then you will see a message stating that the
+"Database insertion was successful".</li>
+
+<li>To see the updated list of completed forms, click on the "Refresh
+Form List" link at the top of the page.</li>
+
+<li>To modify a form after it is submitted, click on the form in your
+list and click the "Modify" button at the bottom of the form.  Please
+note that you may make modifications to your information only during
+the designated time that you have access to the system.</li>
+
+<li>Once forms have all <font color="#a00000"><b>FINAL</b></font>
+modifications to them, please <font
+color="#a00000"><b>PRINT</b></font> each form off and <font
+color="#a00000"><b>SIGN/DATE</b></font> in all the appropriate places
+(if you are under the age of 18 please have your legal guardian/parent
+sign in all the appropriate places).  To print a form, click on it in
+your list of forms, then click the "Print" link at the bottom of the
+form.</li>
+
+<li>After forms are <font color="#a00000"><b>PRINTED</b></font> and
+<font color="#a00000"><b>SIGNED/DATED</b></font> please mail them to
+or drop them off at:
+
+<table align="center" border="0"><tr>
+<td>Miami University Sports Medicine<br>
+Attn: Mr. Gale Newton<br>
+144 Yager Stadium<br>
+Oxford, OH 45056<br>
+</td>
+</tr></table>
+</li>
+
+</ol>
+
+<p>If you have problems or questions, please contact Jennifer
+Beardslee at beardsjm@muohio.edu or call at 513-529-4777.</p>
+
+</body>
+</html>

@@ -1,0 +1,157 @@
+<html>
+
+<head>
+  <title>Insurance Worksheet Graphs Criteria</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+<body background="/www/background.gif" onLoad="document.insurance_worksheet_graphs.DATE_REPORTED1.focus();">
+
+<form name="insurance_worksheet_graphs" method="GET" action="/bin/insurance_worksheet_graphs.pl" target="bottom">
+
+  <b>Funds vs.: </b>
+  <select name="GROUPING_FIELD" size="1">
+     <option value="MEDICAL_PROVIDER">Medical Provider</option>
+     <option value="PAID_BY">Paid By</option>
+     <option value="SEX">Sex</option>
+     <option value="SPORT" selected>Sport</option>
+  </select>
+
+  <b>Graph type:</b>
+  <select name="GRAPH_TYPE" size="1">
+     <option value="BAR">Bar</option>
+     <option value="PIE" selected>Pie</option>
+  </select>
+
+
+  <table border="0">
+    <tr>
+      <td align="right" valign="middle"><b>Sex:</b></td>
+      <td valign="middle"><select name="SEX" size="1">
+        <option selected value="">All</option>
+        <option value="Female">Female</option>
+        <option value="Male">Male</option>
+      </select></td>
+      <td valign="middle">&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td align="right" valign="middle"><b>Sport:</b></td>
+      <td valign="middle"><select name="SPORT" size="1">
+        <option selected value="">All</option>
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+      <td valign="middle">&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td align="right" valign="middle"><b>Athlete Status:</b></td>
+      <td valign="middle"><select name="STATUS" size="1">
+        <option value="">All</option>
+        <option selected value="Active">Active</option>
+        <option value="Archived">Archived</option>
+      </select></td>
+    </tr>
+    <tr>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+    </tr>
+    <tr>
+      <td align="right" valign="middle"><b>Medical Provider:</b></td>
+      <td valign="middle"><select name="MEDICAL_PROVIDER" size="1">
+        <option selected value="">All</option>
+        <option value="Other">Other</option>
+        <option value="Anesthesia Associates of Cincinnati">Anesthesia Associates of Cincinnati</option>
+        <option value="DJO">DJO</option>
+        <option value="Family Vision Care">Family Vision Care</option>
+        <option value="Hamco X-Ray">Hamco X-Ray</option>
+        <option value="McCullough Hyde Memorial Hospital">McCullough Hyde Memorial Hospital</option>
+        <option value="Mercy Hospital">Mercy Hospital</option>
+        <option value="Miami University Treasurer">Miami University Treasurer</option>
+        <option value="Midwest Pain Management">Midwest Pain Management</option>
+        <option value="Oxford Radiology">Oxford Radiology</option>
+        <option value="ProScan">ProScan</option>
+        <option value="Talawanda Emergency Physicians">Talawanda Emergency Physicians</option>
+        <option value="Wellington Orthopedics">Wellington Orthopedics</option>
+      </select></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"><b>Paid By:</b></td>
+      <td valign="middle"><select name="PAID_BY" size="1">
+        <option selected value="">All</option>
+        <option value="paid_by_athlete_primary">Athlete Primary</option>
+        <option value="paid_by_athlete_secondary">Athlete Secondary</option>
+        <option value="insurance_writeoff">Insurance Writeoff</option>
+        <option value="paid_by_miami_primary">Maksim</option>
+        <option value="paid_by_miami_secondary">Miami Athlete Insurance</option>
+      </select></td>
+      <td valign="middle"></td>
+    </tr>
+
+    <tr>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+      <td align="right" valign="middle"></td>
+      <td valign="middle"></td>
+      <td valign="middle"></td>
+    </tr>
+
+    <tr><td colspan="4">
+  <table border="0">
+    <tr>
+      <td valign="middle"><b>Date Received Between:</b></td>
+      <td><input type="text" name="DATE_RECEIVED1" size="10"><br>
+<small>mm-dd-yyyy</small></td>
+      <td align="center"><b>&nbsp; and</b> </td>
+      <td align="center"><input type="text" name="DATE_RECEIVED2" size="10"><br>
+<small>mm-dd-yyyy</small></td>
+    </tr>
+  </table>
+  </td>
+
+  <td valign="middle"></td>
+
+  <td colspan="4">
+  <table border="0">
+    <tr>
+      <td valign="middle"><b>Date Serviced Between:</b></td>
+      <td><input type="text" name="SERVICE_DATE1" size="10"><br>
+<small>mm-dd-yyyy</small></td>
+      <td align="center"><b>&nbsp; and</b> </td>
+      <td align="center"><input type="text" name="SERVICE_DATE2" size="10"><br>
+<small>mm-dd-yyyy</small></td>
+    </tr>
+  </table>
+  </td>
+ </tr>
+</table>
+
+<p>
+<input type="submit" value=" Generate Graph ">
+<input type="reset" value=" Reset Fields ">
+</p>
+
+
+</form>
+</body>
+</html>
+

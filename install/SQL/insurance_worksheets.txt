@@ -1,0 +1,11 @@
+create table insurance_worksheets
+(
+worksheet_id                    int             not null  primary key,
+athlete_id                      int             not null  references athlete (athlete_id) on delete cascade,
+injury_report_id                int             not null  references injury_report (injury_report_id) on delete cascade,
+contact_name                    varchar (100),
+total_balance                   float           not null,
+form_sign_user_id               varchar (50)    not null,
+form_sign_date                  timestamp       not null,
+form_signature                  text
+)

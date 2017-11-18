@@ -1,0 +1,4 @@
+# Perform incremental backup Monday thru Saturday mornings at 3am:
+0 3 * * 1-6 . /usr/oracle7/.profile; /usr/intranet/internal/admin/database_backup incremental
+# Perform a full backup each Sunday morning at 3am:
+0 3 * * 0 . /usr/oracle7/.profile; /usr/intranet/internal/admin/database_backup complete

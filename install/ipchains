@@ -1,0 +1,49 @@
+# Firewall configuration written by lokkit
+# Manual customization of this file is not recommended.
+# Note: ifup-post will punch the current nameservers through the
+#       firewall; such entries will *not* be listed here.
+:input DENY
+:forward DENY
+:output ACCEPT
+#
+# Note: eth0 is the Internet interface, eth1 is the internal LAN interface
+#
+# First consider packets incoming on the LAN interface:
+#
+# Accept any with a source IP address on the LAN:
+-A input -i eth1 -s 192.168.0.0/24 -d 0/0 -j ACCEPT
+-A input -i eth1 -s 0/0 -d 0/0 -j DENY -l
+#
+#
+# All local-to-local packets are okay:
+-A input -s 0/0 -d 0/0 -i lo -j ACCEPT
+#
+#
+# Now take care of the incoming packets from the Internet:
+#
+# We should deny all packets from invalid source IP addresses (and log):
+-A input -i eth0 -s 0.0.0.0/8 -d 0/0 -j DENY -l
+-A input -i eth0 -s 10.0.0.0/8 -d 0/0 -j DENY -l
+-A input -i eth0 -s 127.0.0.0/8 -d 0/0 -j DENY -l
+-A input -i eth0 -s 169.254.0.0/16 -d 0/0 -j DENY -l
+-A input -i eth0 -s 172.16.0.0/12 -d 0/0 -j DENY -l
+-A input -i eth0 -s 192.0.2.0/24 -d 0/0 -j DENY -l
+-A input -i eth0 -s 192.168.0.0/16 -d 0/0 -j DENY -l
+-A input -i eth0 -s 224.0.0.0/4 -d 0/0 -j DENY -l
+-A input -i eth0 -s 240.0.0.0/5 -d 0/0 -j DENY -l
+-A input -i eth0 -s 248.0.0.0/5 -d 0/0 -j DENY -l
+-A input -i eth0 -s 255.255.255.255/32 -d 0/0 -j DENY -l
+# Allow in any packets associated with an established TCP session:
+-A input -i eth0 -p tcp -s 0/0 -d 0/0 ! -y -j ACCEPT
+# Permit incoming https connections:
+-A input -i eth0 -p tcp -s 0/0 -d 0/0 443 -j ACCEPT
+# Permit incoming ssh connections:
+-A input -i eth0 -p tcp -s 0/0 -d 0/0 22 -j ACCEPT
+# ICMP traffic:
+-A input -i eth0 -p icmp -s 0/0 -d 0/0 -j ACCEPT
+# All other packets should be denied and logged:
+-A input -i eth0 -s 0/0 -d 0/0 -j DENY -l
+#
+#
+# Forwarding packets:
+-A forward -s 192.168.0.0/24 -j MASQ

@@ -1,0 +1,798 @@
+<html>
+
+<head>
+  <title>HEALTH HISTORY</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+SPORT: maxsize=50
+FORM_DATE: not null
+FORM_DATE: date
+--- END DATA VERIFICATION ---
+
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT,
+TO_CHAR(now(), 'MM-DD-YYYY') as FORM_DATE
+
+FROM athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+insert into health_history
+(
+
+HEALTH_HISTORY_ID, ORIG_VERSION_ID, ATHLETE_ID, SPORT, FORM_DATE,
+TROUBLED_MUSCLES_JOINTS, JOINTS_SWOLLEN, TROUBLED_BACK_SHOULDER,
+FEET_PAINFUL, HANDICAPPED, SKIN_PROBLEMS, TROUBLE_BLEEDING,
+BRUISE_EASILY, FAINT, ALWAYS_NUMB, FITS_OR_CONVULSIONS,
+SHAKE_OR_TREMBLE, GAINED_LOST_WEIGHT, THIRSTY,
+SWELLINGS_ARMPITS_GROIN, EXHAUSTED_FATIGUED, DIFFICULTY_SLEEPING,
+COUNTRIES_OUTSIDE_US, DISCOMFORT_STOMACH, EASILY_NAUSEATED,
+VOMITED_BLOOD, CONSTIPATED, BM_BLACK_BLOODY, PAINS_URINATING,
+URINE_BLOODY, DISCHARGE_PENIS_VAGINA, HEADACHES, CORRECTIVE_LENSES,
+GLASSES_OR_CONTACTS, TROUBLE_EYES, DIFFICULTY_HEARING, EARACHES,
+NOISES_IN_EARS, MOTION_SICKNESS, SWELLING_GUMS_JAWS, NOSE_STUFFED_UP,
+SNEEZING_SPELLS, NOSE_BLEED, WHEEZE_GASP, COUGHING_SPELLS, PHLEGM,
+COUGHED_BLOOD, CHEST_COLDS, HIGH_BLOOD_PRESSURE, PAINS_CHEST,
+HEART_MURMUR, INJURY_HEAD, BEEN_UNCONSCIOUS, INJURY_SHOULDER,
+INJURY_NECK, INJURY_RIBS, INJURY_BACK, INJURY_HIPS, INJURY_LEG,
+INJURY_KNEE, INJURY_THIGH, INJURY_ANKLE, INJURY_FOOT, INJURY_ELBOW,
+INJURY_HAND_WRIST, SPECIAL_DIET, SPECIAL_DIET_ADDTNL_INFO, CARE_MEDS,
+CARE_MEDS_ADDTNL_INFO, ALLERGY_MEDS, ALLERGY_MEDS_ADDTNL_INFO,
+MISSING_ORGANS, MISSING_ORGANS_ADDTNL_INFO, RELIGIOUS_OBJECTIONS,
+HOSPITALIZATION, LIMITS_ON_PARTICIPATION, SIGNED_BY_ATHLETE, COMMENTS,
+CONFIDENTIAL, FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+)
+VALUES
+(
+
+nextval('new_health_history_id'), $ORIG_VERSION_ID, $ORIG_ATHLETE_ID,
+$SPORT, TO_DATE($FORM_DATE, 'MM-DD-YYYY'), $TROUBLED_MUSCLES_JOINTS,
+$JOINTS_SWOLLEN, $TROUBLED_BACK_SHOULDER, $FEET_PAINFUL, $HANDICAPPED,
+$SKIN_PROBLEMS, $TROUBLE_BLEEDING, $BRUISE_EASILY, $FAINT,
+$ALWAYS_NUMB, $FITS_OR_CONVULSIONS, $SHAKE_OR_TREMBLE,
+$GAINED_LOST_WEIGHT, $THIRSTY, $SWELLINGS_ARMPITS_GROIN,
+$EXHAUSTED_FATIGUED, $DIFFICULTY_SLEEPING, $COUNTRIES_OUTSIDE_US,
+$DISCOMFORT_STOMACH, $EASILY_NAUSEATED, $VOMITED_BLOOD, $CONSTIPATED,
+$BM_BLACK_BLOODY, $PAINS_URINATING, $URINE_BLOODY,
+$DISCHARGE_PENIS_VAGINA, $HEADACHES, $CORRECTIVE_LENSES,
+$GLASSES_OR_CONTACTS, $TROUBLE_EYES, $DIFFICULTY_HEARING, $EARACHES,
+$NOISES_IN_EARS, $MOTION_SICKNESS, $SWELLING_GUMS_JAWS,
+$NOSE_STUFFED_UP, $SNEEZING_SPELLS, $NOSE_BLEED, $WHEEZE_GASP,
+$COUGHING_SPELLS, $PHLEGM, $COUGHED_BLOOD, $CHEST_COLDS,
+$HIGH_BLOOD_PRESSURE, $PAINS_CHEST, $HEART_MURMUR, $INJURY_HEAD,
+$BEEN_UNCONSCIOUS, $INJURY_SHOULDER, $INJURY_NECK, $INJURY_RIBS,
+$INJURY_BACK, $INJURY_HIPS, $INJURY_LEG, $INJURY_KNEE, $INJURY_THIGH,
+$INJURY_ANKLE, $INJURY_FOOT, $INJURY_ELBOW, $INJURY_HAND_WRIST,
+$SPECIAL_DIET, $SPECIAL_DIET_ADDTNL_INFO, $CARE_MEDS,
+$CARE_MEDS_ADDTNL_INFO, $ALLERGY_MEDS, $ALLERGY_MEDS_ADDTNL_INFO,
+$MISSING_ORGANS, $MISSING_ORGANS_ADDTNL_INFO, $RELIGIOUS_OBJECTIONS,
+$HOSPITALIZATION, $LIMITS_ON_PARTICIPATION, $SIGNED_BY_ATHLETE,
+$COMMENTS, $CONFIDENTIAL, $FORM_SIGN_USER_ID, now(), $FORM_SIGNATURE
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+HEALTH_HISTORY_ID, ORIG_VERSION_ID, ATHLETE_ID as ORIG_ATHLETE_ID,
+SPORT, TO_CHAR(FORM_DATE, 'MM-DD-YYYY') as FORM_DATE,
+TROUBLED_MUSCLES_JOINTS, JOINTS_SWOLLEN, TROUBLED_BACK_SHOULDER,
+FEET_PAINFUL, HANDICAPPED, SKIN_PROBLEMS, TROUBLE_BLEEDING,
+BRUISE_EASILY, FAINT, ALWAYS_NUMB, FITS_OR_CONVULSIONS,
+SHAKE_OR_TREMBLE, GAINED_LOST_WEIGHT, THIRSTY,
+SWELLINGS_ARMPITS_GROIN, EXHAUSTED_FATIGUED, DIFFICULTY_SLEEPING,
+COUNTRIES_OUTSIDE_US, DISCOMFORT_STOMACH, EASILY_NAUSEATED,
+VOMITED_BLOOD, CONSTIPATED, BM_BLACK_BLOODY, PAINS_URINATING,
+URINE_BLOODY, DISCHARGE_PENIS_VAGINA, HEADACHES, CORRECTIVE_LENSES,
+GLASSES_OR_CONTACTS, TROUBLE_EYES, DIFFICULTY_HEARING, EARACHES,
+NOISES_IN_EARS, MOTION_SICKNESS, SWELLING_GUMS_JAWS, NOSE_STUFFED_UP,
+SNEEZING_SPELLS, NOSE_BLEED, WHEEZE_GASP, COUGHING_SPELLS, PHLEGM,
+COUGHED_BLOOD, CHEST_COLDS, HIGH_BLOOD_PRESSURE, PAINS_CHEST,
+HEART_MURMUR, INJURY_HEAD, BEEN_UNCONSCIOUS, INJURY_SHOULDER,
+INJURY_NECK, INJURY_RIBS, INJURY_BACK, INJURY_HIPS, INJURY_LEG,
+INJURY_KNEE, INJURY_THIGH, INJURY_ANKLE, INJURY_FOOT, INJURY_ELBOW,
+INJURY_HAND_WRIST, SPECIAL_DIET, SPECIAL_DIET_ADDTNL_INFO, CARE_MEDS,
+CARE_MEDS_ADDTNL_INFO, ALLERGY_MEDS, ALLERGY_MEDS_ADDTNL_INFO,
+MISSING_ORGANS, MISSING_ORGANS_ADDTNL_INFO, RELIGIOUS_OBJECTIONS,
+HOSPITALIZATION, LIMITS_ON_PARTICIPATION, SIGNED_BY_ATHLETE, COMMENTS,
+CONFIDENTIAL, FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+FROM health_history
+
+WHERE HEALTH_HISTORY_ID = $HEALTH_HISTORY_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+
+
+<body background="/www/background.gif">
+
+<form name="health_history" method="POST" action="/bin/process_form">
+
+<input type="hidden" name="FORM_NAME" value="HEALTH_HISTORY">
+
+  <div align="center"><center><p><strong>MIAMI UNIVERSITY SPORTS MEDICINE<br>
+  HEALTH HISTORY</strong></p>
+  </center></div><table border="0" width="100%">
+    <tr>
+      <td><strong>Athlete: </strong>#LAST_NAME#, #FIRST_NAME# #MIDDLE_NAME#</td>
+      <td><div align="right"><p><strong>Sport: </strong><select name="SPORT" size="1">
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Dance Team">Dance Team</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+    </tr>
+  </table>
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td valign="top"><strong>Date of Form:&nbsp; </strong></td>
+      <td valign="top"><div align="center"><center><p><input type="text" name="FORM_DATE" size="10"><br>
+      mm-dd-yyyy</td>
+    </tr>
+  </table>
+  <div align="left"><p><strong>Please comment specifically on any &quot;Yes&quot; answers in
+  space at end of form.</strong></p>
+  </div><div align="left"><table border="0">
+    <tr>
+      <td nowrap valign="top"><input type="radio" value="Yes" name="TROUBLED_MUSCLES_JOINTS">Yes
+      <input type="radio" name="TROUBLED_MUSCLES_JOINTS" value="No">No</td>
+      <td valign="top"></td>
+      <td align="right" valign="top">1.</td>
+      <td valign="top">Are you troubled with stiff or painful muscles or joints?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" value="Yes" name="JOINTS_SWOLLEN">Yes 
+<input type="radio" name="JOINTS_SWOLLEN" value="No">No</td>
+      <td valign="top"></td>
+      <td align="right" valign="top">2.</td>
+      <td valign="top">Are your joints ever swollen?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" value="Yes" name="TROUBLED_BACK_SHOULDER">Yes 
+<input type="radio" name="TROUBLED_BACK_SHOULDER" value="No">No</td>
+      <td valign="top"></td>
+      <td align="right" valign="top">3.</td>
+      <td valign="top">Are you troubled by pains in the back or shoulder?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" value="Yes" name="FEET_PAINFUL">Yes 
+<input type="radio" name="FEET_PAINFUL" value="No">No</td>
+      <td valign="top"></td>
+      <td align="right" valign="top">4.</td>
+      <td valign="top">Are your feet often painful?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" value="Yes" name="HANDICAPPED">Yes 
+<input type="radio" name="HANDICAPPED" value="No">No</td>
+      <td valign="top"></td>
+      <td align="right" valign="top">5.</td>
+      <td valign="top">Are you handicapped in any way?</td>
+    </tr>
+    <tr>
+      <td nowrap>&nbsp;&nbsp; </td>
+      <td></td>
+      <td align="right" valign="top"></td>
+      <td valign="top">&nbsp; </td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="SKIN_PROBLEMS">Yes 
+<input type="radio" name="SKIN_PROBLEMS" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">6.</td>
+      <td valign="top">Do you have skin problems?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="TROUBLE_BLEEDING">Yes 
+<input type="radio" name="TROUBLE_BLEEDING" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">7.</td>
+      <td valign="top">Do you have trouble stopping even a small cut from bleeding?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="BRUISE_EASILY">Yes 
+<input type="radio" name="BRUISE_EASILY" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">8.</td>
+      <td valign="top">Do you bruise easily?</td>
+    </tr>
+    <tr>
+      <td nowrap>&nbsp;&nbsp; </td>
+      <td></td>
+      <td align="right" valign="top"></td>
+      <td valign="top">&nbsp; </td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="FAINT">Yes 
+<input type="radio" name="FAINT" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">9.</td>
+      <td valign="top">Do you ever faint or feel faint?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="ALWAYS_NUMB">Yes 
+<input type="radio" name="ALWAYS_NUMB" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">10.</td>
+      <td valign="top">Is any part of your body always numb?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="FITS_OR_CONVULSIONS">Yes 
+<input type="radio" name="FITS_OR_CONVULSIONS" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">11.</td>
+      <td valign="top">Have you ever had fits or convulsions?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="SHAKE_OR_TREMBLE">Yes 
+<input type="radio" name="SHAKE_OR_TREMBLE" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">12.</td>
+      <td valign="top">Do you have a tendency to shake or tremble?</td>
+    </tr>
+    <tr>
+      <td nowrap></td>
+      <td></td>
+      <td align="right" valign="top"></td>
+      <td valign="top">&nbsp; </td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="GAINED_LOST_WEIGHT">Yes 
+<input type="radio" name="GAINED_LOST_WEIGHT" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">13.</td>
+      <td valign="top">Have you gained or lost much weight recently?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="THIRSTY">Yes 
+<input type="radio" name="THIRSTY" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">14.</td>
+      <td valign="top">Are you more thirsty than usual lately?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="SWELLINGS_ARMPITS_GROIN">Yes 
+<input type="radio" name="SWELLINGS_ARMPITS_GROIN" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">15.</td>
+      <td valign="top">Are there any swellings in you armpits or groin?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="EXHAUSTED_FATIGUED">Yes 
+<input type="radio" name="EXHAUSTED_FATIGUED" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">16.</td>
+      <td valign="top">Do you seem to feel exhausted or fatigued most of the time?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="DIFFICULTY_SLEEPING">Yes 
+<input type="radio" name="DIFFICULTY_SLEEPING" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">17.</td>
+      <td valign="top">Do you have difficulty either falling or staying asleep?</td>
+    </tr>
+    <tr>
+      <td nowrap></td>
+      <td></td>
+      <td align="right" valign="top">18.</td>
+      <td valign="top">List any country outside the United States you have visited in the past
+      six months:</td>
+    </tr>
+    <tr>
+      <td nowrap></td>
+      <td></td>
+      <td align="right" valign="top"></td>
+      <td valign="top"><input type="text" name="COUNTRIES_OUTSIDE_US" size="30"></td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="DISCOMFORT_STOMACH">Yes 
+<input type="radio" name="DISCOMFORT_STOMACH" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">19.</td>
+      <td valign="top">Do you suffer discomfort in the pit of your stomach?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="EASILY_NAUSEATED">Yes 
+<input type="radio" name="EASILY_NAUSEATED" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">20.</td>
+      <td valign="top">Do you easily become nauseated (feel like vomiting)?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="VOMITED_BLOOD">Yes 
+<input type="radio" name="VOMITED_BLOOD" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">21.</td>
+      <td valign="top">Have you ever vomited blood?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="CONSTIPATED">Yes 
+<input type="radio" name="CONSTIPATED" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">22.</td>
+      <td valign="top">Are you constipated more than twice a month?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="BM_BLACK_BLOODY">Yes 
+<input type="radio" name="BM_BLACK_BLOODY" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">23.</td>
+      <td valign="top">Are your bowel movements ever black or bloody?</td>
+    </tr>
+    <tr>
+      <td nowrap></td>
+      <td></td>
+      <td align="right" valign="top"></td>
+      <td valign="top">&nbsp; </td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="PAINS_URINATING">Yes 
+<input type="radio" name="PAINS_URINATING" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">24.</td>
+      <td valign="top">Have you ever had burning or pains when you urinate?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="URINE_BLOODY">Yes 
+<input type="radio" name="URINE_BLOODY" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">25.</td>
+      <td valign="top">Has you urine ever been brown, black or bloody?</td>
+    </tr>
+    <tr>
+      <td nowrap></td>
+      <td></td>
+      <td align="right" valign="top"></td>
+      <td valign="top">&nbsp; </td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="DISCHARGE_PENIS_VAGINA">Yes 
+<input type="radio" name="DISCHARGE_PENIS_VAGINA" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">26.</td>
+      <td valign="top">Have you had any burning or discharge from your penis or vagina?</td>
+    </tr>
+    <tr>
+      <td nowrap></td>
+      <td></td>
+      <td align="right" valign="top"></td>
+      <td valign="top">&nbsp; </td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="HEADACHES">Yes 
+<input type="radio" name="HEADACHES" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">27.</td>
+      <td valign="top">Do you have headaches more than once a week?</td>
+    </tr>
+    <tr>
+      <td nowrap></td>
+      <td></td>
+      <td align="right" valign="top"></td>
+      <td valign="top">&nbsp; </td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="CORRECTIVE_LENSES">Yes 
+<input type="radio" name="CORRECTIVE_LENSES" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">28.</td>
+      <td valign="top">Do you wear corrective lenses? If yes, indicate whether glasses or
+      contacts:</td>
+    </tr>
+    <tr>
+      <td nowrap></td>
+      <td></td>
+      <td align="right" valign="top"></td>
+      <td valign="top"><input type="text" name="GLASSES_OR_CONTACTS" size="30"></td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="TROUBLE_EYES">Yes 
+<input type="radio" name="TROUBLE_EYES" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">29.</td>
+      <td valign="top">Have you any trouble with your eyes in the last two years?</td>
+    </tr>
+    <tr>
+      <td nowrap></td>
+      <td></td>
+      <td align="right" valign="top"></td>
+      <td valign="top">&nbsp; </td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="DIFFICULTY_HEARING">Yes 
+<input type="radio" name="DIFFICULTY_HEARING" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">30.</td>
+      <td valign="top">Do you have difficulty hearing?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="EARACHES">Yes 
+<input type="radio" name="EARACHES" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">31.</td>
+      <td valign="top">Have you had any earaches lately?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="NOISES_IN_EARS">Yes 
+<input type="radio" name="NOISES_IN_EARS" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">32.</td>
+      <td valign="top">Do you have a repeated buzzing or other noises in your ears?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="MOTION_SICKNESS">Yes 
+<input type="radio" name="MOTION_SICKNESS" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">33.</td>
+      <td valign="top">Do you get motion sickness riding in a car or plane?</td>
+    </tr>
+    <tr>
+      <td nowrap></td>
+      <td></td>
+      <td align="right" valign="top"></td>
+      <td valign="top">&nbsp; </td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="SWELLING_GUMS_JAWS">Yes 
+<input type="radio" name="SWELLING_GUMS_JAWS" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">34.</td>
+      <td valign="top">Do you have any sore swellings on your gums or jaws?</td>
+    </tr>
+    <tr>
+      <td nowrap></td>
+      <td></td>
+      <td align="right" valign="top"></td>
+      <td valign="top">&nbsp; </td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="NOSE_STUFFED_UP">Yes 
+<input type="radio" name="NOSE_STUFFED_UP" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">35.</td>
+      <td valign="top">Is your nose stuffed up when you don't have a cold?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="SNEEZING_SPELLS">Yes 
+<input type="radio" name="SNEEZING_SPELLS" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">36.</td>
+      <td valign="top">Do you ever have sneezing spells?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="NOSE_BLEED">Yes 
+<input type="radio" name="NOSE_BLEED" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">37.</td>
+      <td valign="top">Does your nose ever bleed for no reason at all?</td>
+    </tr>
+    <tr>
+      <td nowrap></td>
+      <td></td>
+      <td align="right" valign="top"></td>
+      <td valign="top">&nbsp; </td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="WHEEZE_GASP">Yes 
+<input type="radio" name="WHEEZE_GASP" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">38.</td>
+      <td valign="top">Do you wheeze or have to gasp to breathe?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="COUGHING_SPELLS">Yes 
+<input type="radio" name="COUGHING_SPELLS" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">39.</td>
+      <td valign="top">Are you bothered by coughing spells?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="PHLEGM">Yes 
+<input type="radio" name="PHLEGM" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">40.</td>
+      <td valign="top">Do you cough up a lot of phlegm (thick spit)?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="COUGHED_BLOOD">Yes 
+<input type="radio" name="COUGHED_BLOOD" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">41.</td>
+      <td valign="top">Have you ever coughed up blood?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="CHEST_COLDS">Yes 
+<input type="radio" name="CHEST_COLDS" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">42.</td>
+      <td valign="top">Do you get chest colds more than once a week?</td>
+    </tr>
+    <tr>
+      <td nowrap></td>
+      <td></td>
+      <td align="right" valign="top"></td>
+      <td valign="top">&nbsp; </td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="HIGH_BLOOD_PRESSURE">Yes 
+<input type="radio" name="HIGH_BLOOD_PRESSURE" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">43.</td>
+      <td valign="top">Have you ever been told that you had high blood pressure?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="PAINS_CHEST">Yes 
+<input type="radio" name="PAINS_CHEST" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">44.</td>
+      <td valign="top">Do you ever get pains or tightness in your chest?</td>
+    </tr>
+    <tr>
+      <td nowrap><input type="radio" value="Yes" name="HEART_MURMUR">Yes 
+<input type="radio" name="HEART_MURMUR" value="No">No</td>
+      <td></td>
+      <td align="right" valign="top">45.</td>
+      <td valign="top">Have you ever been told that you have a heart murmur?</td>
+    </tr>
+    <tr>
+      <td nowrap></td>
+      <td></td>
+      <td align="right" valign="top">46.</td>
+      <td valign="top">Have you ever had an injury in the following areas?</td>
+    </tr>
+  </table>
+  </div><div align="left"><table border="0">
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td nowrap><input type="radio" value="Yes" name="INJURY_HEAD">Yes 
+<input type="radio" name="INJURY_HEAD" value="No">No</td>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td valign="top">a.</td>
+      <td valign="top">Head</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap><input type="radio" value="Yes" name="BEEN_UNCONSCIOUS">Yes 
+<input type="radio" name="BEEN_UNCONSCIOUS" value="No">No</td>
+      <td></td>
+      <td valign="top">b.</td>
+      <td valign="top">Been Unconscious</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap><input type="radio" value="Yes" name="INJURY_SHOULDER">Yes 
+<input type="radio" name="INJURY_SHOULDER" value="No">No</td>
+      <td></td>
+      <td valign="top">c.</td>
+      <td valign="top">Shoulder</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap><input type="radio" value="Yes" name="INJURY_NECK">Yes 
+<input type="radio" name="INJURY_NECK" value="No">No</td>
+      <td></td>
+      <td valign="top">d.</td>
+      <td valign="top">Neck</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap><input type="radio" value="Yes" name="INJURY_RIBS">Yes 
+<input type="radio" name="INJURY_RIBS" value="No">No</td>
+      <td></td>
+      <td valign="top">e.</td>
+      <td valign="top">Ribs</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap><input type="radio" value="Yes" name="INJURY_BACK">Yes 
+<input type="radio" name="INJURY_BACK" value="No">No</td>
+      <td></td>
+      <td valign="top">f.</td>
+      <td valign="top">Back</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap><input type="radio" value="Yes" name="INJURY_HIPS">Yes 
+<input type="radio" name="INJURY_HIPS" value="No">No</td>
+      <td></td>
+      <td valign="top">g.</td>
+      <td valign="top">Hips</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap><input type="radio" value="Yes" name="INJURY_LEG">Yes 
+<input type="radio" name="INJURY_LEG" value="No">No</td>
+      <td></td>
+      <td valign="top">h.</td>
+      <td valign="top">Leg</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap><input type="radio" value="Yes" name="INJURY_KNEE">Yes 
+<input type="radio" name="INJURY_KNEE" value="No">No</td>
+      <td></td>
+      <td valign="top">i.</td>
+      <td valign="top">Knee</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap><input type="radio" value="Yes" name="INJURY_THIGH">Yes 
+<input type="radio" name="INJURY_THIGH" value="No">No</td>
+      <td></td>
+      <td valign="top">j.</td>
+      <td valign="top">Thigh</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap><input type="radio" value="Yes" name="INJURY_ANKLE">Yes 
+<input type="radio" name="INJURY_ANKLE" value="No">No</td>
+      <td></td>
+      <td valign="top">k.</td>
+      <td valign="top">Ankle</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap><input type="radio" value="Yes" name="INJURY_FOOT">Yes 
+<input type="radio" name="INJURY_FOOT" value="No">No</td>
+      <td></td>
+      <td valign="top">l.</td>
+      <td valign="top">Foot</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap><input type="radio" value="Yes" name="INJURY_ELBOW">Yes 
+<input type="radio" name="INJURY_ELBOW" value="No">No</td>
+      <td></td>
+      <td valign="top">m.</td>
+      <td valign="top">Elbow</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td nowrap><input type="radio" value="Yes" name="INJURY_HAND_WRIST">Yes 
+<input type="radio" name="INJURY_HAND_WRIST" value="No">No</td>
+      <td></td>
+      <td valign="top">n.</td>
+      <td valign="top">Hand/Wrist</td>
+    </tr>
+  </table>
+  </div><div align="left"><table border="0">
+    <tr>
+      <td nowrap valign="top"></td>
+      <td></td>
+      <td valign="top"></td>
+      <td valign="top">&nbsp; </td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" value="Yes" name="SPECIAL_DIET">Yes 
+<input type="radio" name="SPECIAL_DIET" value="No">No</td>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td valign="top">47.</td>
+      <td valign="top">Have or are you on a special diet for medical reasons?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td></td>
+      <td valign="top"></td>
+      <td valign="top"><input type="text" name="SPECIAL_DIET_ADDTNL_INFO" size="30"></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" value="Yes" name="CARE_MEDS">Yes 
+<input type="radio" name="CARE_MEDS" value="No">No</td>
+      <td></td>
+      <td valign="top">48.</td>
+      <td valign="top">Are you currently under a physician's care or presently taking <u>any</u>
+      medications?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td></td>
+      <td valign="top"></td>
+      <td valign="top"><input type="text" name="CARE_MEDS_ADDTNL_INFO" size="30"></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" value="Yes" name="ALLERGY_MEDS">Yes 
+<input type="radio" name="ALLERGY_MEDS" value="No">No</td>
+      <td></td>
+      <td valign="top">49.</td>
+      <td valign="top">Do you have any known allergies to medication?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td></td>
+      <td valign="top"></td>
+      <td valign="top"><input type="text" name="ALLERGY_MEDS_ADDTNL_INFO" size="30"></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td></td>
+      <td valign="top"></td>
+      <td valign="top">&nbsp; </td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" value="Yes" name="MISSING_ORGANS">Yes 
+<input type="radio" name="MISSING_ORGANS" value="No">No</td>
+      <td></td>
+      <td valign="top">50.</td>
+      <td valign="top">Do you have missing organs? - ex. kidney, eye, etc.</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"></td>
+      <td></td>
+      <td valign="top"></td>
+      <td valign="top"><input type="text" name="MISSING_ORGANS_ADDTNL_INFO" size="30"></td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" value="Yes" name="RELIGIOUS_OBJECTIONS">Yes 
+<input type="radio" name="RELIGIOUS_OBJECTIONS" value="No">No</td>
+      <td></td>
+      <td valign="top">51.</td>
+      <td valign="top">Do you have any religious objections to medical treatment?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" value="Yes" name="HOSPITALIZATION">Yes 
+<input type="radio" name="HOSPITALIZATION" value="No">No</td>
+      <td></td>
+      <td valign="top">52.</td>
+      <td valign="top">Have you ever had hospitalization, surgery, injury, or serious medical
+      illness?</td>
+    </tr>
+    <tr>
+      <td nowrap valign="top"><input type="radio" value="Yes" name="LIMITS_ON_PARTICIPATION">Yes
+      <input type="radio" name="LIMITS_ON_PARTICIPATION" value="No">No</td>
+      <td></td>
+      <td valign="top">53.</td>
+      <td valign="top">Has any physician ever recommended or do you feel that there should be
+      limits placed on participation in competitive sports?</td>
+    </tr>
+  </table>
+  </div><div align="left"><p><strong>If you answered &quot;Yes&quot; to any of the above,
+  please explain:<br>
+  </strong><textarea rows="3" name="COMMENTS" cols="60" wrap="virtual"></textarea></p>
+  </div><div align="left"><p><strong>Signed by Athlete?</strong>&nbsp; <input type="radio" value="Yes" name="SIGNED_BY_ATHLETE">Yes 
+<input type="radio" name="SIGNED_BY_ATHLTE" value="No">No</p>
+  </div><div align="left"><table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td valign="top"><font color="#FF0000"><strong>CONFIDENTIAL<br>
+      </strong>(staff members only)&nbsp;&nbsp;&nbsp; </font></td>
+      <td valign="top"><input type="radio" value="No" name="CONFIDENTIAL" checked>No - allow all
+      authorized users to view this information.<br>
+      <input type="radio" name="CONFIDENTIAL" value="Yes">Yes - allow only staff members to view
+      this information.</td>
+    </tr>
+  </table>
+  </div><div align="left"><p><input type="submit" value="Submit"></p>
+  </div>
+</form>
+</body>
+</html>
+

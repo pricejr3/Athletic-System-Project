@@ -1,0 +1,5 @@
+alter table insurance add column guardian1_birthdate date;
+alter table insurance add column guardian2_birthdate date;
+
+alter table insurance_lv add column guardian1_birthdate date;
+alter table insurance_lv add column guardian2_birthdate date;

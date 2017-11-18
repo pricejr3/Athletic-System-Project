@@ -1,0 +1,23 @@
+\i athlete.txt
+\i coaches_report.txt
+\i family_history.txt
+\i health_appraisal.txt
+\i health_history.txt
+\i insurance.txt
+\i personal_addtnl_info.txt
+\i physical.txt
+\i recommended_treatment.txt
+\i treatment_addtnl_info.txt
+\i treatment_record.txt
+\i waiver.txt
+/* Now create injury_report table and those that depend on it: */
+\i injury_report.txt
+\i injury_addtnl_info.txt
+\i physician_remark.txt
+\i treatment_remark.txt
+\i athlete_release.txt
+\i ferpa_release.txt
+\i health_info_release.txt
+\i athlete_login.txt
+\i insurance_worksheets.txt
+\i insurance_worksheet_entries.txt

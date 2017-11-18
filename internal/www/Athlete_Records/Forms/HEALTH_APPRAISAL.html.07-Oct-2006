@@ -1,0 +1,361 @@
+<html>
+
+<head>
+<title>HEALTH APPRAISAL</title>
+</head>
+
+
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+SPORT: maxsize=50
+FORM_DATE: not null
+FORM_DATE: date
+BIRTHDATE: date
+LOCAL_ADDRESS: maxsize=500
+LOCAL_PHONE: maxsize=50
+PARENTS_ADDRESS: maxsize=500
+PARENTS_HOME_PHONE: maxsize=50
+PARENTS_WORK_PHONE: maxsize=50
+DATE_OF_LAST_EYE_EXAM: maxsize=50
+ORGANIZED_COACHING_YEARS: maxsize=50
+RELEASE_SIGNATURE_DATE: maxsize=50
+COMPLETE_SIGNATURE_DATE: maxsize=50
+--- END DATA VERIFICATION ---
+
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT, TO_CHAR(now(),
+'MM-DD-YYYY') as FORM_DATE, TO_CHAR(BIRTHDATE, 'MM-DD-YYYY') as
+BIRTHDATE, SEX, SSN, LOCAL_ADDRESS, LOCAL_PHONE, PERM_ADDRESS as
+PARENTS_ADDRESS, PERM_PHONE as PARENTS_HOME_PHONE
+
+FROM athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+insert into health_appraisal
+(
+
+HEALTH_APPRAISAL_ID, ORIG_VERSION_ID, ATHLETE_ID, SPORT, FORM_DATE,
+BIRTHDATE, SEX, SSN, LOCAL_ADDRESS, LOCAL_PHONE, PARENTS_NAME,
+PARENTS_ADDRESS, PARENTS_HOME_PHONE, PARENTS_WORK_PHONE,
+HAD_PHYSICAL_IN_LAST_4_YEARS, PHYSICAL_REVEALED_PROBS,
+HAD_PROBS_SINCE_LAST_PHYSICAL, CURRENT_CARE_OR_MEDS,
+LIMITS_ON_PARTICIPATION, HAS_ALLERGIES, ALLERGIES_TO_MEDS,
+OTHER_ALLERGIES, WEARS_GLASSES_OR_CONTACTS, DATE_OF_LAST_EYE_EXAM,
+ADVISED_NOT_TO_PARTICIPATE, RECEIVED_ORGANIZED_COACHING,
+ORGANIZED_COACHING_YEARS, TAKING_ORAL_CONTRACEPTIVES,
+RELEASE_SIGNED_BY_ATHLETE, RELEASE_SIGNATURE_DATE,
+COMPLETE_SIGNED_BY_ATHLETE, COMPLETE_SIGNATURE_DATE, ADDTNL_COMMENTS,
+CONFIDENTIAL, FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+)
+VALUES
+(
+
+nextval('new_health_appraisal_id'), $ORIG_VERSION_ID,
+$ORIG_ATHLETE_ID, $SPORT, TO_DATE($FORM_DATE, 'MM-DD-YYYY'),
+TO_DATE($BIRTHDATE, 'MM-DD-YYYY'), $SEX, $SSN, $LOCAL_ADDRESS,
+$LOCAL_PHONE, $PARENTS_NAME, $PARENTS_ADDRESS, $PARENTS_HOME_PHONE,
+$PARENTS_WORK_PHONE, $HAD_PHYSICAL_IN_LAST_4_YEARS,
+$PHYSICAL_REVEALED_PROBS, $HAD_PROBS_SINCE_LAST_PHYSICAL,
+$CURRENT_CARE_OR_MEDS, $LIMITS_ON_PARTICIPATION, $HAS_ALLERGIES,
+$ALLERGIES_TO_MEDS, $OTHER_ALLERGIES, $WEARS_GLASSES_OR_CONTACTS,
+$DATE_OF_LAST_EYE_EXAM, $ADVISED_NOT_TO_PARTICIPATE,
+$RECEIVED_ORGANIZED_COACHING, $ORGANIZED_COACHING_YEARS,
+$TAKING_ORAL_CONTRACEPTIVES, $RELEASE_SIGNED_BY_ATHLETE,
+$RELEASE_SIGNATURE_DATE, $COMPLETE_SIGNED_BY_ATHLETE,
+$COMPLETE_SIGNATURE_DATE, $ADDTNL_COMMENTS, $CONFIDENTIAL,
+$FORM_SIGN_USER_ID, now(), $FORM_SIGNATURE
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+HEALTH_APPRAISAL_ID, ORIG_VERSION_ID, ATHLETE_ID as ORIG_ATHLETE_ID,
+SPORT, TO_CHAR(FORM_DATE, 'MM-DD-YYYY') as FORM_DATE,
+TO_CHAR(BIRTHDATE, 'MM-DD-YYYY') as BIRTHDATE, SEX, SSN,
+LOCAL_ADDRESS, LOCAL_PHONE, PARENTS_NAME, PARENTS_ADDRESS,
+PARENTS_HOME_PHONE, PARENTS_WORK_PHONE, HAD_PHYSICAL_IN_LAST_4_YEARS,
+PHYSICAL_REVEALED_PROBS, HAD_PROBS_SINCE_LAST_PHYSICAL,
+CURRENT_CARE_OR_MEDS, LIMITS_ON_PARTICIPATION, HAS_ALLERGIES,
+ALLERGIES_TO_MEDS, OTHER_ALLERGIES, WEARS_GLASSES_OR_CONTACTS,
+DATE_OF_LAST_EYE_EXAM, ADVISED_NOT_TO_PARTICIPATE,
+RECEIVED_ORGANIZED_COACHING, ORGANIZED_COACHING_YEARS,
+TAKING_ORAL_CONTRACEPTIVES, RELEASE_SIGNED_BY_ATHLETE,
+RELEASE_SIGNATURE_DATE, COMPLETE_SIGNED_BY_ATHLETE,
+COMPLETE_SIGNATURE_DATE, ADDTNL_COMMENTS, CONFIDENTIAL,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+FROM health_appraisal
+
+WHERE HEALTH_APPRAISAL_ID = $HEALTH_APPRAISAL_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+
+<body background="/www/background.gif">
+
+<form name="health_appraisal" method="POST" action="/bin/process_form">
+
+<input type="hidden" name="FORM_NAME" value="HEALTH_APPRAISAL">
+
+
+<center><p><strong>MIAMI UNIVERSITY SPORTS MEDICINE<br>
+  HEALTH APPRAISAL</strong></p>
+  </center></div><table border="0" width="100%">
+    <tr>
+      <td><strong>Athlete: </strong>#LAST_NAME#, #FIRST_NAME# #MIDDLE_NAME#</td>
+      <td><div align="right"><p><strong>Sport: </strong><select name="SPORT" size="1">
+        <option value="Baseball">Baseball</option>
+        <option value="Basketball">Basketball</option>
+        <option value="Cheerleading">Cheerleading</option>
+        <option value="Cross Country">Cross Country</option>
+        <option value="Field Hockey">Field Hockey</option>
+        <option value="Football">Football</option>
+        <option value="Golf">Golf</option>
+        <option value="Ice Hockey">Ice Hockey</option>
+        <option value="Soccer">Soccer</option>
+        <option value="Softball">Softball</option>
+        <option value="Swimming and Diving">Swimming and Diving</option>
+        <option value="Synchronized Skating">Synchronized Skating</option>
+        <option value="Tennis">Tennis</option>
+        <option value="Track">Track</option>
+        <option value="Volleyball">Volleyball</option>
+        <option value="Wrestling">Wrestling</option>
+      </select></td>
+    </tr>
+  </table>
+  <table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td valign="top"><strong>Date of Form:</strong>&nbsp; </td>
+      <td valign="top"><table border="0" cellpadding="0" cellspacing="0">
+        <tr>
+          <td><div align="center"><center><p><input type="text" name="FORM_DATE" size="10"><br>
+          mm-dd-yyyy</td>
+        </tr>
+      </table>
+      </td>
+    </tr>
+  </table>
+  <hr align="center">
+  <div align="left"><table border="0">
+    <tr>
+      <td valign="middle" align="left"><div align="left"><p><strong>Birthdate:</strong></td>
+      <td valign="middle" align="left"><strong><div align="left"><p></strong><input type="text" name="BIRTHDATE" size="10"></td>
+      <td valign="middle" align="left"><div align="left"><p><strong>Sex</strong>:</td>
+      <td valign="middle" align="left"><select name="SEX" size="1">
+        <option selected value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select></td>
+      <td valign="middle" align="left"></td>
+      <td valign="middle" align="left"><div align="left"><p><strong>SSN:</strong></td>
+      <td valign="middle" align="left"><input type="text" name="SSN" size="11"></td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" colspan="2"><strong>Campus or School Address:</strong></td>
+      <td valign="top" align="left" colspan="5"><textarea rows="3" name="LOCAL_ADDRESS" cols="35" wrap="virual"></textarea></td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" colspan="2"><strong>Campus or Local Phone:</strong></td>
+      <td valign="top" align="left" colspan="5"><input type="text" name="LOCAL_PHONE" size="14"></td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" colspan="2"></td>
+      <td valign="top" align="left" colspan="5"></td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" colspan="2"><strong>Parent(s) Name:</strong></td>
+      <td valign="top" align="left" colspan="5"><input type="text" name="PARENTS_NAME" size="37"></td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" colspan="2"><strong>Parent(s) Address:</strong></td>
+      <td valign="top" align="left" colspan="5"><textarea rows="3" name="PARENTS_ADDRESS" cols="35" wrap="virual"></textarea></td>
+    </tr>
+  </table>
+  </div><div align="left"><table border="0">
+    <tr>
+      <td valign="middle" align="left"><strong>Parent(s) Telephone Number:</strong></td>
+      <td valign="middle" align="left">Home: </td>
+      <td valign="middle" align="left"><input type="text" name="PARENTS_HOME_PHONE" size="25"></td>
+    </tr>
+    <tr>
+      <td valign="middle" align="left"></td>
+      <td valign="middle" align="left">Work:</td>
+      <td valign="middle" align="left"><input type="text" name="PARENTS_WORK_PHONE" size="25"></td>
+    </tr>
+  </table>
+  </div><hr align="center">
+  <div align="left"><p><strong>ATHLETE'S HISTORY:</strong></p>
+  </div><div align="left"><table border="0">
+    <tr>
+      <td valign="top" align="left" nowrap><input type="radio" value="Yes" name="HAD_PHYSICAL_IN_LAST_4_YEARS">Yes</td>
+      <td valign="top" align="left" nowrap><input type="radio" name="HAD_PHYSICAL_IN_LAST_4_YEARS" value="No">No</td>
+      <td valign="top" align="left" nowrap>&nbsp;&nbsp;&nbsp;&nbsp; </td>
+      <td valign="top" align="right">1.</td>
+      <td valign="top" align="left">Have you had a complete physical examination within the last
+      four years?</td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" nowrap><input type="radio" name="PHYSICAL_REVEALED_PROBS" value="Yes">Yes</td>
+      <td valign="top" align="left" nowrap><input type="radio" name="PHYSICAL_REVEALED_PROBS" value="No">No</td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="right">2.</td>
+      <td valign="top" align="left">If yes, did the examination disclose any health problems, or
+      result in any recommendation that you should limit your activities?</td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" nowrap><input type="radio" name="HAD_PROBS_SINCE_LAST_PHYSICAL" value="Yes">Yes</td>
+      <td valign="top" align="left" nowrap><input type="radio" name="HAD_PROBS_SINCE_LAST_PHYSICAL" value="No">No</td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="right">3.</td>
+      <td valign="top" align="left">Since your last physical examination, have you suffered any
+      INJURY, MEDICAL ILLNESS, or HAD ANY SURGERY?</td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" nowrap><input type="radio" name="CURRENT_CARE_OR_MEDS" value="Yes">Yes</td>
+      <td valign="top" align="left" nowrap><input type="radio" name="CURRENT_CARE_OR_MEDS" value="No">No</td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="right">4.</td>
+      <td valign="top" align="left">Are you now under the care of a physician or taking any
+      medication?</td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" nowrap><input type="radio" name="LIMITS_ON_PARTICIPATION" value="Yes">Yes</td>
+      <td valign="top" align="left" nowrap><input type="radio" name="LIMITS_ON_PARTICIPATION" value="No">No</td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="right">5.</td>
+      <td valign="top" align="left">Do you feel that there are any limitations placed on your
+      full participation?</td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" nowrap><input type="radio" name="HAS_ALLERGIES" value="Yes">Yes</td>
+      <td valign="top" align="left" nowrap><div align="left"><p><input type="radio" name="HAS_ALLERGIES" value="No">No</td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="right">6.</td>
+      <td valign="top" align="left">Do you have any allergies?</td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="right"></td>
+      <td valign="top" align="left">Medications: <input type="text" name="ALLERGIES_TO_MEDS" size="30"></td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="right"></td>
+      <td valign="top" align="left">Other: <input type="text" name="OTHER_ALLERGIES" size="30"></td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" nowrap><input type="radio" name="WEARS_GLASSES_OR_CONTACTS" value="Yes">Yes</td>
+      <td valign="top" align="left" nowrap><input type="radio" name="WEARS_GLASSES_OR_CONTACTS" value="No">No</td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="right">7.</td>
+      <td valign="top" align="left">Do you wear glasses or contact lenses?</td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="right"></td>
+      <td valign="top" align="left">Date of last eye exam: <input type="text" name="DATE_OF_LAST_EYE_EXAM" size="10"></td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" nowrap><input type="radio" name="ADVISED_NOT_TO_PARTICIPATE" value="Yes">Yes</td>
+      <td valign="top" align="left" nowrap><input type="radio" name="ADVISED_NOT_TO_PARTICIPATE" value="No">No</td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="right">8.</td>
+      <td valign="top" align="left">Have you ever been advised not to participate in any form of
+      organized athletics?</td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" nowrap><input type="radio" name="RECEIVED_ORGANIZED_COACHING" value="Yes">Yes</td>
+      <td valign="top" align="left" nowrap><input type="radio" name="RECEIVED_ORGANIZED_COACHING" value="No">No</td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="right">9.</td>
+      <td valign="top" align="left">Have you ever received organized coaching in the sport you
+      are trying out for at least one full season?</td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="right"></td>
+      <td valign="top" align="left">For how many years? <input type="text" name="ORGANIZED_COACHING_YEARS" size="2"></td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" nowrap><input type="radio" name="TAKING_ORAL_CONTRACEPTIVES" value="Yes">Yes</td>
+      <td valign="top" align="left" nowrap><input type="radio" name="TAKING_ORAL_CONTRACEPTIVES" value="No">No</td>
+      <td valign="top" align="left" nowrap></td>
+      <td valign="top" align="right">10.</td>
+      <td valign="top" align="left">Are you currently taking oral contraceptives?</td>
+    </tr>
+  </table>
+  </div><div align="left"><p>If you answered &quot;Yes&quot; to any of the above, please
+  explain.</p>
+  </div><div align="center"><center><p><textarea rows="4" name="ADDTNL_COMMENTS" cols="60" wrap="virual"></textarea></p>
+  </center></div><hr align="center">
+  <div align="left"><p><strong>MEDICAL INFORMATION RELEASE AUTHORIZATION</strong></p>
+  </div><div align="center"><center><table border="0" width="100%">
+    <tr>
+      <td width="45%" valign="top" align="left">I, [<u>Athlete Name</u>] authorize the
+      University's Doctors and Athletic Trainers to release any and all medical information
+      concerning any and all injuries and/or illnesses that have occurred to me while
+      participating for athletic teams for Miami University.</td>
+      <td width="10%" valign="top" align="left"></td>
+      <td width="45%" valign="top" align="left">To the best of my knowledge, the preceding
+      information is correct and up to date. I have not willingly or knowingly withheld medical
+      information that would affect my eligibility to participate in athletics at Miami
+      University.</td>
+    </tr>
+    <tr>
+      <td width="45%" valign="top" align="left" nowrap><strong>Signed by Athlete? </strong><input type="radio" name="RELEASE_SIGNED_BY_ATHLETE" value="Yes">Yes&nbsp;&nbsp; 
+<input type="radio" name="RELEASE_SIGNED_BY_ATHLETE" value="No">No</td>
+      <td width="10%" valign="top" align="left" nowrap></td>
+      <td width="45%" valign="top" align="left" nowrap><strong>Signed by Athlete? </strong><input type="radio" name="COMPLETE_SIGNED_BY_ATHLETE" value="Yes">Yes
+<input type="radio" name="COMPLETE_SIGNED_BY_ATHLETE" value="No">No</td>
+    </tr>
+    <tr>
+      <td width="45%" valign="top" align="left" nowrap><strong>Date of Signature:</strong>
+      &nbsp; <input type="text" name="RELEASE_SIGNATURE_DATE" size="10"></td>
+      <td width="10%" valign="top" align="left" nowrap></td>
+      <td width="45%" valign="top" align="left" nowrap><strong>Date of Signature:</strong>
+      &nbsp; <input type="text" name="COMPLETE_SIGNATURE_DATE" size="10"></td>
+    </tr>
+  </table>
+  </center></div><div align="left"><table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </td>
+    </tr>
+  </table>
+  </div><div align="left"><table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td valign="top"><font color="#FF0000"><strong>CONFIDENTIAL<br>
+      </strong>(staff members only)&nbsp;&nbsp;&nbsp; </font></td>
+      <td valign="top"><input type="radio" value="No" name="CONFIDENTIAL" checked>No - allow all
+      authorized users to view this information.<br>
+      <input type="radio" name="CONFIDENTIAL" value="Yes">Yes - allow only staff members to view
+      this information.</td>
+    </tr>
+  </table>
+  </div><div align="left"><p><input type="submit" value="Submit"></p>
+  </div>
+</form>
+</body>
+</html>
+

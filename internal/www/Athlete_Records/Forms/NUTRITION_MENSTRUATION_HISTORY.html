@@ -1,0 +1,640 @@
+<html>
+
+<head>
+  <title>Nutritional and Menstrual History Form</title>
+  <link rel="stylesheet" type="text/css" href="/www/common.css"/>
+</head>
+
+<!--
+--- BEGIN DATA VERIFICATION ---
+FORM_DATE: not null
+FORM_DATE: date
+WEIGHT_LOSS_DIET: not null
+WEIGHT_LOSS_DIET: format=^(Yes|No)$
+DIETING_MONITORED_MEAL_PLAN: format=^(Yes)$
+DIETING_INCREASED_EXERCISE: format=^(Yes)$
+DIETING_PILLS: format=^(Yes)$
+DIETING_DECREASED_FOOD_INTAKE: format=^(Yes)$
+DIETING_WEIGHT_LOSS_CENTER: format=^(Yes)$
+DIETING_MAGAZINE_SUGGESTIONS: format=^(Yes)$
+DIETING_OTHER: format=^(Yes)$
+DIETING_OTHER_COMMENTS: maxsize=1000
+AVOID_FOODS: not null
+AVOID_FOODS: format=^(Yes|No)$
+AVOID_FOODS_COMMENTS: maxsize=1000
+NUM_MEALS_DAILY: not null
+NUM_MEALS_DAILY: format=^(0|1|2|3|4|5)$
+NUM_SNACKS_DAILY: not null
+NUM_SNACKS_DAILY: format=^(0|1|2|3|4|5|6|7|8|9)$
+WEIGHT_LOSS_DIET_PILLS: format=^(Yes)$
+WEIGHT_LOSS_LAXATIVES: format=^(Yes)$
+WEIGHT_LOSS_DIURETICS: format=^(Yes)$
+WEIGHT_LOSS_VOMITING: format=^(Yes)$
+NUTRITIONAL_INFO_MAGAZINES: format=^(Yes)$
+NUTRITIONAL_INFO_FRIENDS: format=^(Yes)$
+NUTRITIONAL_INFO_PHYSICIAN: format=^(Yes)$
+NUTRITIONAL_INFO_CLASS: format=^(Yes)$
+NUTRITIONAL_INFO_NUTRITIONIST: format=^(Yes)$
+NUTRITIONAL_INFO_COACH: format=^(Yes)$
+NUTRITIONAL_INFO_TRAINER: format=^(Yes)$
+NUTRITIONAL_INFO_OTHER: format=^(Yes)$
+NUTRITIONAL_INFO_OTHER_COMMENTS: maxsize=1000
+WEIGHT_CONCERN_LEVEL: not null
+WEIGHT_CONCERN_LEVEL: format=^(Not very concerned|Somewhat concerned|Concerned|Very Concerned)$
+FEELINGS_FAMILY: format=^(Yes)$
+FEELINGS_PARTNER: format=^(Yes)$
+FEELINGS_ATHLETES: format=^(Yes)$
+FEELINGS_MAGAZINES: format=^(Yes)$
+FEELINGS_PERFORMANCE: format=^(Yes)$
+FEELINGS_COACH: format=^(Yes)$
+FEELINGS_OTHER: format=^(Yes)$
+FEELINGS_OTHER_COMMENTS: maxsize=1000
+WEIGHT_SATISFACTION_LEVEL: format=^(Very satisfied|Satisfied|Somewhat satisfied|Not satisfied)$
+TAKING_SUPPLEMENTS: not null
+TAKING_SUPPLEMENTS: format=^(Yes|No)$
+TAKING_SUPPLEMENTS_COMMENTS: maxsize=1000
+EATING_DISORDER_DIAGNOSIS: not null
+EATING_DISORDER_DIAGNOSIS: format=^(Yes|No)$
+MENARCHE_AGE: not null
+MENARCHE_AGE: format=^(9|10|11|12|13|14|15)$
+LAST_PERIOD_DATE: not null
+LAST_PERIOD_DATE: date
+NUM_PERIODS_PAST_YEAR: not null
+NUM_PERIODS_PAST_YEAR: format=^(10\-12|7\-9|5\-6|1\-4|None)$
+ATHLETICS_AFFECTING_MENSTRUATION: not null
+ATHLETICS_AFFECTING_MENSTRUATION: format=^(Yes|No)$
+LAST_GYNECOLOGICAL_APPT_DATE: not null
+LAST_GYNECOLOGICAL_APPT_DATE: date
+TERMS_SIGNED_BY_ATHLETE: not null
+TERMS_SIGNED_BY_ATHLETE: format=^(Yes|No)$
+TERMS_SIGNED_BY_PARENT: not null
+TERMS_SIGNED_BY_PARENT: format=^(Yes|No)$
+--- END DATA VERIFICATION ---
+
+
+INSERT_CLEARANCE=ATHLETE
+VIEW_CLEARANCE=ATHLETE
+EDIT_CLEARANCE=STUDENT
+REVIEW_REQUIRED_CLEARANCE=NONE
+
+
+--- BEGIN PREPOPULATED FIELD STATEMENTS ---
+SELECT
+
+LAST_NAME, FIRST_NAME, MIDDLE_NAME, SPORT,
+TO_CHAR(now(), 'MM-DD-YYYY') as FORM_DATE
+
+FROM athlete_lv
+
+WHERE ORIG_VERSION_ID = $ORIG_ATHLETE_ID;
+--- END PREPOPULATED FIELD STATEMENTS ---
+
+
+--- BEGIN INSERTION STATEMENTS ---
+insert into nutrition_menstruation_history
+(
+
+NUTRITION_MENSTRUATION_HISTORY_ID, ORIG_VERSION_ID, ATHLETE_ID, FORM_DATE,
+WEIGHT_LOSS_DIET, DIETING_MONITORED_MEAL_PLAN,
+DIETING_INCREASED_EXERCISE, DIETING_PILLS,
+DIETING_DECREASED_FOOD_INTAKE, DIETING_WEIGHT_LOSS_CENTER,
+DIETING_MAGAZINE_SUGGESTIONS, DIETING_OTHER, DIETING_OTHER_COMMENTS,
+AVOID_FOODS, AVOID_FOODS_COMMENTS, NUM_MEALS_DAILY, NUM_SNACKS_DAILY,
+WEIGHT_LOSS_DIET_PILLS, WEIGHT_LOSS_LAXATIVES, WEIGHT_LOSS_DIURETICS,
+WEIGHT_LOSS_VOMITING, NUTRITIONAL_INFO_MAGAZINES,
+NUTRITIONAL_INFO_FRIENDS, NUTRITIONAL_INFO_PHYSICIAN,
+NUTRITIONAL_INFO_CLASS, NUTRITIONAL_INFO_NUTRITIONIST,
+NUTRITIONAL_INFO_COACH, NUTRITIONAL_INFO_TRAINER,
+NUTRITIONAL_INFO_OTHER, NUTRITIONAL_INFO_OTHER_COMMENTS,
+WEIGHT_CONCERN_LEVEL, FEELINGS_FAMILY, FEELINGS_PARTNER, FEELINGS_ATHLETES,
+FEELINGS_MAGAZINES, FEELINGS_PERFORMANCE, FEELINGS_COACH,
+FEELINGS_OTHER, FEELINGS_OTHER_COMMENTS, WEIGHT_SATISFACTION_LEVEL,
+TAKING_SUPPLEMENTS, TAKING_SUPPLEMENTS_COMMENTS,
+EATING_DISORDER_DIAGNOSIS, MENARCHE_AGE,
+LAST_PERIOD_DATE, NUM_PERIODS_PAST_YEAR, ATHLETICS_AFFECTING_MENSTRUATION,
+LAST_GYNECOLOGICAL_APPT_DATE,
+TERMS_SIGNED_BY_ATHLETE, TERMS_SIGNED_BY_PARENT, FORM_DATE_PARENT,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+)
+VALUES
+(
+
+nextval('new_nutrition_menstruation_history_id'), $ORIG_VERSION_ID, $ORIG_ATHLETE_ID,
+TO_DATE($FORM_DATE, 'MM-DD-YYYY'),
+$WEIGHT_LOSS_DIET, $DIETING_MONITORED_MEAL_PLAN,
+$DIETING_INCREASED_EXERCISE, $DIETING_PILLS,
+$DIETING_DECREASED_FOOD_INTAKE, $DIETING_WEIGHT_LOSS_CENTER,
+$DIETING_MAGAZINE_SUGGESTIONS, $DIETING_OTHER, $DIETING_OTHER_COMMENTS,
+$AVOID_FOODS, $AVOID_FOODS_COMMENTS, $NUM_MEALS_DAILY, $NUM_SNACKS_DAILY,
+$WEIGHT_LOSS_DIET_PILLS, $WEIGHT_LOSS_LAXATIVES, $WEIGHT_LOSS_DIURETICS,
+$WEIGHT_LOSS_VOMITING, $NUTRITIONAL_INFO_MAGAZINES,
+$NUTRITIONAL_INFO_FRIENDS, $NUTRITIONAL_INFO_PHYSICIAN,
+$NUTRITIONAL_INFO_CLASS, $NUTRITIONAL_INFO_NUTRITIONIST,
+$NUTRITIONAL_INFO_COACH, $NUTRITIONAL_INFO_TRAINER,
+$NUTRITIONAL_INFO_OTHER, $NUTRITIONAL_INFO_OTHER_COMMENTS,
+$WEIGHT_CONCERN_LEVEL, $FEELINGS_FAMILY, $FEELINGS_PARTNER, $FEELINGS_ATHLETES,
+$FEELINGS_MAGAZINES, $FEELINGS_PERFORMANCE, $FEELINGS_COACH,
+$FEELINGS_OTHER, $FEELINGS_OTHER_COMMENTS, $WEIGHT_SATISFACTION_LEVEL,
+$TAKING_SUPPLEMENTS, $TAKING_SUPPLEMENTS_COMMENTS,
+$EATING_DISORDER_DIAGNOSIS, $MENARCHE_AGE, TO_DATE($LAST_PERIOD_DATE, 'MM-DD-YYYY'),
+$NUM_PERIODS_PAST_YEAR, $ATHLETICS_AFFECTING_MENSTRUATION,
+TO_DATE($LAST_GYNECOLOGICAL_APPT_DATE, 'MM-DD-YYYY'),
+$TERMS_SIGNED_BY_ATHLETE, $TERMS_SIGNED_BY_PARENT, $FORM_DATE_PARENT,
+$FORM_SIGN_USER_ID, now(), $FORM_SIGNATURE
+
+);
+--- END INSERTION STATEMENTS ---
+
+
+--- BEGIN EXTRACTION STATEMENTS ---
+SELECT
+
+NUTRITION_MENSTRUATION_HISTORY_ID, ORIG_VERSION_ID, ATHLETE_ID as ORIG_ATHLETE_ID,
+TO_CHAR(FORM_DATE, 'MM-DD-YYYY') as FORM_DATE,
+WEIGHT_LOSS_DIET, DIETING_MONITORED_MEAL_PLAN,
+DIETING_INCREASED_EXERCISE, DIETING_PILLS,
+DIETING_DECREASED_FOOD_INTAKE, DIETING_WEIGHT_LOSS_CENTER,
+DIETING_MAGAZINE_SUGGESTIONS, DIETING_OTHER, DIETING_OTHER_COMMENTS,
+AVOID_FOODS, AVOID_FOODS_COMMENTS, NUM_MEALS_DAILY, NUM_SNACKS_DAILY,
+WEIGHT_LOSS_DIET_PILLS, WEIGHT_LOSS_LAXATIVES, WEIGHT_LOSS_DIURETICS,
+WEIGHT_LOSS_VOMITING, NUTRITIONAL_INFO_MAGAZINES,
+NUTRITIONAL_INFO_FRIENDS, NUTRITIONAL_INFO_PHYSICIAN,
+NUTRITIONAL_INFO_CLASS, NUTRITIONAL_INFO_NUTRITIONIST,
+NUTRITIONAL_INFO_COACH, NUTRITIONAL_INFO_TRAINER,
+NUTRITIONAL_INFO_OTHER, NUTRITIONAL_INFO_OTHER_COMMENTS,
+WEIGHT_CONCERN_LEVEL, FEELINGS_FAMILY, FEELINGS_PARTNER, FEELINGS_ATHLETES,
+FEELINGS_MAGAZINES, FEELINGS_PERFORMANCE, FEELINGS_COACH,
+FEELINGS_OTHER, FEELINGS_OTHER_COMMENTS, WEIGHT_SATISFACTION_LEVEL,
+TAKING_SUPPLEMENTS, TAKING_SUPPLEMENTS_COMMENTS,
+EATING_DISORDER_DIAGNOSIS, MENARCHE_AGE,
+TO_CHAR(LAST_PERIOD_DATE, 'MM-DD-YYYY') as LAST_PERIOD_DATE,
+NUM_PERIODS_PAST_YEAR, ATHLETICS_AFFECTING_MENSTRUATION,
+TO_CHAR(LAST_GYNECOLOGICAL_APPT_DATE, 'MM-DD-YYYY') as LAST_GYNECOLOGICAL_APPT_DATE,
+TERMS_SIGNED_BY_ATHLETE, TERMS_SIGNED_BY_PARENT,
+TO_CHAR(FORM_DATE_PARENT, 'MM-DD-YYYY') as FORM_DATE_PARENT,
+FORM_SIGN_USER_ID, FORM_SIGN_DATE, FORM_SIGNATURE
+
+FROM nutrition_menstruation_history
+
+WHERE NUTRITION_MENSTRUATION_HISTORY_ID = $NUTRITION_MENSTRUATION_HISTORY_ID;
+--- END EXTRACTION STATEMENTS ---
+-->
+
+
+<body background="/www/background.gif">
+
+<form name="nutrition_menstruation_history" method="POST" action="/bin/process_form">
+<input type="hidden" name="FORM_NAME" value="NUTRITION_MENSTRUATION_HISTORY">
+
+<div align="center"><b>Miami University</b><br/>
+<b>Department of Intercollegiate Athletics</b><br/></div>
+<div align="center"><h3>Miami Sports Medicine<br/>Nutritional and Menstrual History Questionnaire</h3></div>
+
+<div align="center"><p>To provide you with the best possible support
+during your years as a Student-Athlete, it would be helpful to have
+the following information.  Please circle, check or fill in the blanks
+where indicated and feel free to contact Jennifer Beardslee at
+513-529-4777 or <a href="mailto:beardsjm@muohio.edu">beardsjm@muohio.edu</a>
+if you have any questions or concerns.</p></div>
+
+
+<table border="0" width="100%">
+   <tr>
+      <td align="left" valign="top"><b>Student Athlete:</b> #LAST_NAME#, #FIRST_NAME# #MIDDLE_NAME#</td>
+      <td align="right" valign="top"><b>Sport:</b> #SPORT#</td>
+   </tr>
+</table>
+
+<br/>
+
+<table border="1" cellspacing="0" cellpadding="5" width="100%">
+
+<tr>
+   <td valign="top" align="center" rowspan="9"><b>1.</b></td>
+   <td valign="top">Have you ever been on a weight loss diet?</td>
+   <td valign="top" align="center" nowrap="nowrap"><input type="radio" value="Yes" name="WEIGHT_LOSS_DIET">Yes</td>
+   <td valign="top" align="center" nowrap="nowrap"><input type="radio" value="No"  name="WEIGHT_LOSS_DIET">No</td>
+</tr>
+
+<tr>
+   <td valign="top" colspan="3">If YES, what was your usual approach to dieting?  Check all that apply:</td>
+</tr>
+
+<tr>
+   <td valign="top">- Physician Monitored Meal Plan</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="DIETING_MONITORED_MEAL_PLAN"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Increased Exercise Only</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="DIETING_INCREASED_EXERCISE"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Diet Pills</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="DIETING_PILLS"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Decreased Food Intake Only</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="DIETING_DECREASED_FOOD_INTAKE"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Professional Weight Loss Center (e.g. Jenny Craig, etc.)</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="DIETING_WEIGHT_LOSS_CENTER"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Followed published suggestions in a magazine</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="DIETING_MAGAZINE_SUGGESTIONS"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Other:<br/>
+<textarea rows="3" name="DIETING_OTHER_COMMENTS" cols="60" wrap="virtual"></textarea></td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="DIETING_OTHER"></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+<tr>
+   <td valign="top" align="center" rowspan="2"><b>2.</b></td>
+   <td valign="top">Are there certain foods you avoid?</td>
+   <td valign="top" align="center" nowrap="nowrap"><input type="radio" value="Yes" name="AVOID_FOODS">Yes</td>
+   <td valign="top" align="center" nowrap="nowrap"><input type="radio" value="No"  name="AVOID_FOODS">No</td>
+</tr>
+
+<tr>
+   <td valign="top" colspan="3">If yes, please list food/drinks:<br/>
+<textarea rows="3" name="AVOID_FOODS_COMMENTS" cols="60" wrap="virtual"></textarea></td>
+</tr>
+
+
+<tr>
+   <td valign="top" align="center" rowspan="1"><b>3.</b></td>
+   <td valign="top">How many meals do you eat each day?</td>
+   <td valign="top" align="center" colspan="2"><select name="NUM_MEALS_DAILY" size="1">
+<option value=""></option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+</select></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+   <td valign="top" align="center" rowspan="1"><b>4.</b></td>
+   <td valign="top">How many snacks do you eat each day?</td>
+   <td valign="top" align="center" colspan="2"><select name="NUM_SNACKS_DAILY" size="1">
+<option value=""></option>
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+<option value="9">9</option>
+</select></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+<tr>
+   <td valign="top" align="center" rowspan="5"><b>5.</b></td>
+   <td valign="top" colspan="3">Have you ever used any of the following methods to lose weight?  Check all that apply:</td>
+</tr>
+
+<tr>
+   <td valign="top">- Diet Pills</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="WEIGHT_LOSS_DIET_PILLS"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Laxatives</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="WEIGHT_LOSS_LAXATIVES"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Diuretics</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="WEIGHT_LOSS_DIURETICS"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Vomiting</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="WEIGHT_LOSS_VOMITING"></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+   <td valign="top" align="center" rowspan="9"><b>6.</b></td>
+   <td valign="top" colspan="3">Where do you get your nutritional information?  Check all that apply:</td>
+</tr>
+
+<tr>
+   <td valign="top">- Magazines</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="NUTRITIONAL_INFO_MAGAZINES"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Friends/Family</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="NUTRITIONAL_INFO_FRIENDS"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Physician</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="NUTRITIONAL_INFO_PHYSICIAN"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Nutrition Class</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="NUTRITIONAL_INFO_CLASS"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Nutritionist</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="NUTRITIONAL_INFO_NUTRITIONIST"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Coach</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="NUTRITIONAL_INFO_COACH"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Certified Athletic TrainerC</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="NUTRITIONAL_INFO_TRAINER"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Other:<br/>
+<textarea rows="3" name="NUTRITIONAL_INFO_OTHER_COMMENTS" cols="60" wrap="virtual"></textarea></td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="NUTRITIONAL_INFO_OTHER"></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+   <td valign="top" align="center" rowspan="5"><b>6.</b></td>
+   <td valign="top" colspan="3">How concerned would you say you are about "controlling" your weight?  Check one that applies:</td>
+</tr>
+
+<tr>
+   <td valign="top">- Not very concerned</td>
+   <td valign="top" align="center" colspan="2"><input type="radio" value="Not very concerned" name="WEIGHT_CONCERN_LEVEL"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Somewhat concerned</td>
+   <td valign="top" align="center" colspan="2"><input type="radio" value="Somewhat concerned" name="WEIGHT_CONCERN_LEVEL"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Concerned</td>
+   <td valign="top" align="center" colspan="2"><input type="radio" value="Concerned" name="WEIGHT_CONCERN_LEVEL"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Very concerned</td>
+   <td valign="top" align="center" colspan="2"><input type="radio" value="Very Concerned" name="WEIGHT_CONCERN_LEVEL"></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+   <td valign="top" align="center" rowspan="9"><b>7.</b></td>
+   <td valign="top" colspan="3">What factors, if any, contribute to how you feel about your weight?  Check all that apply:</td>
+</tr>
+
+<tr>
+   <td valign="top">- Family opinion</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="FEELINGS_FAMILY"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Romantic partner opinion</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="FEELINGS_PARTNER"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Comparison to other athletes</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="FEELINGS_ATHLETES"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Comparison to images in fashion magazines</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="FEELINGS_MAGAZINES"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Athletic performance</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="FEELINGS_PERFORMANCE"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Coach(es) opinion</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="FEELINGS_COACH"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Physician opinion</td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="FEELINGS_PHYSICIAN"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Other:<br/>
+<textarea rows="3" name="FEELINGS_OTHER_COMMENTS" cols="60" wrap="virtual"></textarea></td>
+   <td valign="top" align="center" colspan="2"><input type="checkbox" value="Yes" name="FEELINGS_OTHER"></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+   <td valign="top" align="center" rowspan="5"><b>6.</b></td>
+   <td valign="top" colspan="3">How satisfied are you with your current weight?  Check one that applies:</td>
+</tr>
+
+<tr>
+   <td valign="top">- Very satisfied</td>
+   <td valign="top" align="center" colspan="2"><input type="radio" value="Very satisfied" name="WEIGHT_SATISFACTION_LEVEL"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Satisfied</td>
+   <td valign="top" align="center" colspan="2"><input type="radio" value="Satisfied" name="WEIGHT_SATISFACTION_LEVEL"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Somewhat satisfied</td>
+   <td valign="top" align="center" colspan="2"><input type="radio" value="Somewhat satisfied" name="WEIGHT_SATISFACTION_LEVEL"></td>
+</tr>
+
+<tr>
+   <td valign="top">- Not satisfied</td>
+   <td valign="top" align="center" colspan="2"><input type="radio" value="Not satisfied" name="WEIGHT_SATISFACTION_LEVEL"></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+   <td valign="top" align="center" rowspan="2"><b>10.</b></td>
+   <td valign="top">Do you take vitamins or mineral supplements?</td>
+   <td valign="top" align="center" nowrap="nowrap"><input type="radio" value="Yes" name="TAKING_SUPPLEMENTS">Yes</td>
+   <td valign="top" align="center" nowrap="nowrap"><input type="radio" value="No"  name="TAKING_SUPPLEMENTS">No</td>
+</tr>
+
+<tr>
+   <td valign="top" colspan="3">If Yes, please list vitamins or supplements:<br/>
+<textarea rows="3" name="TAKING_SUPPLEMENTS_COMMENTS" cols="60" wrap="virtual"></textarea></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+   <td valign="top" align="center" rowspan="1"><b>11.</b></td>
+   <td valign="top">Have you ever been diagnosed with an eating disorder?</td>
+   <td valign="top" align="center" nowrap="nowrap"><input type="radio" value="Yes" name="EATING_DISORDER_DIAGNOSIS">Yes</td>
+   <td valign="top" align="center" nowrap="nowrap"><input type="radio" value="No"  name="EATING_DISORDER_DIAGNOSIS">No</td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+<tr>
+   <td valign="top" align="center" rowspan="1"><b>12.</b></td>
+   <td valign="top">At what age did your menstrual period start?  How many years old:</td>
+   <td valign="top" align="center" colspan="2"><select name="MENARCHE_AGE" size="1">
+<option value=""></option>
+<option value="9">9</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+<option value="13">13</option>
+<option value="14">14</option>
+<option value="15">15</option>
+</select></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+   <td valign="top" align="center" rowspan="1"><b>13.</b></td>
+   <td valign="top">When was your last menstrual period?  Give date:</td>
+   <td valign="top" align="center" colspan="2"><input type="text" name="LAST_PERIOD_DATE" size="10"><br>mm-dd-yyyy</td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+   <td valign="top" align="center" rowspan="6"><b>14.</b></td>
+   <td valign="top" colspan="3">How many periods did you have during the last 12 months? Check one that applies:</td>
+</tr>
+
+<tr>
+   <td valign="top">- 10-12</td>
+   <td valign="top" align="center" colspan="2"><input type="radio" value="10-12" name="NUM_PERIODS_PAST_YEAR"></td>
+</tr>
+
+<tr>
+   <td valign="top">- 7-9</td>
+   <td valign="top" align="center" colspan="2"><input type="radio" value="7-9" name="NUM_PERIODS_PAST_YEAR"></td>
+</tr>
+
+<tr>
+   <td valign="top">- 5-6</td>
+   <td valign="top" align="center" colspan="2"><input type="radio" value="5-6" name="NUM_PERIODS_PAST_YEAR"></td>
+</tr>
+
+<tr>
+   <td valign="top">- 1-4</td>
+   <td valign="top" align="center" colspan="2"><input type="radio" value="1-4" name="NUM_PERIODS_PAST_YEAR"></td>
+</tr>
+
+<tr>
+   <td valign="top">- None</td>
+   <td valign="top" align="center" colspan="2"><input type="radio" value="None" name="NUM_PERIODS_PAST_YEAR"></td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+   <td valign="top" align="center" rowspan="1"><b>11.</b></td>
+   <td valign="top">Has a physician ever told you that your athletic involvement has affected your menstrual cycles?</td>
+   <td valign="top" align="center" nowrap="nowrap"><input type="radio" value="Yes" name="ATHLETICS_AFFECTING_MENSTRUATION">Yes</td>
+   <td valign="top" align="center" nowrap="nowrap"><input type="radio" value="No"  name="ATHLETICS_AFFECTING_MENSTRUATION">No</td>
+</tr>
+
+
+<tr><td colspan="4">&nbsp;</td></tr>
+
+
+<tr>
+   <td valign="top" align="center" rowspan="2"><b>13.</b></td>
+   <td valign="top">When was your last gynecological appointment?  Give date:</td>
+   <td valign="top" align="center" colspan="2"><input type="text" name="LAST_GYNECOLOGICAL_APPT_DATE" size="10"><br>mm-dd-yyyy</td>
+</tr>
+
+</table>
+
+
+<div align="center">
+<table border="0" width="100%"><tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Student Athlete:</b></td>
+   <td align="right"><b>Signed by Athlete?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="TERMS_SIGNED_BY_ATHLETE" checked="checked" value="Yes">Yes&nbsp; 
+<input type="radio" name="TERMS_SIGNED_BY_ATHLETE" value="No">No</td>
+   <td width="50"></td>
+   <td><b>Signature date:</b></td>
+   <td><div align="center"><p><input type="text" name="FORM_DATE" size="10"><br>
+      mm-dd-yyyy</div></td>
+</tr>
+<tr>
+   <td valign="bottom">_______________________________________________________________________<br>
+<b>Signature of Parent or Guardian (If Student Athlete is under 18 years of age)</b></td>
+   <td align="right"><b>Signed by Parent or Guardian?</b></td>
+   <td nowrap="nowrap"><input type="radio" name="TERMS_SIGNED_BY_PARENT" value="Yes">Yes&nbsp; 
+<input type="radio" name="TERMS_SIGNED_BY_PARENT" value="No" checked="checked">No</td>
+   <td width="50"></td>
+   <td><b>Signature date:</b></td>
+   <td><div align="center"><p><input type="text" name="FORM_DATE_PARENT" size="10"><br>
+      mm-dd-yyyy</div></td>
+</tr></table>
+
+</div>
+
+<div align="center"><p><input type="submit" value="Submit"></p></div>
+
+</form>
+</body>
+</html>

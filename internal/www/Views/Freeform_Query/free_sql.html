@@ -1,0 +1,23 @@
+<html>
+
+<head>
+<title>Free-Form Database Query</title>
+</head>
+
+<body background="/www/background.gif" onLoad="document.freeform_query.SQL_QUERY.focus();">
+
+<form name="freeform_query" method="POST" action="/bin/freeform_query.pl" target="bottom">
+
+<p>This page allows the user to enter in any SQL <i>SELECT</i> statement and receive
+a response back from the database.</p>
+
+  <p><strong>SQL statement:</strong><br>
+  <textarea rows="10" name="SQL_QUERY" wrap="virtual" cols="80"></textarea></p>
+
+  <p><input type="submit" value=" Submit Query ">
+     <input type="reset" value=" Reset ">
+  </p>
+
+</form>
+</body>
+</html>

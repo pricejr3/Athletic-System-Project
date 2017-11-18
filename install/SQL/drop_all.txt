@@ -1,0 +1,2 @@
+\i drop_tables.txt
+\i drop_sequences.txt
